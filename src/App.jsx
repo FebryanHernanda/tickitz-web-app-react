@@ -1,7 +1,10 @@
+import { LoginPage, RegisterPages } from "./components/pages/auth";
+
 function App() {
   return (
     <>
-      <h1>hello world</h1>
+      {/* <LoginPage /> */}
+      <RegisterPages />
     </>
   );
 }
