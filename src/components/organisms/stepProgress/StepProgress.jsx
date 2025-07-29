@@ -35,7 +35,7 @@ const StepProgress = () => {
         <div className="text-white bg-gray-500 rounded-full w-15 h-15 flex items-center justify-center">
           3
         </div>
-        <p classNameclass="text-secondary">Done</p>
+        <p className="text-secondary">Done</p>
       </div>
     </div>
   );
