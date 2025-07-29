@@ -5,7 +5,7 @@ import { FormRegister, StepProgress } from "../../organisms";
 const RegisterPages = () => {
   return (
     <AuthLayout>
-      <div className=" flex flex-col gap-5 bg-white p-7 rounded-2xl lg:p-10">
+      <div className="md:w-[600px] flex flex-col gap-5 bg-white p-7 rounded-2xl lg:p-10">
         <StepProgress />
         <FormRegister />
 
