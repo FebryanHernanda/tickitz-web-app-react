@@ -4,30 +4,44 @@ const MovieCard = ({ movie, genres }) => {
     .slice(0, 3);
 
   return (
-    <div className="w-[300px]">
-      <div className="">
+    <div className="w-full lg:w-[300px] rounded-2xl overflow-hidden relative">
+      {/* Gambar Movie */}
+      <div className="relative">
         <img
           src={`https://image.tmdb.org/t/p/original${movie.backdrop_path}`}
           alt={movie.title}
-          className="rounded-2xl w-50"
+          className="rounded-2xl w-full h-[400px] object-cover"
         />
-        <div className="card-overlay">
-          <div className="button-overlay">
+
+        <div className="absolute inset-0 flex items-center justify-center rounded-2xl group">
+          <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-70 transition duration-300 rounded-2xl z-0"></div>
+
+          <div className="z-10 space-x-2 opacity-0 group-hover:opacity-100 transition duration-300">
             <a href={`/pages/movies/detail-movies.html?id=${movie.id}`}>
-              <button>Details</button>
+              <button className="bg-white text-black px-4 py-2 rounded-md text-sm hover:bg-gray-200 transition">
+                Details
+              </button>
             </a>
             <a href="/pages/payment/order.html">
-              <button>Buy Tickets</button>
+              <button className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm hover:bg-blue-700 transition">
+                Buy Tickets
+              </button>
             </a>
           </div>
         </div>
       </div>
 
-      <div className="movies-desc">
-        <h3 className="text-large font-regular">{movie.title}</h3>
-        <div className="flex gap-5">
+      {/* Deskripsi Movie */}
+      <div className="p-4">
+        <h3 className="text-lg font-semibold text-gray-800 mb-2">
+          {movie.title}
+        </h3>
+        <div className="flex flex-wrap gap-2">
           {findGenres.map((genre) => (
-            <span key={genre.id} className="tags">
+            <span
+              key={genre.id}
+              className="bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded-md"
+            >
               {genre.name}
             </span>
           ))}
