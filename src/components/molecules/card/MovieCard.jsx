@@ -4,7 +4,7 @@ const MovieCard = ({ movie, genres }) => {
     .slice(0, 3);
 
   return (
-    <div className="w-full lg:w-[300px] rounded-2xl overflow-hidden relative">
+    <div className="w-full lg:w-[300px] overflow-hidden rounded-2xl relative">
       {/* Gambar Movie */}
       <div className="relative">
         <img
@@ -16,9 +16,12 @@ const MovieCard = ({ movie, genres }) => {
         <div className="absolute inset-0 flex items-center justify-center rounded-2xl group">
           <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-70 transition duration-300 rounded-2xl z-0"></div>
 
-          <div className="z-10 space-x-2 opacity-0 group-hover:opacity-100 transition duration-300">
-            <a href={`/pages/movies/detail-movies.html?id=${movie.id}`}>
-              <button className="bg-white text-black px-4 py-2 rounded-md text-sm hover:bg-gray-200 transition">
+          <div className="flex flex-col gap-2 z-10 space-x-2 opacity-0 group-hover:opacity-100 transition duration-300">
+            <a
+              href={`/pages/movies/detail-movies.html?id=${movie.id}`}
+              className="w-full"
+            >
+              <button className="bg-white w-full text-black px-4 py-2 rounded-md text-sm hover:bg-gray-200 transition">
                 Details
               </button>
             </a>
@@ -32,7 +35,7 @@ const MovieCard = ({ movie, genres }) => {
       </div>
 
       {/* Deskripsi Movie */}
-      <div className="p-4">
+      <div className="py-4 px-2 flex flex-col justify-between h-[120px] ">
         <h3 className="text-lg font-semibold text-gray-800 mb-2">
           {movie.title}
         </h3>
