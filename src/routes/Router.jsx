@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { MoviesPages } from "../components/pages";
+import { LandingPages, MoviesPages } from "../components/pages";
 import { MainLayout } from "../layouts";
 
 function Router() {
@@ -7,7 +7,8 @@ function Router() {
     <BrowserRouter>
       <Routes>
         <Route element={<MainLayout />}>
-          "<Route path="/" element={<MoviesPages />}></Route>
+          <Route path="/" element={<LandingPages />}></Route>
+          <Route path="/movies" element={<MoviesPages />}></Route>
         </Route>
       </Routes>
     </BrowserRouter>
