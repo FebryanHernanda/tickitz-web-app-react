@@ -1,3 +1,4 @@
+import { ArrowRight } from "lucide-react";
 import { MyButton } from "../../atoms";
 import { InputField } from "../../molecules";
 import { Footer, MoviesList, Navbar, Newslatters } from "../../organisms";
@@ -9,10 +10,10 @@ const MoviesPages = () => {
         <div className="">
           {/* <!-- Hero --> */}
           <section
-            className="bg-cover bg-center bg-no-repeat h-[500px] flex justify-center items-center"
+            className="bg-cover bg-center bg-no-repeat h-[700px] flex justify-center items-center"
             style={{
               backgroundImage:
-                "linear-gradient(rgba(0, 0, 0, 0.5)), url(src/assets/background/background.png)",
+                "linear-gradient(rgba(0, 0, 0, 0.7)), url(src/assets/background/background.png)",
             }}
           >
             <div className="flex text-white flex-col gap-5 p-5 w-full">
@@ -66,14 +67,17 @@ const MoviesPages = () => {
                 <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white">
                   1
                 </div>
-                <div className="w-10 h-10 rounded-full bg-blue-300 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-full bg-blue-200 flex items-center justify-center ">
                   2
                 </div>
-                <div className="w-10 h-10 rounded-full bg-blue-300 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-full bg-blue-200 flex items-center justify-center">
                   3
                 </div>
-                <div className="w-10 h-10 rounded-full bg-blue-300 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-full bg-blue-200 flex items-center justify-center">
                   4
+                </div>
+                <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white">
+                  <ArrowRight />
                 </div>
               </div>
               {/* <!-- Next List --> */}
