@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { MovieCard } from "../../molecules";
 import { getGenreMovies, getPopularMovies } from "../../../data";
 
-const MovieList = () => {
+const MovieList = ({ limits }) => {
   const apiKey = import.meta.env.VITE_META_API_KEY;
   const [movies, setMovies] = useState([]);
   const [genres, setGenres] = useState([]);
@@ -25,10 +25,12 @@ const MovieList = () => {
     fetchAll();
   }, [apiKey]);
 
+  const displayedMovies = limits ? movies.slice(0, limits) : movies;
+
   return (
     <>
       {loading ? <p>Loading...</p> : null}
-      {movies.map((movie) => (
+      {displayedMovies.map((movie) => (
         <MovieCard key={movie.id} movie={movie} genres={genres} />
       ))}
     </>
