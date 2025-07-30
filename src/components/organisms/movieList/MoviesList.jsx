@@ -1,0 +1,38 @@
+import { useEffect, useState } from "react";
+import { MovieCard } from "../../molecules";
+import { getGenreMovies, getPopularMovies } from "../../../data";
+
+const MovieList = () => {
+  const apiKey = import.meta.env.VITE_META_API_KEY;
+  const [movies, setMovies] = useState([]);
+  const [genres, setGenres] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchAll = async () => {
+      try {
+        const moviesData = await getPopularMovies(apiKey);
+        const genresData = await getGenreMovies(apiKey);
+        setMovies(moviesData);
+        setGenres(genresData);
+      } catch (error) {
+        console.error("Fetch error:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAll();
+  }, [apiKey]);
+
+  return (
+    <>
+      {loading ? <p>Loading...</p> : null}
+      {movies.map((movie) => (
+        <MovieCard key={movie.id} movie={movie} genres={genres} />
+      ))}
+    </>
+  );
+};
+
+export default MovieList;
