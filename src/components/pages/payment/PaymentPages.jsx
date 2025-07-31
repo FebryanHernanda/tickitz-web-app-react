@@ -1,7 +1,7 @@
 const PaymentPages = () => {
   return (
-    <section class="bg-gray-200 p-10">
-      <div class="bg-white p-5 rounded-2xl">
+    <section class="bg-gray-200 p-10 flex justify-center">
+      <div class="bg-white p-5 lg:w-200 rounded-2xl">
         <form
           action="/pages/payment/payment-modal.html"
           id="payment-order"
@@ -150,93 +150,85 @@ const PaymentPages = () => {
           {/* <!-- Payment Method --> */}
           <div className="flex flex-col gap-5 ">
             <h1 className="font-semibold text-3xl ">Payment Method</h1>
-            <div className="payment-method-wrapper flex flex-wrap  justify-between">
+            <div className="payment-method-wrapper flex flex-wrap justify-between gap-5">
               <button
                 type="button"
                 value="Gpay"
-                className="flex justify-center w-50 p-3 bg-white rounded-md shadow  hover:bg-gray-100"
+                className="flex justify-center w-full lg:w-40 p-3 bg-white rounded-md shadow  hover:bg-gray-100"
               >
                 <img
                   src="/src/assets/icons/payment-method/googlepay-icon.svg"
                   alt="Google Pay Icon"
-                  //   className="w-50]"
                 />
               </button>
               <button
                 type="button"
                 value="VISA"
-                className="flex justify-center w-50 p-3 bg-white rounded-md shadow  hover:bg-gray-100"
+                className="flex justify-center w-full lg:w-40 p-3 bg-white rounded-md shadow  hover:bg-gray-100"
               >
                 <img
                   src="/src/assets/icons/payment-method/visa-icon.svg"
                   alt="Visa Icon"
-                  //   className="w-full"
                 />
               </button>
               <button
                 type="button"
                 value="Gopay"
-                className="flex justify-center w-50 p-3 bg-white rounded-md shadow hover:bg-gray-100"
+                className="flex justify-center w-full lg:w-40 p-3 bg-white rounded-md shadow hover:bg-gray-100"
               >
                 <img
                   src="/src/assets/icons/payment-method/gopay-icon.svg"
                   alt="Gopay Icon"
-                  //   className="w-full"
                 />
               </button>
               <button
                 type="button"
                 value="Paypal"
-                className="flex justify-center w-50 p-3 bg-white rounded-md shadow hover:bg-gray-100"
+                className="flex justify-center w-full lg:w-40 p-3 bg-white rounded-md shadow hover:bg-gray-100"
               >
                 <img
                   src="/src/assets/icons/payment-method/paypal-icon.svg"
                   alt="Paypal Icon"
-                  //   className="w-full"
                 />
               </button>
               <button
                 type="button"
                 value="Dana"
-                className="flex justify-center w-50 p-3 bg-white rounded-md shadow hover:bg-gray-100"
+                className="flex justify-center w-full lg:w-40 p-3 bg-white rounded-md shadow hover:bg-gray-100"
               >
                 <img
                   src="/src/assets/icons/payment-method/dana-icon.svg"
                   alt="Dana Icon"
-                  //   className="w-full"
                 />
               </button>
               <button
                 type="button"
                 value="BCA"
-                className="flex justify-center w-50 p-3 bg-white rounded-md shadow hover:bg-gray-100"
+                className="flex justify-center w-full lg:w-40 p-3 bg-white rounded-md shadow hover:bg-gray-100"
               >
                 <img
                   src="/src/assets/icons/payment-method/bca-icon.svg"
                   alt="BCA Icon"
-                  //   className="w-full"
                 />
               </button>
               <button
                 type="button"
                 value="BRI"
-                className="flex justify-center w-50 p-3 bg-white rounded-md shadow hover:bg-gray-100"
+                className="flex justify-center w-full lg:w-40 p-3 bg-white rounded-md shadow hover:bg-gray-100"
               >
                 <img
                   src="/src/assets/icons/payment-method/bri-icon.svg"
                   alt="BRI Icon"
-                  //   className="w-full"
                 />
               </button>
               <button
                 type="button"
                 value="OVO"
-                className="flex justify-center w-50 p-3 bg-white rounded-md shadow hover:bg-gray-100"
+                className="flex justify-center w-full lg:w-40 p-3 bg-white rounded-md shadow hover:bg-gray-100"
               >
                 <img
                   src="/src/assets/icons/payment-method/ovo-icon.svg"
                   alt="OVO Icon"
-                  //   className="w-full"
                 />
               </button>
             </div>
