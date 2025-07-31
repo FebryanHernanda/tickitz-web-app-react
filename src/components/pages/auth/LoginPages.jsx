@@ -1,10 +1,9 @@
-import { AuthLayout } from "../../../layouts";
 import { ButtonSocialMedia } from "../../molecules";
 import { FormLogin } from "../../organisms";
 
 const LoginPages = () => {
   return (
-    <AuthLayout>
+    <>
       <div className="md:w-[600px]flex flex-col gap-5 bg-white p-7 rounded-2xl lg:p-10">
         <h1 className="text-3xl">Welcome Back👋</h1>
         <h3 className="text-gray-500">
@@ -21,7 +20,7 @@ const LoginPages = () => {
 
         <ButtonSocialMedia />
       </div>
-    </AuthLayout>
+    </>
   );
 };
 
