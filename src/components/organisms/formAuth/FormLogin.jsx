@@ -1,17 +1,16 @@
 import { useState } from "react";
 import { MyButton } from "../../atoms";
 import { InputField } from "../../molecules";
-import { Link } from "react-router-dom";
-
+import { Link, useNavigate } from "react-router-dom";
 const FormLogin = () => {
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState("");
   const [password, setPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
     const userData = JSON.parse(localStorage.getItem("userData"));
     let isValid = true;
 
@@ -36,6 +35,7 @@ const FormLogin = () => {
 
     if (isValid) {
       alert("Login Berhasil!");
+      navigate("/");
     }
   };
 
@@ -62,7 +62,7 @@ const FormLogin = () => {
           value={email}
           onChange={handleEmailChange}
         />
-        <p className="text-red-500 text-sm">{emailError}</p>
+        <p className="text-sm text-red-500">{emailError}</p>
         <InputField
           label="Password"
           htmlFor="password"
@@ -74,10 +74,12 @@ const FormLogin = () => {
           value={password}
           onChange={handlePasswordChange}
         />
-        <p className="text-red-500 text-sm">{passwordError}</p>
+        <p className="text-sm text-red-500">{passwordError}</p>
 
         <MyButton type="submit">Login</MyButton>
-        <Link to="/auth/register">Forgot your password?</Link>
+        <Link to="/auth/register" className="text-right hover:text-blue-800">
+          Forgot your password?
+        </Link>
       </form>
     </>
   );
