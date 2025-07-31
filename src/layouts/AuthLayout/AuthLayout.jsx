@@ -4,7 +4,7 @@ const AuthLayout = () => {
   return (
     <>
       <div
-        className=" w-full min-h-screen bg-cover bg-center bg-no-repeat flex flex-col justify-center items-center gap-10 p-5 lg:p-10"
+        className="flex min-h-screen w-full flex-col items-center justify-center gap-10 bg-cover bg-center bg-no-repeat p-5 lg:p-10"
         style={{
           backgroundImage:
             "linear-gradient(rgba(0, 0, 0, 0.3)), url(../src/assets/background/background.png)",
