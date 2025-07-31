@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { MyButton } from "../../atoms";
 import { InputField } from "../../molecules";
+import { Link } from "react-router-dom";
 
 const FormLogin = () => {
   const [email, setEmail] = useState("");
@@ -76,9 +77,7 @@ const FormLogin = () => {
         <p className="text-red-500 text-sm">{passwordError}</p>
 
         <MyButton type="submit">Login</MyButton>
-        <a href="#" className="text-right">
-          Forgot your password?
-        </a>
+        <Link to="/auth/register">Forgot your password?</Link>
       </form>
     </>
   );
