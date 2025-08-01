@@ -1,7 +1,7 @@
 const Footer = () => {
   return (
     <>
-      <footer className="p-5 ">
+      <footer className="p-5 lg:p-10">
         <div className="flex flex-col gap-10 lg:flex-row lg:justify-between">
           <div className="flex flex-col gap-5">
             <img
@@ -9,7 +9,7 @@ const Footer = () => {
               alt="Tickitz Logo"
               className="w-50"
             />
-            <p className="font-light text-small">
+            <p className="text-small font-light">
               Stop waiting in line. Buy tickets conveniently, watch movies
               quietly.
             </p>
@@ -17,7 +17,7 @@ const Footer = () => {
 
           <div className="flex flex-col gap-5">
             <h3 className="font-bold">Explore</h3>
-            <ul className="flex flex-wrap  gap-5 lg:flex-nowrap lg:flex-col lg:items-start">
+            <ul className="flex flex-wrap gap-5 lg:flex-col lg:flex-nowrap lg:items-start">
               <a href="#">
                 <li>Cinemas</li>
               </a>
@@ -35,7 +35,7 @@ const Footer = () => {
 
           <div className="flex flex-col gap-5">
             <h3 className="font-bold">Our Sponsor</h3>
-            <ul className="flex flex-wrap gap-10 justify-between items-end md:justify-normal lg:flex-nowrap lg:flex-col lg:items-start">
+            <ul className="flex flex-wrap items-end justify-between gap-10 md:justify-normal lg:flex-col lg:flex-nowrap lg:items-start">
               <li>
                 <img
                   src="/src/assets/icons/sponsor/ebv-logo.svg"
@@ -91,7 +91,7 @@ const Footer = () => {
             </ul>
           </div>
         </div>
-        <h5 className="text-center mt-10">
+        <h5 className="mt-10 text-center">
           © 2020 Tickitz. All Rights Reserved.
         </h5>
       </footer>
