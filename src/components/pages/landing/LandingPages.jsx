@@ -6,11 +6,11 @@ const LandingPages = () => {
   return (
     <>
       {/* <!-- Container --> */}
-      <div className="flex flex-col p-5 lg:p-10 gap-10">
+      <div className="mx-auto flex max-w-screen-2xl flex-col gap-10 p-5 lg:p-10">
         {/* <!-- Hero --> */}
-        <section className="flex flex-wrap lg:flex-nowrap justify-center lg:justify-between gap-10">
-          <div className="flex flex-col justify-center text-center lg:text-left gap-5">
-            <h3 className="text-blue-700 text-2xl">
+        <section className="flex flex-wrap justify-center gap-10 lg:flex-nowrap lg:justify-between">
+          <div className="flex flex-col justify-center gap-10 text-center lg:text-left">
+            <h3 className="text-2xl text-blue-700">
               MOVIE TICKET PURCHASES #1 IN INDONESIA
             </h3>
             <h1 className="text-5xl font-semibold">
@@ -33,7 +33,7 @@ const LandingPages = () => {
             />
             <div className="relative">
               <img
-                className="col-start-1 row-start-2 absolute bottom-0 lg:bottom-4 xl:bottom-0 "
+                className="absolute bottom-0 col-start-1 row-start-2 lg:bottom-4 xl:bottom-0"
                 src="src/assets/background/hero/hero-3.svg"
                 alt="Spiderman Movie Poster"
               />
@@ -48,18 +48,18 @@ const LandingPages = () => {
         {/* <!-- Hero --> */}
 
         {/* <!-- Why Choose Use Section --> */}
-        <section className="flex flex-col gap-10 ">
-          <div className="flex flex-col justify-center text-center lg:text-left gap-5">
-            <h3 className="text-blue-700 text-2xl">WHY CHOOSE US</h3>
+        <section className="flex flex-col gap-10">
+          <div className="flex flex-col justify-center gap-5 text-center lg:text-left">
+            <h3 className="text-2xl text-blue-700">WHY CHOOSE US</h3>
             <h1 className="text-5xl font-semibold">
               Unleashing the Ultimate Movie Experience
             </h1>
           </div>
 
-          <div className="flex flex-col gap-5 lg:flex-row justify-between ">
+          <div className="flex flex-col justify-between gap-5 lg:flex-row">
             {/* <!-- Card1 --> */}
-            <div className="flex flex-col gap-3 text-center items-center lg:text-left lg:items-start">
-              <div className="w-13 h-13 rounded-full flex items-center justify-center bg-blue-200">
+            <div className="flex flex-col items-center gap-3 text-center lg:items-start lg:text-left">
+              <div className="flex h-13 w-13 items-center justify-center rounded-full bg-blue-200">
                 <img
                   src="src/assets/icons/whychooseus/shield-icon.svg"
                   alt="Shield Icon"
@@ -72,29 +72,29 @@ const LandingPages = () => {
               </p>
             </div>
             {/* <!-- Card 2  --> */}
-            <div className="flex flex-col gap-3 text-center items-center lg:text-left lg:items-start">
-              <div className="w-13 h-13 rounded-full flex items-center justify-center bg-blue-200">
+            <div className="flex flex-col items-center gap-3 text-center lg:items-start lg:text-left">
+              <div className="flex h-13 w-13 items-center justify-center rounded-full bg-blue-200">
                 <img
                   src="src/assets/icons/whychooseus/checklist-icon.svg"
                   alt="Shield Icon"
                 />
               </div>
               <h6 className="font-bold">Affordable</h6>
-              <p className="font-light text-small">
+              <p className="text-small font-light">
                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Hic ad
                 iste voluptatem rerum nam nisi iusto fugit sint beatae aut.
               </p>
             </div>
             {/* <!-- Card 3 --> */}
-            <div className="flex flex-col gap-3 text-center items-center lg:text-left lg:items-start">
-              <div className="w-13 h-13 rounded-full flex items-center justify-center bg-blue-200">
+            <div className="flex flex-col items-center gap-3 text-center lg:items-start lg:text-left">
+              <div className="flex h-13 w-13 items-center justify-center rounded-full bg-blue-200">
                 <img
                   src="src/assets/icons/whychooseus/chat-icon.svg"
                   alt="Shield Icon"
                 />
               </div>
               <h6 className="font-bold">24/7 Customer Support</h6>
-              <p className="font-light text-small">
+              <p className="text-small font-light">
                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Hic ad
                 iste voluptatem rerum nam nisi iusto fugit sint beatae aut.
               </p>
@@ -104,16 +104,16 @@ const LandingPages = () => {
         {/* <!-- Why Choose Us Section --> */}
 
         {/* <!-- Exciting Movies --> */}
-        <section className="flex items-center justify-center flex-col gap-10">
+        <section className="flex flex-col items-center justify-center gap-10">
           <div className="title-wrapper text-center">
-            <h3 className="text-blue-700 text-2xl">MOVIES</h3>
+            <h3 className="text-2xl text-blue-700">MOVIES</h3>
             <h1 className="text-5xl font-semibold">
               Exciting Movies That Should Be Watched Today
             </h1>
           </div>
 
-          <div className="overflow-x-scroll md:overflow-x-auto w-full">
-            <div className="flex gap-5 w-[1200px] md:w-full md:justify-between md:flex-wrap ">
+          <div className="w-full overflow-x-scroll md:overflow-x-auto">
+            <div className="flex w-[1200px] gap-5 md:w-full md:flex-wrap md:justify-between">
               <MoviesList limits="4" />
             </div>
           </div>
@@ -137,7 +137,7 @@ const LandingPages = () => {
         {/* <!-- Upcoming Movies --> */}
         <section className="flex flex-col gap-10">
           <div className="text-center">
-            <h3 className="text-blue-700 text-2xl">UPCOMING MOVIES</h3>
+            <h3 className="text-2xl text-blue-700">UPCOMING MOVIES</h3>
             <div className="wrapper-upcoming">
               <h1 className="text-5xl font-semibold">
                 Exciting Movie Coming Soon
@@ -153,8 +153,8 @@ const LandingPages = () => {
             </div>
           </div>
 
-          <div className="overflow-x-scroll md:overflow-x-auto w-full">
-            <div className="flex gap-5 w-[1200px] md:w-full md:justify-between md:flex-wrap ">
+          <div className="w-full overflow-x-scroll md:overflow-x-auto">
+            <div className="flex w-[1200px] gap-5 md:w-full md:flex-wrap md:justify-between">
               <MoviesList limits="4" />
             </div>
           </div>
