@@ -44,21 +44,21 @@ const OrderPages = () => {
           {/* <!-- Choose Seat --> */}
           <div className="flex flex-col gap-3">
             <h3 className="text-xl font-semibold">Seating Key</h3>
-            <div className="flex items-center justify-around gap-6 p-5 text-sm">
+            <div className="flex flex-wrap items-center justify-center gap-5 p-5 text-sm lg:justify-around">
               <div className="flex items-center gap-2">
-                <div className="h-6 w-6 rounded-md border border-gray-300 bg-white" />
+                <div className="h-5 w-5 rounded-md border border-gray-300 bg-white" />
                 <span>Available</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="h-6 w-6 rounded-md bg-blue-600" />
+                <div className="h-5 w-5 rounded-md bg-blue-600" />
                 <span>Selected</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="h-6 w-6 rounded-md bg-pink-600" />
+                <div className="h-5 w-5 rounded-md bg-pink-600" />
                 <span>Love Nest</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="h-6 w-6 rounded-md bg-gray-500" />
+                <div className="h-5 w-5 rounded-md bg-gray-500" />
                 <span>Sold</span>
               </div>
             </div>
