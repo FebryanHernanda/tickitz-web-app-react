@@ -29,7 +29,7 @@ const MovieList = ({ limits }) => {
 
   return (
     <>
-      {loading ? <p>Loading...</p> : null}
+      {loading ? <p className="w-full items-center">Loading...</p> : null}
       {displayedMovies.map((movie) => (
         <MovieCard key={movie.id} movie={movie} genres={genres} />
       ))}
