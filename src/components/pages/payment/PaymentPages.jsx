@@ -177,7 +177,7 @@ const PaymentPages = () => {
               <button
                 type="button"
                 value="Gpay"
-                className="flex w-full justify-center rounded-md bg-white p-3 shadow hover:bg-gray-100 lg:w-40"
+                className="flex w-full justify-center rounded-md border-1 border-gray-200 bg-white p-3 shadow hover:bg-gray-100 lg:w-40"
               >
                 <img
                   src="/src/assets/icons/payment-method/googlepay-icon.svg"
@@ -187,7 +187,7 @@ const PaymentPages = () => {
               <button
                 type="button"
                 value="VISA"
-                className="flex w-full justify-center rounded-md bg-white p-3 shadow hover:bg-gray-100 lg:w-40"
+                className="flex w-full justify-center rounded-md border-1 border-gray-200 bg-white p-3 shadow hover:bg-gray-100 lg:w-40"
               >
                 <img
                   src="/src/assets/icons/payment-method/visa-icon.svg"
@@ -197,7 +197,7 @@ const PaymentPages = () => {
               <button
                 type="button"
                 value="Gopay"
-                className="flex w-full justify-center rounded-md bg-white p-3 shadow hover:bg-gray-100 lg:w-40"
+                className="flex w-full justify-center rounded-md border-1 border-gray-200 bg-white p-3 shadow hover:bg-gray-100 lg:w-40"
               >
                 <img
                   src="/src/assets/icons/payment-method/gopay-icon.svg"
@@ -207,7 +207,7 @@ const PaymentPages = () => {
               <button
                 type="button"
                 value="Paypal"
-                className="flex w-full justify-center rounded-md bg-white p-3 shadow hover:bg-gray-100 lg:w-40"
+                className="flex w-full justify-center rounded-md border-1 border-gray-200 bg-white p-3 shadow hover:bg-gray-100 lg:w-40"
               >
                 <img
                   src="/src/assets/icons/payment-method/paypal-icon.svg"
@@ -217,7 +217,7 @@ const PaymentPages = () => {
               <button
                 type="button"
                 value="Dana"
-                className="flex w-full justify-center rounded-md bg-white p-3 shadow hover:bg-gray-100 lg:w-40"
+                className="flex w-full justify-center rounded-md border-1 border-gray-200 bg-white p-3 shadow hover:bg-gray-100 lg:w-40"
               >
                 <img
                   src="/src/assets/icons/payment-method/dana-icon.svg"
@@ -227,7 +227,7 @@ const PaymentPages = () => {
               <button
                 type="button"
                 value="BCA"
-                className="flex w-full justify-center rounded-md bg-white p-3 shadow hover:bg-gray-100 lg:w-40"
+                className="flex w-full justify-center rounded-md border-1 border-gray-200 bg-white p-3 shadow hover:bg-gray-100 lg:w-40"
               >
                 <img
                   src="/src/assets/icons/payment-method/bca-icon.svg"
@@ -237,7 +237,7 @@ const PaymentPages = () => {
               <button
                 type="button"
                 value="BRI"
-                className="flex w-full justify-center rounded-md bg-white p-3 shadow hover:bg-gray-100 lg:w-40"
+                className="flex w-full justify-center rounded-md border-1 border-gray-200 bg-white p-3 shadow hover:bg-gray-100 lg:w-40"
               >
                 <img
                   src="/src/assets/icons/payment-method/bri-icon.svg"
@@ -247,7 +247,7 @@ const PaymentPages = () => {
               <button
                 type="button"
                 value="OVO"
-                className="flex w-full justify-center rounded-md bg-white p-3 shadow hover:bg-gray-100 lg:w-40"
+                className="flex w-full justify-center rounded-md border-1 border-gray-200 bg-white p-3 shadow hover:bg-gray-100 lg:w-40"
               >
                 <img
                   src="/src/assets/icons/payment-method/ovo-icon.svg"
@@ -258,7 +258,7 @@ const PaymentPages = () => {
           </div>
           <button
             type="submit"
-            className="w-full rounded-md bg-blue-600 p-3 text-white shadow transition hover:bg-blue-700"
+            className="w-full rounded-md bg-blue-600 p-3 text-white shadow hover:bg-blue-700"
             onClick={(e) => {
               e.preventDefault();
               setIsModalOpen(true);
