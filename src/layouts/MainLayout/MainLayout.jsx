@@ -5,8 +5,12 @@ const MainLayout = () => {
   return (
     <>
       <Navbar />
-      <Outlet />
-      <Footer />
+      <main>
+        <Outlet />
+      </main>
+      <div className="mx-auto max-w-screen-2xl">
+        <Footer />
+      </div>
     </>
   );
 };
