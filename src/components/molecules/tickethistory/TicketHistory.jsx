@@ -38,7 +38,7 @@ const TicketHistory = (props) => {
             </div>
           </div>
           <hr />
-          /* Ticket Info */
+          <h3 className="text-lg">Ticket Info</h3>
           {/* Ticket status */}
           <div className="ticket-status flex items-center justify-between">
             <div className="ticket-button space-x-3">
