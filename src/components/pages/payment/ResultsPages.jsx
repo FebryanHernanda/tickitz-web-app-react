@@ -1,9 +1,46 @@
 import { MoveDown, MoveRight } from "lucide-react";
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
 const ResultsPages = () => {
+  const location = useLocation();
+
+  const { data } = location.state;
+
+  // set Data to local storage for Temporary data
+  useEffect(() => {
+    const userData = localStorage.getItem("userData");
+    const getUserData = JSON.parse(userData);
+
+    /* Check array Order, if dont have create order array */
+    if (!Array.isArray(getUserData.order)) {
+      getUserData.order = [];
+    }
+
+    /* Check Duplicate Id true or false? */
+    const isDuplicate = getUserData.order.some((item) => {
+      return item.orderId === data.orderId;
+    });
+
+    /* if not false, push data to order array */
+    if (!isDuplicate) {
+      getUserData.order.push(data);
+      localStorage.setItem("userData", JSON.stringify(getUserData));
+      return;
+    }
+  }, [data]);
+
+  /* Convert Date */
+  const moviesDate = new Date(data.dateShow).toLocaleString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
   return (
     <div className="bg-gray-200">
       <div className="flex flex-col lg:flex-row">
+        {/* Left Container */}
         <section
           style={{
             backgroundImage:
@@ -41,9 +78,9 @@ const ResultsPages = () => {
             </div>
           </div>
         </section>
+        {/* Left Container */}
 
         {/* <!-- Right Container --> */}
-
         <section className="flex flex-col items-center justify-center gap-5 p-10 xl:px-40">
           <div className="w-75 overflow-hidden rounded-2xl bg-white p-5 xl:w-80">
             <div className="flex flex-col items-center gap-5">
@@ -62,37 +99,39 @@ const ResultsPages = () => {
               <div className="flex w-full justify-between gap-10">
                 <div className="flex flex-col gap-5">
                   <div>
-                    <h4 className="font-regular text-secondary">Movie</h4>
-                    <h4 className="font-regular">Spider-man:..</h4>
+                    <h4 className="text-lg text-gray-400">Movie</h4>
+                    <h4 className="">{`${data.details.title.slice(0, 15)} ...`}</h4>
                   </div>
                   <div>
-                    <h4 className="font-regular text-secondary">Date</h4>
-                    <h4 className="font-regular">07 Jul</h4>
+                    <h4 className="text-lg text-gray-400">Date</h4>
+                    <h4 className="">{moviesDate}</h4>
                   </div>
                   <div>
-                    <h4 className="font-regular text-secondary">Count</h4>
-                    <h4 className="font-regular">3 pcs</h4>
+                    <h4 className="text-lg text-gray-400">Count</h4>
+                    <h4 className="">{`${data.seat.length} pcs`}</h4>
                   </div>
                 </div>
                 <div className="flex flex-col gap-5">
                   <div>
-                    <h4 className="font-regular text-secondary">Category</h4>
-                    <h4 className="font-regular">PG-13</h4>
+                    <h4 className="text-lg text-gray-400">Category</h4>
+                    <h4 className="">PG-13</h4>
                   </div>
                   <div>
-                    <h4 className="font-regular text-secondary">Time</h4>
-                    <h4 className="font-regular">2:00pm</h4>
+                    <h4 className="text-lg text-gray-400">Time</h4>
+                    <h4 className="">{`${data.time}`}</h4>
                   </div>
                   <div>
-                    <h4 className="font-regular text-secondary">Seats</h4>
-                    <h4 className="font-regular">C4, C5, C6</h4>
+                    <h4 className="text-lg text-gray-400">Seats</h4>
+                    <h4 className="">
+                      {data.seat.length > 0 ? data.seat.join(", ") : "-"}
+                    </h4>
                   </div>
                 </div>
               </div>
 
               <div className="flex w-full justify-between rounded-lg border-1 border-gray-200 p-2">
-                <h3 className="font-regular">Total</h3>
-                <h3 className="font-regular">$30.00</h3>
+                <h3 className="">Total</h3>
+                <h3 className="text-lg text-blue-700">{`$${data.seat.length * 10}`}</h3>
               </div>
             </div>
           </div>
@@ -105,6 +144,7 @@ const ResultsPages = () => {
             </button>
           </div>
         </section>
+        {/* <!-- Right Container --> */}
       </div>
     </div>
   );
