@@ -1,8 +1,9 @@
 import { MoveDown, MoveRight } from "lucide-react";
 import { useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const ResultsPages = () => {
+  const navigate = useNavigate();
   const location = useLocation();
 
   const { data } = location.state;
@@ -36,6 +37,11 @@ const ResultsPages = () => {
     month: "long",
     day: "numeric",
   });
+
+  /* HandleButton Done */
+  const handleButton = () => {
+    navigate("/movies");
+  };
 
   return (
     <div className="bg-gray-200">
@@ -139,7 +145,10 @@ const ResultsPages = () => {
             <button className="rounded-lg border-1 border-blue-600 px-4 py-2 text-blue-700">
               Download
             </button>
-            <button className="rounded-lg bg-blue-600 px-4 py-2 text-white">
+            <button
+              className="rounded-lg bg-blue-600 px-4 py-2 text-white"
+              onClick={handleButton}
+            >
               Done
             </button>
           </div>
