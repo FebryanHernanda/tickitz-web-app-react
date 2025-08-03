@@ -1,13 +1,56 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Circle, Line } from "../../atoms";
 import { ModalPayment } from "../../molecules";
 import { Check } from "lucide-react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const PaymentPages = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  /* State */
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [payment, setPayment] = useState("");
+
+  /* Check if location state null back to home */
+  useEffect(() => {
+    if (!location.state) {
+      navigate("/");
+    }
+  }, [location.state, navigate]);
+
+  if (!location.state) return null;
+
+  const { details, time, dateShow, cinema, seat } = location.state;
+
+  /* Get UserData from localstorage */
+  const user = JSON.parse(localStorage.getItem("userData"));
+
+  /* count Price */
+  const countPrices = () => {
+    const price = seat.length * 10;
+    return `$ ${price}`;
+  };
+
+  /* Handle Form */
+  const handleForm = (e) => {
+    e.preventDefault();
+    const name = e.target.personalName.value;
+    const email = e.target.personalEmail.value;
+    const phoneNumber = e.target.personalNumber.value;
+
+    /* Check if input value === null */
+    if (!name || !email || !phoneNumber || !payment) {
+      alert("Please fill in all the columns and choose a payment method");
+      return;
+    }
+
+    setIsModalOpen(true);
+  };
 
   return (
     <section className="relative flex flex-col items-center gap-10 bg-gray-200 p-10">
+      {/* Step Progress */}
       <div className="flex items-center justify-between lg:w-150">
         <Circle name="Dates and Time" color="bg-green-700">
           <Check />
@@ -21,14 +64,14 @@ const PaymentPages = () => {
           3
         </Circle>
       </div>
+      {/* Step Progress */}
+
+      {/* Contaienr Form */}
       <div className="rounded-2xl bg-white p-5 lg:w-200">
         <form
           id="payment-order"
           className="flex flex-col gap-5"
-          onSubmit={(e) => {
-            e.preventDefault();
-            setIsModalOpen(true);
-          }}
+          onSubmit={handleForm}
         >
           {/* <!-- Payment Info --> */}
           <div className="flex flex-col gap-5">
@@ -45,7 +88,7 @@ const PaymentPages = () => {
                 name="date-showing"
                 id="date-showing"
                 className="mt-2 block w-full rounded-md border border-gray-300 p-2"
-                value="Tuesday, 07 July 2020 at 02:00pm"
+                value={`${dateShow} at ${time}pm`}
                 disabled
               />
             </div>
@@ -61,7 +104,7 @@ const PaymentPages = () => {
                 name="movie-title"
                 id="movie-title"
                 className="mt-2 block w-full rounded-md border border-gray-300 p-2"
-                value="Spider-Man: Homecoming"
+                value={details.title}
                 disabled
               />
             </div>
@@ -77,7 +120,7 @@ const PaymentPages = () => {
                 name="cinema-name"
                 id="cinema-name"
                 className="mt-2 block w-full rounded-md border border-gray-300 p-2"
-                value="CineOne21 Cinema"
+                value={`${cinema} Cinema`}
                 disabled
               />
             </div>
@@ -93,7 +136,7 @@ const PaymentPages = () => {
                 name="total-tickets"
                 id="total-tickets"
                 className="mt-2 block w-full rounded-md border border-gray-300 p-2"
-                value="3 pieces"
+                value={`${seat.length} pieces`}
                 disabled
               />
             </div>
@@ -109,11 +152,12 @@ const PaymentPages = () => {
                 name="total-payment"
                 id="total-payment"
                 className="mt-2 block w-full rounded-md border border-gray-300 p-2"
-                value="$30,00"
+                value={countPrices()}
                 disabled
               />
             </div>
           </div>
+          {/* <!-- Payment Info --> */}
 
           {/* <!-- Payment Personal Info --> */}
           <div className="flex flex-col gap-5">
@@ -127,7 +171,7 @@ const PaymentPages = () => {
               </label>
               <input
                 type="text"
-                name="personal-name"
+                name="personalName"
                 id="personal-name"
                 className="mt-2 block w-full rounded-md border border-gray-300 p-2"
                 placeholder="Jonas El Rodriguez"
@@ -142,10 +186,10 @@ const PaymentPages = () => {
               </label>
               <input
                 type="email"
-                name="personal-email"
+                name="personalEmail"
                 id="personal-email"
                 className="mt-2 block w-full rounded-md border border-gray-300 p-2"
-                placeholder="jonasrodri123@gmail.com"
+                placeholder={user.email}
               />
             </div>
             <div className="payment-info-wrapper flex flex-col">
@@ -161,7 +205,7 @@ const PaymentPages = () => {
                 </span>
                 <input
                   type="tel"
-                  name="personal-number"
+                  name="personalNumber"
                   id="personal-number"
                   className="mt-2 block w-full rounded-md border border-gray-300 p-2 pl-17"
                   placeholder="81445687121"
@@ -169,6 +213,7 @@ const PaymentPages = () => {
               </div>
             </div>
           </div>
+          {/* <!-- Payment Personal Info --> */}
 
           {/* <!-- Payment Method --> */}
           <div className="flex flex-col gap-5">
@@ -176,8 +221,8 @@ const PaymentPages = () => {
             <div className="payment-method-wrapper flex flex-wrap justify-between gap-5">
               <button
                 type="button"
-                value="Gpay"
-                className="flex w-full justify-center rounded-md border-1 border-gray-200 bg-white p-3 shadow hover:bg-gray-100 lg:w-40"
+                className={`flex w-full justify-center rounded-md border-1 border-gray-200 p-3 shadow lg:w-40 ${payment === "Gpay" ? "bg-blue-500 text-white" : "bg-white hover:bg-gray-100"}`}
+                onClick={() => setPayment("Gpay")}
               >
                 <img
                   src="/src/assets/icons/payment-method/googlepay-icon.svg"
@@ -187,7 +232,8 @@ const PaymentPages = () => {
               <button
                 type="button"
                 value="VISA"
-                className="flex w-full justify-center rounded-md border-1 border-gray-200 bg-white p-3 shadow hover:bg-gray-100 lg:w-40"
+                className={`flex w-full justify-center rounded-md border-1 border-gray-200 p-3 shadow lg:w-40 ${payment === "VISA" ? "bg-blue-500 text-white" : "bg-white hover:bg-gray-100"}`}
+                onClick={() => setPayment("VISA")}
               >
                 <img
                   src="/src/assets/icons/payment-method/visa-icon.svg"
@@ -196,8 +242,8 @@ const PaymentPages = () => {
               </button>
               <button
                 type="button"
-                value="Gopay"
-                className="flex w-full justify-center rounded-md border-1 border-gray-200 bg-white p-3 shadow hover:bg-gray-100 lg:w-40"
+                className={`flex w-full justify-center rounded-md border-1 border-gray-200 p-3 shadow lg:w-40 ${payment === "Gopay" ? "bg-blue-500 text-white" : "bg-white hover:bg-gray-100"}`}
+                onClick={() => setPayment("Gopay")}
               >
                 <img
                   src="/src/assets/icons/payment-method/gopay-icon.svg"
@@ -206,8 +252,8 @@ const PaymentPages = () => {
               </button>
               <button
                 type="button"
-                value="Paypal"
-                className="flex w-full justify-center rounded-md border-1 border-gray-200 bg-white p-3 shadow hover:bg-gray-100 lg:w-40"
+                className={`flex w-full justify-center rounded-md border-1 border-gray-200 p-3 shadow lg:w-40 ${payment === "Paypal" ? "bg-blue-500 text-white" : "bg-white hover:bg-gray-100"}`}
+                onClick={() => setPayment("Paypal")}
               >
                 <img
                   src="/src/assets/icons/payment-method/paypal-icon.svg"
@@ -216,8 +262,8 @@ const PaymentPages = () => {
               </button>
               <button
                 type="button"
-                value="Dana"
-                className="flex w-full justify-center rounded-md border-1 border-gray-200 bg-white p-3 shadow hover:bg-gray-100 lg:w-40"
+                className={`flex w-full justify-center rounded-md border-1 border-gray-200 p-3 shadow lg:w-40 ${payment === "DANA" ? "bg-blue-500 text-white" : "bg-white hover:bg-gray-100"}`}
+                onClick={() => setPayment("DANA")}
               >
                 <img
                   src="/src/assets/icons/payment-method/dana-icon.svg"
@@ -227,7 +273,8 @@ const PaymentPages = () => {
               <button
                 type="button"
                 value="BCA"
-                className="flex w-full justify-center rounded-md border-1 border-gray-200 bg-white p-3 shadow hover:bg-gray-100 lg:w-40"
+                className={`flex w-full justify-center rounded-md border-1 border-gray-200 p-3 shadow lg:w-40 ${payment === "BCA" ? "bg-blue-500 text-white" : "bg-white hover:bg-gray-100"}`}
+                onClick={() => setPayment("BCA")}
               >
                 <img
                   src="/src/assets/icons/payment-method/bca-icon.svg"
@@ -236,8 +283,8 @@ const PaymentPages = () => {
               </button>
               <button
                 type="button"
-                value="BRI"
-                className="flex w-full justify-center rounded-md border-1 border-gray-200 bg-white p-3 shadow hover:bg-gray-100 lg:w-40"
+                className={`flex w-full justify-center rounded-md border-1 border-gray-200 p-3 shadow lg:w-40 ${payment === "BRI" ? "bg-blue-500 text-white" : "bg-white hover:bg-gray-100"}`}
+                onClick={() => setPayment("BRI")}
               >
                 <img
                   src="/src/assets/icons/payment-method/bri-icon.svg"
@@ -246,8 +293,8 @@ const PaymentPages = () => {
               </button>
               <button
                 type="button"
-                value="OVO"
-                className="flex w-full justify-center rounded-md border-1 border-gray-200 bg-white p-3 shadow hover:bg-gray-100 lg:w-40"
+                className={`flex w-full justify-center rounded-md border-1 border-gray-200 p-3 shadow lg:w-40 ${payment === "OVO" ? "bg-blue-500 text-white" : "bg-white hover:bg-gray-100"}`}
+                onClick={() => setPayment("OVO")}
               >
                 <img
                   src="/src/assets/icons/payment-method/ovo-icon.svg"
@@ -256,20 +303,21 @@ const PaymentPages = () => {
               </button>
             </div>
           </div>
+          {/* <!-- Payment Method --> */}
+
           <button
             type="submit"
             className="w-full rounded-md bg-blue-600 p-3 text-white shadow hover:bg-blue-700"
-            onClick={(e) => {
-              e.preventDefault();
-              setIsModalOpen(true);
-            }}
           >
             Pay your order
           </button>
         </form>
       </div>
+      {/* Modal Payment Component, call if state isModalOpen = true */}
       <ModalPayment
         isOpen={isModalOpen}
+        data={location.state}
+        prices={countPrices()}
         onClose={() => setIsModalOpen(false)}
       />
     </section>
