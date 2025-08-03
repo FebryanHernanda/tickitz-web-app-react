@@ -4,3 +4,5 @@ export * from "./navbar";
 export * from "./footer";
 export * from "./newslatters";
 export * from "./seat";
+export * from "./profileContent";
+export * from "./chart";
