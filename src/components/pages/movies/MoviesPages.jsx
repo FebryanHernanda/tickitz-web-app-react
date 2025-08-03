@@ -1,8 +1,5 @@
 import { ArrowRight, Search } from "lucide-react";
-import { MyButton } from "../../atoms";
-import { InputField } from "../../molecules";
-import { Footer, MoviesList, Navbar, Newslatters } from "../../organisms";
-import MoviesDetailsPages from "./MoviesDetailsPages";
+import { MoviesList, Newslatters } from "../../organisms";
 
 const MoviesPages = () => {
   return (
