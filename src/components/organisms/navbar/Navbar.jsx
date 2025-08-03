@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { MyButton } from "../../atoms";
-import { Menu, X } from "lucide-react";
+import { Menu, Search, X } from "lucide-react";
 import NavbarDropdown from "./NavbarDropdown";
 
 const Navbar = () => {
@@ -15,7 +15,9 @@ const Navbar = () => {
   const dataStorage = JSON.parse(localStorage.getItem("userData"));
 
   useEffect(() => {
-    setIsLoggedIn(!!dataStorage);
+    if (dataStorage) {
+      setIsLoggedIn(true);
+    }
   }, [dataStorage]);
 
   return (
@@ -40,9 +42,20 @@ const Navbar = () => {
             </Link>
           </nav>
 
-          {/* Desktop Auth */}
+          {/* Desktop isLoggedin */}
           <div className="hidden items-center gap-5 lg:flex">
-            {!isLoggedIn ? (
+            {isLoggedIn ? (
+              <div className="flex items-center gap-5">
+                <span className="text-sm">Hello, {dataStorage.email}</span>
+                <Search />
+                <img
+                  src="/src/assets/background/ava-profile.png"
+                  alt="Avatar"
+                  className="h-15 w-15 cursor-pointer rounded-full object-cover"
+                  onClick={handleMenuToggle}
+                />
+              </div>
+            ) : (
               <>
                 <MyButton>
                   <Link to="/auth/login">Sign In</Link>
@@ -51,20 +64,10 @@ const Navbar = () => {
                   <Link to="/auth/register">Sign Up</Link>
                 </MyButton>
               </>
-            ) : (
-              <div className="flex items-center gap-5">
-                <span className="text-sm">Hello, {dataStorage.email}</span>
-                <img
-                  src="https://d14u0p1qkech25.cloudfront.net/29118534_dfbc716c-f39a-4d57-b17c-d414be541ec2_thumbnail_250x250"
-                  alt="Avatar"
-                  className="h-10 w-10 cursor-pointer rounded-full object-cover"
-                  onClick={handleMenuToggle}
-                />
-              </div>
             )}
           </div>
 
-          {/* Hamburger Icon */}
+          {/* Hamburger Menu */}
           <button className="lg:hidden" onClick={handleMenuToggle}>
             {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
           </button>
@@ -74,7 +77,7 @@ const Navbar = () => {
         {isMenuOpen && (
           <NavbarDropdown
             setIsMenuOpen={setIsMenuOpen}
-            isLoggedIn={isLoggedIn}
+            checkLogin={isLoggedIn}
             setIsLoggedIn={setIsLoggedIn}
             dataUser={dataStorage}
           />
