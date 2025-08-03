@@ -1,16 +1,23 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { MapPin } from "lucide-react";
 import { getCreditsMovies, getDetailsMovies } from "../../../data";
-import { Circle } from "../../atoms";
 
 const MoviesDetailsPages = () => {
+  /* Get movie id from url */
   const { movieId } = useParams();
+  /* Navigate React Router */
+  const navigate = useNavigate();
 
+  /* state for get all data */
   const [details, setDetails] = useState([]);
   const [credits, setCredits] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [time, setTime] = useState("");
+  const [cinema, setCinema] = useState("");
+  const [date, setDate] = useState("");
 
+  /* Fetching data */
   useEffect(() => {
     const fetchAllData = async () => {
       try {
@@ -31,22 +38,42 @@ const MoviesDetailsPages = () => {
     fetchAllData();
   }, [movieId]);
 
+  /* get Directore */
   const directorName = credits?.crew?.find((crew) => crew.job === "Director");
 
+  /* get Cast */
   const cast = credits?.cast?.slice(0, 3);
   const artistName = cast?.map((artist) => artist.name).join(", ");
 
+  /* Handle Order */
+  const handleOrder = () => {
+    if (!time || !date || !cinema) {
+      alert("Please choose a time, date and cinema");
+      return;
+    }
+    /* Sent the data state to orderPages */
+    navigate(`/order`, {
+      state: {
+        details,
+        time,
+        date,
+        cinema,
+      },
+    });
+  };
+
   return (
     <>
-      {/* <!-- Hero --> */}
+      {/* <!-- Hero Image --> */}
       <section
         className="flex h-[400px] w-full items-center justify-center bg-cover bg-center bg-no-repeat"
         style={{
           backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.7)), url(https://image.tmdb.org/t/p/original${details.backdrop_path})`,
         }}
       ></section>
+      {/* <!-- Hero  Image--> */}
 
-      {/* <!-- Movie Details --> */}
+      {/* <!-- Movie Details Container --> */}
       <div className="mx-auto flex max-w-screen-2xl flex-col gap-10 p-5 lg:p-10">
         <section>
           <div className="relative bottom-55 -mb-50 flex w-full flex-col items-center gap-10 md:bottom-35 md:-mb-30 md:flex-row lg:bottom-45 lg:-mb-35 xl:bottom-51 xl:-mb-45">
@@ -60,6 +87,7 @@ const MoviesDetailsPages = () => {
               <h1 className="text-center text-3xl md:text-left md:text-4xl">
                 {details.title}
               </h1>
+              {/* set Genres */}
               <div className="flex flex-wrap gap-2">
                 {details?.genres?.map((data) => {
                   return (
@@ -72,6 +100,9 @@ const MoviesDetailsPages = () => {
                   );
                 })}
               </div>
+              {/* set Genres */}
+
+              {/* Details Movie */}
               <div className="flex h-full w-full gap-5">
                 <div className="flex w-full flex-col gap-5">
                   <div className="flex flex-col gap-2">
@@ -109,21 +140,26 @@ const MoviesDetailsPages = () => {
                   </div>
                 </div>
               </div>
+              {/* Details Movie */}
             </div>
           </div>
 
+          {/* Movies Overview */}
           <div className="flex flex-col gap-5">
             <h3 className="text-2xl">Synopsis</h3>
             <p className="text-justify text-lg text-gray-500">
               {details.overview}
             </p>
           </div>
+          {/* Movies Overview */}
         </section>
         {/* <!-- Movie Details --> */}
+
         {/* <!-- Book Section --> */}
         <section className="flex flex-col gap-15">
           <div className="flex flex-col gap-5">
             <h1 className="text-3xl">Book Tickets</h1>
+            {/* Input Container */}
             <div className="flex flex-wrap justify-between gap-5">
               <div className="flex w-full flex-col gap-3 xl:w-80">
                 <h2 className="font-light">Choose Date</h2>
@@ -131,7 +167,7 @@ const MoviesDetailsPages = () => {
                   <input
                     type="date"
                     className="w-full outline-none"
-                    placeholder="21/07/2025"
+                    onChange={(e) => setDate(e.target.value)}
                   />
                 </div>
               </div>
@@ -141,7 +177,7 @@ const MoviesDetailsPages = () => {
                   <input
                     type="time"
                     className="w-full outline-none"
-                    placeholder="08:30 AM"
+                    onChange={(e) => setTime(e.target.value)}
                   />
                 </div>
               </div>
@@ -165,55 +201,64 @@ const MoviesDetailsPages = () => {
                 </button>
               </div>
             </div>
+            {/* Input Container */}
           </div>
 
+          {/* Choose Cinema container */}
           <div className="flex flex-col gap-5">
             <h1 className="text-3xl">Choose Cinema</h1>
             <div className="payment-method-wrapper flex flex-wrap justify-between gap-5">
               <button
                 type="button"
-                value="EBV"
-                className="flex w-full flex-grow justify-center rounded-md border-1 border-gray-200 bg-white px-5 py-10 shadow hover:bg-gray-100 sm:w-40 lg:w-100 xl:w-50"
+                onClick={() => setCinema("EBV")}
+                className={`flex w-full flex-grow justify-center rounded-md border-1 border-gray-200 px-5 py-10 shadow ${cinema === "EBV" ? "group bg-blue-500 text-white" : "bg-white hover:bg-gray-100"} sm:w-40 lg:w-100 xl:w-50`}
               >
                 <img
                   src="/src/assets/icons/sponsor/ebv-logo.svg"
                   alt="EBV Icon"
+                  className={`${cinema === "EBV" ? "group:filter brightness-0 invert saturate-100" : ""}`}
                 />
               </button>
               <button
                 type="button"
-                value="CineOne21"
-                className="flex w-full flex-grow justify-center rounded-md border-1 border-gray-200 bg-white px-5 py-10 shadow hover:bg-gray-100 sm:w-40 lg:w-100 xl:w-50"
+                className={`flex w-full flex-grow justify-center rounded-md border-1 border-gray-200 px-5 py-10 shadow ${cinema === "CineOne21" ? "bg-blue-500 text-white" : "bg-white hover:bg-gray-100"} sm:w-40 lg:w-100 xl:w-50`}
+                onClick={() => setCinema("CineOne21")}
               >
                 <img
                   src="/src/assets/icons/sponsor/CineOne-logo.svg"
                   alt="CineOne21 Icon"
+                  className={`${cinema === "CineOne21" ? "group:filter brightness-0 invert saturate-100" : ""}`}
                 />
               </button>
               <button
                 type="button"
                 value="hiflix"
-                className="flex w-full flex-grow justify-center rounded-md border-1 border-gray-200 bg-white px-5 py-10 shadow hover:bg-gray-100 sm:w-40 lg:w-100 xl:w-50"
+                className={`flex w-full flex-grow justify-center rounded-md border-1 border-gray-200 px-5 py-10 shadow ${cinema === "hiflix" ? "bg-blue-500 text-white" : "bg-white hover:bg-gray-100"} sm:w-40 lg:w-100 xl:w-50`}
+                onClick={() => setCinema("hiflix")}
               >
                 <img
                   src="/src/assets/icons/sponsor/hiflix-logo.svg"
                   alt="hiflix Icon"
+                  className={`${cinema === "hiflix" ? "group:filter brightness-0 invert saturate-100" : ""}`}
                 />
               </button>
               <button
                 type="button"
-                value="EBV"
-                className="flex w-full flex-grow justify-center rounded-md border-1 border-gray-200 bg-white px-5 py-10 shadow hover:bg-gray-100 sm:w-40 lg:w-100 xl:w-50"
+                className={`flex w-full flex-grow justify-center rounded-md border-1 border-gray-200 px-5 py-10 shadow ${cinema === "ebv" ? "bg-blue-500 text-white" : "bg-white hover:bg-gray-100"} sm:w-40 lg:w-100 xl:w-50`}
+                onClick={() => setCinema("ebv")}
               >
                 <img
                   src="/src/assets/icons/sponsor/ebv-logo.svg"
                   alt="EBV Icon"
+                  className={`${cinema === "ebv" ? "group:filter brightness-0 invert saturate-100" : ""}`}
                 />
               </button>
             </div>
           </div>
+          {/* Choose Cinema container */}
 
-          <div class="flex justify-center gap-5">
+          {/* Pagination */}
+          <div className="flex justify-center gap-5">
             <button
               type="button"
               className="flex h-5 w-5 items-center justify-center rounded-lg bg-blue-700 p-5 text-white"
@@ -245,17 +290,23 @@ const MoviesDetailsPages = () => {
               5
             </button>
           </div>
-          <div class="flex justify-center">
+          {/* Pagination */}
+
+          {/* Button Book */}
+          <div className="flex justify-center">
             <button
               type="submit"
               className="h-11 items-end rounded-md bg-blue-700 p-2 px-20 text-white"
+              onClick={handleOrder}
             >
               Book Now
             </button>
           </div>
+          {/* Button Book */}
         </section>
         {/* <!-- Book Section --> */}
       </div>
+      {/* <!-- Movie Details Container --> */}
     </>
   );
 };
