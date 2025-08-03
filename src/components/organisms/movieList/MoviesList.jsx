@@ -11,8 +11,11 @@ const MovieList = ({ limits }) => {
   useEffect(() => {
     const fetchAll = async () => {
       try {
-        const moviesData = await getPopularMovies(apiKey);
-        const genresData = await getGenreMovies(apiKey);
+        const [moviesData, genresData] = await Promise.all([
+          getPopularMovies(apiKey),
+          getGenreMovies(apiKey),
+        ]);
+
         setMovies(moviesData);
         setGenres(genresData);
       } catch (error) {
@@ -29,7 +32,7 @@ const MovieList = ({ limits }) => {
 
   return (
     <>
-      {loading ? <p>Loading...</p> : null}
+      {loading ? <p className="w-full items-center">Loading...</p> : null}
       {displayedMovies.map((movie) => (
         <MovieCard key={movie.id} movie={movie} genres={genres} />
       ))}

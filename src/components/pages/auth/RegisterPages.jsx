@@ -1,23 +1,36 @@
-import { AuthLayout } from "../../../layouts";
+import { Circle, Line } from "../../atoms";
 import { ButtonSocialMedia } from "../../molecules";
-import { FormRegister, StepProgress } from "../../organisms";
+import { FormRegister } from "../../organisms";
 
 const RegisterPages = () => {
   return (
-    <AuthLayout>
-      <div className="md:w-[600px] flex flex-col gap-5 bg-white p-7 rounded-2xl lg:p-10">
-        <StepProgress />
+    <>
+      <div className="flex flex-col gap-5 rounded-2xl bg-white p-7 md:w-[600px] lg:p-10">
+        <div className="flex items-center justify-between gap-1">
+          <Circle name="Fill Form" color="bg-blue-700" width="w-17">
+            1
+          </Circle>
+          <Line />
+          <Circle name="Activate" color="bg-gray-400">
+            2
+          </Circle>
+          <Line />
+          <Circle name="Done" color="bg-gray-400">
+            3
+          </Circle>
+        </div>
+
         <FormRegister />
 
         <div className="flex items-center gap-5">
-          <div className="w-full h-[1px] bg-gray-300"></div>
+          <div className="h-[1px] w-full bg-gray-300"></div>
           <h3>Or</h3>
-          <div className="w-full h-[1px] bg-gray-300"></div>
+          <div className="h-[1px] w-full bg-gray-300"></div>
         </div>
 
         <ButtonSocialMedia />
       </div>
-    </AuthLayout>
+    </>
   );
 };
 

@@ -2,7 +2,7 @@ const ButtonSocialMedia = () => {
   return (
     <>
       <div className="flex justify-between">
-        <button className="flex gap-5 items-center p-3 hover:bg-gray-100 rounded-2xl">
+        <button className="flex items-center justify-center gap-5 rounded-xl border-1 border-gray-300 p-3 shadow-md hover:bg-gray-100 lg:w-50">
           <img
             src="/src/assets/icons/socialmedia/google-icon.svg"
             alt="Google Icon"
@@ -10,7 +10,7 @@ const ButtonSocialMedia = () => {
           />
           Google
         </button>
-        <button className="flex gap-5 items-center p-3 hover:bg-gray-100 rounded-2xl">
+        <button className="flex items-center justify-center gap-5 rounded-xl border-1 border-gray-300 p-3 shadow-md hover:bg-gray-100 lg:w-50">
           <img
             src="/src/assets/icons/socialmedia/facebook2-icon.svg"
             alt="Facebook Icon"

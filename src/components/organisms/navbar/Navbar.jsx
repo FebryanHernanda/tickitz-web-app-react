@@ -1,47 +1,89 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { MyButton } from "../../atoms";
-import { Menu } from "lucide-react";
+import { Menu, Search, X } from "lucide-react";
+import NavbarDropdown from "./NavbarDropdown";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const handleMenuToggle = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
-  return (
-    <>
-      <header className="flex justify-between items-center p-5 shadow-md">
-        <img
-          src="/src/assets/icons/logo/tickitz-logo-blue.svg"
-          alt="Tickitz Logo"
-        />
-        <nav className={`lg:flex ${isMenuOpen ? "block" : "hidden"}`}>
-          <ul className="flex flex-row gap-5">
-            <li>
-              <Link to="/">Home</Link>
-            </li>
-            <li>
-              <Link to="/movies">Movies</Link>
-            </li>
-            <li>
-              <Link to="#">Buy Tickets</Link>
-            </li>
-          </ul>
-        </nav>
+  const dataStorage = JSON.parse(localStorage.getItem("userData"));
 
-        <div className="gap-5 hidden lg:flex">
-          <>
-            <MyButton>Sign In</MyButton>
-            <MyButton>Sign Up</MyButton>
-          </>
+  useEffect(() => {
+    if (dataStorage) {
+      setIsLoggedIn(true);
+    }
+  }, [dataStorage]);
+
+  return (
+    <header className="relative z-50 bg-white shadow-md">
+      <div className="mx-auto max-w-screen-2xl p-5 lg:p-10">
+        <div className="flex items-center justify-between">
+          <img
+            src="/src/assets/icons/logo/tickitz-logo-blue.svg"
+            alt="Tickitz Logo"
+          />
+
+          {/* Desktop Nav */}
+          <nav className="hidden items-center gap-5 lg:flex">
+            <Link className="hover:text-blue-800" to="/">
+              Home
+            </Link>
+            <Link className="hover:text-blue-800" to="/movies">
+              Movies
+            </Link>
+            <Link className="hover:text-blue-800" to="#">
+              Buy Tickets
+            </Link>
+          </nav>
+
+          {/* Desktop isLoggedin */}
+          <div className="hidden items-center gap-5 lg:flex">
+            {isLoggedIn ? (
+              <div className="flex items-center gap-5">
+                <span className="text-sm">Hello, {dataStorage.email}</span>
+                <Search />
+                <img
+                  src="/src/assets/background/ava-profile.png"
+                  alt="Avatar"
+                  className="h-15 w-15 cursor-pointer rounded-full object-cover"
+                  onClick={handleMenuToggle}
+                />
+              </div>
+            ) : (
+              <>
+                <MyButton>
+                  <Link to="/auth/login">Sign In</Link>
+                </MyButton>
+                <MyButton>
+                  <Link to="/auth/register">Sign Up</Link>
+                </MyButton>
+              </>
+            )}
+          </div>
+
+          {/* Hamburger Menu */}
+          <button className="lg:hidden" onClick={handleMenuToggle}>
+            {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
+          </button>
         </div>
-        <button className="flex lg:hidden" onClick={handleMenuToggle}>
-          <Menu />
-        </button>
-      </header>
-    </>
+
+        {/* Menu Open */}
+        {isMenuOpen && (
+          <NavbarDropdown
+            setIsMenuOpen={setIsMenuOpen}
+            checkLogin={isLoggedIn}
+            setIsLoggedIn={setIsLoggedIn}
+            dataUser={dataStorage}
+          />
+        )}
+      </div>
+    </header>
   );
 };
 

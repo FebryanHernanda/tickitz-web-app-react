@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { MyButton } from "../../atoms";
 import { InputField } from "../../molecules";
+import { Link, useNavigate } from "react-router-dom";
 
 const FormRegister = () => {
   const [email, setEmail] = useState("");
@@ -9,6 +10,8 @@ const FormRegister = () => {
   const [passwordError, setPasswordError] = useState("");
   const [checked, setChecked] = useState(false);
   const [checkedError, setCheckedError] = useState("");
+
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -34,7 +37,7 @@ const FormRegister = () => {
     } else if (!passPattern.test(password)) {
       isValid = false;
       setPasswordError(
-        "Password harus minimal 8 karakter, berisi huruf besar, huruf kecil, dan karakter spesial."
+        "Password harus minimal 8 karakter, berisi huruf besar, huruf kecil, dan karakter spesial.",
       );
     } else {
       setPasswordError("");
@@ -55,13 +58,12 @@ const FormRegister = () => {
 
       const jsonString = JSON.stringify(user);
 
-      alert("Register dan Login Berhasil!");
-      console.log("-----form submitted-----");
-      console.log(`Email : ${email}`);
-      console.log(`Password : ${password}`);
+      alert("Register Berhasil");
 
       /* Set Data Storage */
       localStorage.setItem("userData", jsonString);
+
+      navigate("/auth/login");
     }
   };
 
@@ -82,7 +84,7 @@ const FormRegister = () => {
 
   return (
     <>
-      <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
+      <form className="flex flex-col gap-2" onSubmit={handleSubmit}>
         <InputField
           label="Email"
           htmlFor="email"
@@ -94,7 +96,7 @@ const FormRegister = () => {
           value={email}
           onChange={handleEmailChange}
         />
-        <p className="text-red-500 text-sm">{emailError}</p>
+        <p className="text-sm text-red-500">{emailError}</p>
         <InputField
           label="Password"
           htmlFor="password"
@@ -106,24 +108,34 @@ const FormRegister = () => {
           value={password}
           onChange={handlePasswordChange}
         />
-        <p className="text-red-500 text-sm">{passwordError}</p>
+        <p className="text-sm text-red-500">{passwordError}</p>
 
         <div className="flex items-center gap-2">
           <input
             type="checkbox"
             name="termsNconditions"
             id="termsNconditions"
-            className="rounded-md border-gray-300 cursor-pointer"
+            className="cursor-pointer rounded-md border-gray-300"
             checked={checked}
             onChange={handleCheckedChange}
           />
-          <label htmlFor="termsNconditions" className="text-sm cursor-pointer">
+          <label htmlFor="termsNconditions" className="cursor-pointer text-sm">
             I agree to terms & conditions
           </label>
         </div>
-        <p className="text-red-500 text-sm">{checkedError}</p>
+        <p className="text-sm text-red-500">{checkedError}</p>
 
-        <MyButton type="submit">Sign Up</MyButton>
+        <MyButton type="submit">Join For Free Now</MyButton>
+
+        <div className="my-5 text-center">
+          Already have an account? {""}
+          <Link
+            to={"/auth/login"}
+            className="cursor-pointer hover:text-blue-800 hover:underline"
+          >
+            Log In
+          </Link>
+        </div>
       </form>
     </>
   );
