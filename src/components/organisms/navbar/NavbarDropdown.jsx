@@ -2,40 +2,56 @@ import { Link } from "react-router-dom";
 import { MyButton } from "../../atoms";
 
 const NavbarDropdown = (props) => {
-  const { setIsMenuOpen, isLoggedin, setIsLoggedIn, dataUser } = props;
+  const { setIsMenuOpen, checkLogin, setIsLoggedIn, dataUser } = props;
+
+  const listLogin = [
+    { name: "Home", path: "/" },
+    {
+      name: "Movies",
+      path: "/movies",
+    },
+    {
+      name: "Buy Tickets",
+      path: "/movies",
+    },
+    {
+      name: "Profile",
+      path: "/profile",
+    },
+  ];
 
   return (
     <>
-      <div className="absolute top-20 right-5 w-50 rounded-xl border-1 border-gray-300 bg-white p-4 shadow-2xl">
+      <div className="absolute right-5 w-50 rounded-xl border-1 border-gray-300 bg-white p-4 shadow-2xl lg:top-30 lg:right-10 2xl:right-40">
+        {/* Navigation */}
         <div className="flex flex-col gap-4 border-b pb-4">
-          <Link to="/" onClick={() => setIsMenuOpen(false)}>
-            Home
-          </Link>
-          <Link to="/movies" onClick={() => setIsMenuOpen(false)}>
-            Movies
-          </Link>
-          <Link to="#" onClick={() => setIsMenuOpen(false)}>
-            Buy Tickets
-          </Link>
+          {checkLogin
+            ? listLogin.map((item, id) => (
+                <Link
+                  key={id}
+                  to={item.path}
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {item.name}
+                </Link>
+              ))
+            : listLogin.slice(0, 3).map((item, id) => (
+                <Link
+                  key={id}
+                  to={item.path}
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {item.name}
+                </Link>
+              ))}
         </div>
+        {/* Navigation */}
 
-        {isLoggedin ? (
-          <div className="mt-4 flex flex-col gap-3">
-            <MyButton>
-              <Link to="/auth/login" onClick={() => setIsMenuOpen(false)}>
-                Sign In
-              </Link>
-            </MyButton>
-            <MyButton>
-              <Link to="/auth/register" onClick={() => setIsMenuOpen(false)}>
-                Sign Up
-              </Link>
-            </MyButton>
-          </div>
-        ) : (
+        {/* User Account */}
+        {checkLogin ? (
           <div className="mt-4 flex w-full flex-col items-center justify-center gap-3">
             <img
-              src="https://yt3.googleusercontent.com/ytc/AIdro_mjPRmeiO8D9TtnHuhQyeSetpC7X4KvMTiu96PhgQ1SZAc=s160-c-k-c0x00ffffff-no-rj"
+              src="/src/assets/background/ava-profile.png"
               alt="Avatar"
               className="h-15 w-15 rounded-full object-cover"
             />
@@ -52,8 +68,22 @@ const NavbarDropdown = (props) => {
               Logout
             </button>
           </div>
+        ) : (
+          <div className="mt-4 flex flex-col gap-3">
+            <MyButton>
+              <Link to="/auth/login" onClick={() => setIsMenuOpen(false)}>
+                Sign In
+              </Link>
+            </MyButton>
+            <MyButton>
+              <Link to="/auth/register" onClick={() => setIsMenuOpen(false)}>
+                Sign Up
+              </Link>
+            </MyButton>
+          </div>
         )}
       </div>
+      {/* User Account */}
     </>
   );
 };
