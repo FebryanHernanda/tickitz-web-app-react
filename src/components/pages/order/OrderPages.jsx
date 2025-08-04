@@ -1,8 +1,8 @@
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { ArrowDown, ArrowRight, Check } from "lucide-react";
 import { ChooseSeat } from "../../organisms";
 import { Circle, Line } from "../../atoms";
-import { ArrowDown, ArrowRight, Check } from "lucide-react";
-import { useEffect, useState } from "react";
 
 const OrderPages = () => {
   const navigate = useNavigate();
@@ -181,7 +181,7 @@ const OrderPages = () => {
                 </div>
                 <div className="flex justify-between">
                   <h3 className="text-gray-500">One ticket price</h3>
-                  <h3>{countPrices()}</h3>
+                  <h3>$10</h3>
                 </div>
                 <div className="flex justify-between">
                   <h3 className="text-gray-500">Seat Choosed</h3>
