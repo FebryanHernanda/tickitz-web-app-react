@@ -1,15 +1,19 @@
 import { useState } from "react";
 import { ArrowDown, ArrowRight } from "lucide-react";
 
+import cineOneLogo from "/src/assets/icons/sponsor/CineOne-logo.svg";
+import ebvLogo from "/src/assets/icons/sponsor/ebv-logo.svg";
+import hiflixLogo from "/src/assets/icons/sponsor/hiflix-logo.svg";
+
 const TicketHistory = (props) => {
   const [showDetails, setShowDetails] = useState(null);
   const { userData } = props;
 
   /* Cinemas Icon Data */
   const cinemaLogos = {
-    CineOne21: "CineOne-logo.svg",
-    EBV: "ebv-logo.svg",
-    hiflix: "hiflix-logo.svg",
+    CineOne21: cineOneLogo,
+    EBV: ebvLogo,
+    hiflix: hiflixLogo,
   };
 
   /* Show Details based on OrderId  */
@@ -32,7 +36,7 @@ const TicketHistory = (props) => {
             </div>
             <div>
               <img
-                src={`/src/assets/icons/sponsor/${cinemaLogos[order.cinema]}`}
+                src={cinemaLogos[order.cinema]}
                 alt={`${order.cinema} Logo`}
               />
             </div>
@@ -66,6 +70,7 @@ const TicketHistory = (props) => {
             </button>
           </div>
           {/* Ticket status */}
+
           {/* Ticket Details */}
           {order.orderId === showDetails && (
             <div className="flex flex-col gap-5">
