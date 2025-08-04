@@ -1,6 +1,11 @@
 import { useState } from "react";
 import { AccountSettings, OrderHistory } from "../../organisms";
 
+import avaProfile from "/src/assets/background/ava-profile.png";
+import ellips1 from "/src/assets/icons/ornament/ellips1.svg";
+import ellips2 from "/src/assets/icons/ornament/ellips2.svg";
+import star from "/src/assets/icons/ornament/star.svg";
+
 const ProfilePages = () => {
   const [page, setPage] = useState("settings");
 
@@ -22,7 +27,7 @@ const ProfilePages = () => {
                 <div className="flex flex-col items-center gap-5">
                   <div className="h-20 w-20 overflow-hidden rounded-full bg-orange-500">
                     <img
-                      src="/src/assets/background/ava-profile.png"
+                      src={avaProfile}
                       alt="Photo Profile Avatar"
                       className="h-full w-full object-cover"
                     />
@@ -45,17 +50,17 @@ const ProfilePages = () => {
                     <div className="relative z-1 flex w-full flex-col gap-[50px] overflow-hidden rounded-[24px] bg-[#1d4ed8] px-[20px] py-[40px]">
                       <div className="ornament absolute max-[1025px]:left-[70px] max-[769px]:left-[70px] max-[500px]:left-[30px] max-[380px]:left-[-20px] max-[350px]:left-[-70px]">
                         <img
-                          src="/src/assets/icons/ornament/ellips1.svg"
+                          src={ellips1}
                           alt="Ellips 1 icon"
                           className="relative top-[-50px] right-[-210px]"
                         />
                         <img
-                          src="/src/assets/icons/ornament/ellips2.svg"
+                          src={ellips2}
                           alt="Ellips 2 Icon"
                           className="relative top-[-120px] right-[-240px]"
                         />
                         <img
-                          src="/src/assets/icons/ornament/star.svg"
+                          src={star}
                           alt="Star Icon"
                           className="relative top-[-200px] right-[-250px] w-[50px]"
                         />
