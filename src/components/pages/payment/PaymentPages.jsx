@@ -4,6 +4,15 @@ import { ModalPayment } from "../../molecules";
 import { Check } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 
+import gpayIcon from "/src/assets/icons/payment-method/googlepay-icon.svg";
+import visaIcon from "/src/assets/icons/payment-method/visa-icon.svg";
+import gopayIcon from "/src/assets/icons/payment-method/gopay-icon.svg";
+import paypalIcon from "/src/assets/icons/payment-method/paypal-icon.svg";
+import danaIcon from "/src/assets/icons/payment-method/dana-icon.svg";
+import bcaIcon from "/src/assets/icons/payment-method/bca-icon.svg";
+import briIcon from "/src/assets/icons/payment-method/bri-icon.svg";
+import ovoIcon from "/src/assets/icons/payment-method/ovo-icon.svg";
+
 const PaymentPages = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -224,10 +233,7 @@ const PaymentPages = () => {
                 className={`flex w-full justify-center rounded-md border-1 border-gray-200 p-3 shadow lg:w-40 ${payment === "Gpay" ? "bg-blue-500 text-white" : "bg-white hover:bg-gray-100"}`}
                 onClick={() => setPayment("Gpay")}
               >
-                <img
-                  src="/src/assets/icons/payment-method/googlepay-icon.svg"
-                  alt="Google Pay Icon"
-                />
+                <img src={gpayIcon} alt="Google Pay Icon" />
               </button>
               <button
                 type="button"
@@ -235,40 +241,28 @@ const PaymentPages = () => {
                 className={`flex w-full justify-center rounded-md border-1 border-gray-200 p-3 shadow lg:w-40 ${payment === "VISA" ? "bg-blue-500 text-white" : "bg-white hover:bg-gray-100"}`}
                 onClick={() => setPayment("VISA")}
               >
-                <img
-                  src="/src/assets/icons/payment-method/visa-icon.svg"
-                  alt="Visa Icon"
-                />
+                <img src={visaIcon} alt="Visa Icon" />
               </button>
               <button
                 type="button"
                 className={`flex w-full justify-center rounded-md border-1 border-gray-200 p-3 shadow lg:w-40 ${payment === "Gopay" ? "bg-blue-500 text-white" : "bg-white hover:bg-gray-100"}`}
                 onClick={() => setPayment("Gopay")}
               >
-                <img
-                  src="/src/assets/icons/payment-method/gopay-icon.svg"
-                  alt="Gopay Icon"
-                />
+                <img src={gopayIcon} alt="Gopay Icon" />
               </button>
               <button
                 type="button"
                 className={`flex w-full justify-center rounded-md border-1 border-gray-200 p-3 shadow lg:w-40 ${payment === "Paypal" ? "bg-blue-500 text-white" : "bg-white hover:bg-gray-100"}`}
                 onClick={() => setPayment("Paypal")}
               >
-                <img
-                  src="/src/assets/icons/payment-method/paypal-icon.svg"
-                  alt="Paypal Icon"
-                />
+                <img src={paypalIcon} alt="Paypal Icon" />
               </button>
               <button
                 type="button"
                 className={`flex w-full justify-center rounded-md border-1 border-gray-200 p-3 shadow lg:w-40 ${payment === "DANA" ? "bg-blue-500 text-white" : "bg-white hover:bg-gray-100"}`}
                 onClick={() => setPayment("DANA")}
               >
-                <img
-                  src="/src/assets/icons/payment-method/dana-icon.svg"
-                  alt="Dana Icon"
-                />
+                <img src={danaIcon} alt="Dana Icon" />
               </button>
               <button
                 type="button"
@@ -276,30 +270,21 @@ const PaymentPages = () => {
                 className={`flex w-full justify-center rounded-md border-1 border-gray-200 p-3 shadow lg:w-40 ${payment === "BCA" ? "bg-blue-500 text-white" : "bg-white hover:bg-gray-100"}`}
                 onClick={() => setPayment("BCA")}
               >
-                <img
-                  src="/src/assets/icons/payment-method/bca-icon.svg"
-                  alt="BCA Icon"
-                />
+                <img src={bcaIcon} alt="BCA Icon" />
               </button>
               <button
                 type="button"
                 className={`flex w-full justify-center rounded-md border-1 border-gray-200 p-3 shadow lg:w-40 ${payment === "BRI" ? "bg-blue-500 text-white" : "bg-white hover:bg-gray-100"}`}
                 onClick={() => setPayment("BRI")}
               >
-                <img
-                  src="/src/assets/icons/payment-method/bri-icon.svg"
-                  alt="BRI Icon"
-                />
+                <img src={briIcon} alt="BRI Icon" />
               </button>
               <button
                 type="button"
                 className={`flex w-full justify-center rounded-md border-1 border-gray-200 p-3 shadow lg:w-40 ${payment === "OVO" ? "bg-blue-500 text-white" : "bg-white hover:bg-gray-100"}`}
                 onClick={() => setPayment("OVO")}
               >
-                <img
-                  src="/src/assets/icons/payment-method/ovo-icon.svg"
-                  alt="OVO Icon"
-                />
+                <img src={ovoIcon} alt="OVO Icon" />
               </button>
             </div>
           </div>

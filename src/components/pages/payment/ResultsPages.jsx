@@ -2,6 +2,10 @@ import { MoveDown, MoveRight } from "lucide-react";
 import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
+import heroBg from "/src/assets/background/background.png";
+import logoWhite from "/src/assets/icons/logo/tickitz-logo-white.svg";
+import barcodeImg from "/barcode.svg";
+
 const ResultsPages = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -49,18 +53,13 @@ const ResultsPages = () => {
         {/* Left Container */}
         <section
           style={{
-            backgroundImage:
-              "linear-gradient(rgba(0, 0, 0, 0.7)), url(../src/assets/background/background.png)",
+            backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.7)), url(${heroBg})`,
           }}
           className="h-150 w-full bg-cover lg:h-200"
         >
           <div className="flex h-full w-full flex-row items-center px-5 lg:px-10 2xl:pl-40">
             <div className="flex flex-col items-center gap-5 lg:items-start">
-              <img
-                src="/src/assets/icons/logo/tickitz-logo-white.svg"
-                alt="Tickitz Logo"
-                className="w-80"
-              />
+              <img src={logoWhite} alt="Tickitz Logo" className="w-80" />
               <h1 className="text-center text-5xl font-bold text-white lg:text-left">
                 Thank you For Purchasing
               </h1>
@@ -90,11 +89,7 @@ const ResultsPages = () => {
         <section className="flex flex-col items-center justify-center gap-5 p-10 xl:px-40">
           <div className="w-75 overflow-hidden rounded-2xl bg-white p-5 xl:w-80">
             <div className="flex flex-col items-center gap-5">
-              <img
-                src="/public/barcode.svg"
-                alt="Barcode Ticket"
-                className="w-50"
-              />
+              <img src={barcodeImg} alt="Barcode Ticket" className="w-50" />
 
               <div className="relative mb-5 flex w-84 items-center justify-between xl:w-88">
                 <div className="absolute h-8 w-8 rounded-full bg-gray-200"></div>
