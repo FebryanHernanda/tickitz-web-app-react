@@ -2,6 +2,15 @@ import { LucideCircleChevronRight } from "lucide-react";
 import { MoviesList, Newslatters } from "../../organisms";
 import { Link } from "react-router-dom";
 
+import hero1 from "/src/assets/background/hero/hero-1.svg";
+import hero2 from "/src/assets/background/hero/hero-2.svg";
+import hero3 from "/src/assets/background/hero/hero-3.svg";
+import hero4 from "/src/assets/background/hero/hero-4.svg";
+
+import shieldIcon from "/src/assets/icons/whychooseus/shield-icon.svg";
+import checklistIcon from "/src/assets/icons/whychooseus/checklist-icon.svg";
+import chatIcon from "/src/assets/icons/whychooseus/chat-icon.svg";
+
 const LandingPages = () => {
   return (
     <>
@@ -23,24 +32,24 @@ const LandingPages = () => {
           <div className="grid grid-cols-2 gap-2">
             <img
               className="col-start-1 row-start-1"
-              src="src/assets/background/hero/hero-1.svg"
+              src={hero1}
               alt="John Wick Movie Poster "
             />
             <img
               className="col-start-2 row-start-1"
-              src="src/assets/background/hero/hero-2.svg"
+              src={hero2}
               alt="Lion King Movie poster"
             />
             <div className="relative">
               <img
                 className="absolute bottom-0 col-start-1 row-start-2 lg:bottom-4 xl:bottom-0"
-                src="src/assets/background/hero/hero-3.svg"
+                src={hero3}
                 alt="Spiderman Movie Poster"
               />
             </div>
             <img
               className="col-start-2 row-start-2 lg:-mt-4 xl:-mt-0"
-              src="src/assets/background/hero/hero-4.svg"
+              src={hero4}
               alt="Roblox Movie Poster"
             />
           </div>
@@ -60,10 +69,7 @@ const LandingPages = () => {
             {/* <!-- Card1 --> */}
             <div className="flex flex-col items-center gap-3 text-center lg:items-start lg:text-left">
               <div className="flex h-13 w-13 items-center justify-center rounded-full bg-blue-200">
-                <img
-                  src="src/assets/icons/whychooseus/shield-icon.svg"
-                  alt="Shield Icon"
-                />
+                <img src={shieldIcon} alt="Shield Icon" />
               </div>
               <h6 className="font-bold">Guaranteed</h6>
               <p className="">
@@ -74,10 +80,7 @@ const LandingPages = () => {
             {/* <!-- Card 2  --> */}
             <div className="flex flex-col items-center gap-3 text-center lg:items-start lg:text-left">
               <div className="flex h-13 w-13 items-center justify-center rounded-full bg-blue-200">
-                <img
-                  src="src/assets/icons/whychooseus/checklist-icon.svg"
-                  alt="Shield Icon"
-                />
+                <img src={checklistIcon} alt="Shield Icon" />
               </div>
               <h6 className="font-bold">Affordable</h6>
               <p className="text-small font-light">
@@ -88,10 +91,7 @@ const LandingPages = () => {
             {/* <!-- Card 3 --> */}
             <div className="flex flex-col items-center gap-3 text-center lg:items-start lg:text-left">
               <div className="flex h-13 w-13 items-center justify-center rounded-full bg-blue-200">
-                <img
-                  src="src/assets/icons/whychooseus/chat-icon.svg"
-                  alt="Shield Icon"
-                />
+                <img src={chatIcon} alt="Shield Icon" />
               </div>
               <h6 className="font-bold">24/7 Customer Support</h6>
               <p className="text-small font-light">
