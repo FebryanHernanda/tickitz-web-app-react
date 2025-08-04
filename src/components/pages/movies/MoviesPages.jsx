@@ -1,6 +1,8 @@
 import { ArrowRight, Search } from "lucide-react";
 import { MoviesList, Newslatters } from "../../organisms";
 
+import heroBg from "/src/assets/background/background.png";
+
 const MoviesPages = () => {
   return (
     <>
@@ -8,8 +10,7 @@ const MoviesPages = () => {
         <section
           className="flex h-[700px] items-center justify-center bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage:
-              "linear-gradient(rgba(0, 0, 0, 0.7)), url(../src/assets/background/background.png)",
+            backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.7)), url(${heroBg})`,
           }}
         >
           <div className="flex w-full max-w-screen-2xl flex-col gap-5 p-5 text-white lg:p-10">
