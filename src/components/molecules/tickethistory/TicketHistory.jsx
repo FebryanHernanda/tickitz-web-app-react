@@ -12,7 +12,7 @@ const TicketHistory = (props) => {
   /* Cinemas Icon Data */
   const cinemaLogos = {
     CineOne21: cineOneLogo,
-    EBV: ebvLogo,
+    ebv: ebvLogo,
     hiflix: hiflixLogo,
   };
 
