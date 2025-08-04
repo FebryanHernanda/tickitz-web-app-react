@@ -2,8 +2,10 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { MyButton } from "../../atoms";
 import { Menu, Search, X } from "lucide-react";
-import avaProfile from "/src/assets/background/ava-profile.png";
 import NavbarDropdown from "./NavbarDropdown";
+
+import avaProfile from "/src/assets/background/ava-profile.png";
+import logoBlue from "/src/assets/icons/logo/tickitz-logo-blue.svg";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -25,10 +27,7 @@ const Navbar = () => {
     <header className="relative z-50 bg-white shadow-md">
       <div className="mx-auto max-w-screen-2xl p-5 lg:p-10">
         <div className="flex items-center justify-between">
-          <img
-            src="/src/assets/icons/logo/tickitz-logo-blue.svg"
-            alt="Tickitz Logo"
-          />
+          <img src={logoBlue} alt="Tickitz Logo" />
 
           {/* Desktop Nav */}
           <nav className="hidden items-center gap-5 lg:flex">
