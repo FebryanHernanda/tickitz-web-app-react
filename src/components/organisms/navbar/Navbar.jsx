@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { MyButton } from "../../atoms";
 import { Menu, Search, X } from "lucide-react";
+import avaProfile from "/src/assets/background/ava-profile.png";
 import NavbarDropdown from "./NavbarDropdown";
 
 const Navbar = () => {
@@ -49,7 +50,7 @@ const Navbar = () => {
                 <span className="text-sm">Hello, {dataStorage.email}</span>
                 <Search />
                 <img
-                  src="/src/assets/background/ava-profile.png"
+                  src={avaProfile}
                   alt="Avatar"
                   className="h-15 w-15 cursor-pointer rounded-full object-cover"
                   onClick={handleMenuToggle}

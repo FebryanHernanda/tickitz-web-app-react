@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { MyButton } from "../../atoms";
+import avaProfile from "/src/assets/background/ava-profile.png";
 
 const NavbarDropdown = (props) => {
   const { setIsMenuOpen, checkLogin, setIsLoggedIn, dataUser } = props;
@@ -22,7 +23,7 @@ const NavbarDropdown = (props) => {
 
   return (
     <>
-      <div className="absolute right-5 w-50 rounded-xl border-1 border-gray-300 bg-white p-4 shadow-2xl lg:top-30 lg:right-10 2xl:right-40">
+      <div className="absolute right-5 w-60 rounded-xl border-1 border-gray-300 bg-white p-4 shadow-2xl lg:top-30 lg:right-10 2xl:right-40">
         {/* Navigation */}
         <div className="flex flex-col gap-4 border-b pb-4">
           {checkLogin
@@ -51,11 +52,11 @@ const NavbarDropdown = (props) => {
         {checkLogin ? (
           <div className="mt-4 flex w-full flex-col items-center justify-center gap-3">
             <img
-              src="/src/assets/background/ava-profile.png"
+              src={avaProfile}
               alt="Avatar"
               className="h-15 w-15 rounded-full object-cover"
             />
-            <span className="text-sm">Hello, {dataUser.email}</span>
+            <span className="text-xs">Hello, {dataUser.email}</span>
 
             <button
               onClick={() => {
