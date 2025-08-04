@@ -3,6 +3,10 @@ import { useNavigate, useParams } from "react-router-dom";
 import { MapPin } from "lucide-react";
 import { getCreditsMovies, getDetailsMovies } from "../../../data";
 
+import ebvLogo from "/src/assets/icons/sponsor/ebv-logo.svg";
+import cineOneLogo from "/src/assets/icons/sponsor/CineOne-logo.svg";
+import hiflixLogo from "/src/assets/icons/sponsor/hiflix-logo.svg";
+
 const MoviesDetailsPages = () => {
   /* Get movie id from url */
   const { movieId } = useParams();
@@ -214,7 +218,7 @@ const MoviesDetailsPages = () => {
                 className={`flex w-full flex-grow justify-center rounded-md border-1 border-gray-200 px-5 py-10 shadow ${cinema === "EBV" ? "group bg-blue-500 text-white" : "bg-white hover:bg-gray-100"} sm:w-40 lg:w-100 xl:w-50`}
               >
                 <img
-                  src="/src/assets/icons/sponsor/ebv-logo.svg"
+                  src={ebvLogo}
                   alt="EBV Icon"
                   className={`${cinema === "EBV" ? "group:filter brightness-0 invert saturate-100" : ""}`}
                 />
@@ -225,7 +229,7 @@ const MoviesDetailsPages = () => {
                 onClick={() => setCinema("CineOne21")}
               >
                 <img
-                  src="/src/assets/icons/sponsor/CineOne-logo.svg"
+                  src={cineOneLogo}
                   alt="CineOne21 Icon"
                   className={`${cinema === "CineOne21" ? "group:filter brightness-0 invert saturate-100" : ""}`}
                 />
@@ -237,7 +241,7 @@ const MoviesDetailsPages = () => {
                 onClick={() => setCinema("hiflix")}
               >
                 <img
-                  src="/src/assets/icons/sponsor/hiflix-logo.svg"
+                  src={hiflixLogo}
                   alt="hiflix Icon"
                   className={`${cinema === "hiflix" ? "group:filter brightness-0 invert saturate-100" : ""}`}
                 />
@@ -248,7 +252,7 @@ const MoviesDetailsPages = () => {
                 onClick={() => setCinema("ebv")}
               >
                 <img
-                  src="/src/assets/icons/sponsor/ebv-logo.svg"
+                  src={ebvLogo}
                   alt="EBV Icon"
                   className={`${cinema === "ebv" ? "group:filter brightness-0 invert saturate-100" : ""}`}
                 />
