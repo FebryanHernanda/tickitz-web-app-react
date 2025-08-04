@@ -5,6 +5,7 @@ import {
   AdminMovieForm,
   LandingPages,
   LoginPages,
+  MoviesDetailsPages,
   MoviesPages,
   OrderPages,
   PaymentPages,
@@ -13,8 +14,10 @@ import {
   ResultsPages,
 } from "../components/pages";
 import { AuthLayout, MainLayout } from "../layouts";
-import MoviesDetailsPages from "../components/pages/movies/MoviesDetailsPages";
+
 import PrivateRoutes from "./PrivateRoutes";
+// query params
+// paginations
 
 function Router() {
   return (
