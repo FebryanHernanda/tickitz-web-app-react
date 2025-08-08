@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { ArrowDown, ArrowRight, Check } from "lucide-react";
 import { ChooseSeat } from "../../organisms";
 import { Circle, Line } from "../../atoms";
+import { toast } from "react-toastify";
 
 const OrderPages = () => {
   const navigate = useNavigate();
@@ -10,7 +11,6 @@ const OrderPages = () => {
 
   /* Set state Seat */
   const [seat, setSeat] = useState([]);
-
   /* Check data null back to landing */
   useEffect(() => {
     if (!location.state) {
@@ -44,6 +44,11 @@ const OrderPages = () => {
 
   /* Handle Checkout */
   const handleCheckout = () => {
+    if (seat.length === 0) {
+      return toast.warning("Please choose seat!", {
+        position: "top-center",
+      });
+    }
     navigate("/payment", {
       state: {
         details,
