@@ -15,10 +15,10 @@ const LandingPages = () => {
   return (
     <>
       {/* <!-- Container --> */}
-      <div className="mx-auto flex max-w-screen-2xl flex-col gap-10 p-5 lg:p-10">
+      <div className="mx-auto flex max-w-screen-2xl flex-col gap-20 p-5 lg:p-10">
         {/* <!-- Hero --> */}
         <section className="flex flex-wrap justify-center gap-10 lg:flex-nowrap lg:justify-between">
-          <div className="flex flex-col justify-center gap-10 text-center lg:text-left">
+          <div className="flex flex-col justify-center gap-20 text-center lg:text-left">
             <h3 className="text-2xl text-blue-700">
               MOVIE TICKET PURCHASES #1 IN INDONESIA
             </h3>
@@ -29,26 +29,28 @@ const LandingPages = () => {
               Sign up and get the ticket with a lot of discount
             </h6>
           </div>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 grid-rows-3 gap-2">
             <img
-              className="col-start-1 row-start-1"
+              className="col-start-1 row-start-1 row-end-2 h-full w-full"
               src={hero1}
               alt="John Wick Movie Poster "
             />
             <img
-              className="col-start-2 row-start-1"
+              className="col-start-2 col-end-3 row-start-1 row-end-3 h-full w-full rounded-t-2xl object-cover"
               src={hero2}
               alt="Lion King Movie poster"
             />
-            <div className="relative">
-              <img
-                className="absolute bottom-0 col-start-1 row-start-2 lg:bottom-4 xl:bottom-0"
-                src={hero3}
-                alt="Spiderman Movie Poster"
-              />
-            </div>
+            {/* <div className="relative"> */}
             <img
-              className="col-start-2 row-start-2 lg:-mt-4 xl:-mt-0"
+              // className="absolute bottom-0 col-start-1 row-start-2 lg:bottom-4 xl:bottom-0"
+              className="col-start-1 row-start-2 row-end-4 h-full w-full items-end rounded-b-2xl object-cover"
+              src={hero3}
+              alt="Spiderman Movie Poster"
+            />
+            {/* </div> */}
+            <img
+              // className="col-start-2 row-start-2 lg:-mt-4 xl:-mt-0"
+              className="0 col-start-2 row-start-3 h-full w-full object-cover"
               src={hero4}
               alt="Roblox Movie Poster"
             />
