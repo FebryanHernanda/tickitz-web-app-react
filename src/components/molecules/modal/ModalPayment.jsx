@@ -1,6 +1,7 @@
 // components/molecules/PaymentModal.jsx
 import { X } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const ModalPayment = (props) => {
   const navigate = useNavigate();
@@ -16,6 +17,10 @@ const ModalPayment = (props) => {
       state: {
         data,
       },
+    });
+    toast.success("Your ticket is ready — it’s been printed successfully!", {
+      position: "top-center",
+      autoClose: 3000,
     });
   };
 
