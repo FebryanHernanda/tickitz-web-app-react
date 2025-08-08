@@ -3,6 +3,8 @@ import { MyButton } from "../../atoms";
 import { InputField } from "../../molecules";
 import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeClosed } from "lucide-react";
+import { toast } from "react-toastify";
+
 const FormLogin = () => {
   const navigate = useNavigate();
 
@@ -21,7 +23,10 @@ const FormLogin = () => {
 
     if (!userData) {
       isValid = false;
-      alert("Data tidak ditemukan!");
+      toast.error("Data tidak ditemukan!", {
+        position: "top-center",
+        autoClose: 3000,
+      });
     } else {
       if (email !== userData.email) {
         isValid = false;
@@ -39,8 +44,14 @@ const FormLogin = () => {
     }
 
     if (isValid) {
-      alert("Login Berhasil!");
-      navigate("/");
+      toast.success("Login Berhasil!", {
+        position: "top-center",
+        autoClose: 1000,
+      });
+
+      setTimeout(() => {
+        navigate("/");
+      }, 1500);
     }
   };
 
@@ -48,6 +59,7 @@ const FormLogin = () => {
     setEmail(e.target.value);
     setEmailError("");
   };
+
   const handlePasswordChange = (e) => {
     setPassword(e.target.value);
     setPasswordError("");

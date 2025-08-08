@@ -3,6 +3,7 @@ import { MyButton } from "../../atoms";
 import { InputField } from "../../molecules";
 import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeClosed } from "lucide-react";
+import { toast } from "react-toastify";
 
 const FormRegister = () => {
   const navigate = useNavigate();
@@ -62,12 +63,17 @@ const FormRegister = () => {
 
       const jsonString = JSON.stringify(user);
 
-      alert("Register Berhasil");
+      toast.success("Register Berhasil!", {
+        position: "top-center",
+        autoClose: 2000,
+      });
 
       /* Set Data Storage */
       localStorage.setItem("userData", jsonString);
 
-      navigate("/auth/login");
+      setTimeout(() => {
+        navigate("/auth/login");
+      }, 3000);
     }
   };
 
