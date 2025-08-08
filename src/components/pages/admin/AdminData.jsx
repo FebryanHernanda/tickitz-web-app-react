@@ -84,13 +84,15 @@ const AdminData = () => {
                     key={movie.id}
                     className="border-b border-gray-300 text-center hover:bg-gray-50"
                   >
-                    <td className="">{index + 1}</td>
-                    <td className="mt-auto flex justify-center">
-                      <img
-                        src={movie.thumbnail}
-                        alt={movie.name}
-                        className="h-10 w-20 rounded object-cover"
-                      />
+                    <td>{index + 1}</td>
+                    <td>
+                      <div className="flex h-full w-full items-center justify-center">
+                        <img
+                          src={movie.thumbnail}
+                          alt={movie.name}
+                          className="h-10 w-20 items-center justify-center rounded object-cover"
+                        />
+                      </div>
                     </td>
                     <td className="cursor-pointer text-blue-600 hover:underline">
                       {movie.name}
@@ -100,16 +102,18 @@ const AdminData = () => {
                       {new Date(movie.releaseDate).toLocaleDateString("en-GB")}
                     </td>
                     <td className="p-5">{movie.duration}</td>
-                    <td className="flex justify-center gap-2 p-5">
-                      <button className="rounded bg-blue-600 p-2 text-white hover:bg-blue-700">
-                        <Eye size={14} />
-                      </button>
-                      <button className="rounded bg-indigo-500 p-2 text-white hover:bg-indigo-600">
-                        <Pencil size={14} />
-                      </button>
-                      <button className="rounded bg-red-500 p-2 text-white hover:bg-red-600">
-                        <Trash2 size={14} />
-                      </button>
+                    <td className="gap-2 p-5">
+                      <div className="flex justify-center gap-3">
+                        <button className="rounded bg-blue-600 p-2 text-white hover:bg-blue-700">
+                          <Eye size={14} />
+                        </button>
+                        <button className="rounded bg-indigo-500 p-2 text-white hover:bg-indigo-600">
+                          <Pencil size={14} />
+                        </button>
+                        <button className="rounded bg-red-500 p-2 text-white hover:bg-red-600">
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
