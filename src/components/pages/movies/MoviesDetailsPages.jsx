@@ -6,6 +6,7 @@ import { getCreditsMovies, getDetailsMovies } from "../../../data";
 import ebvLogo from "/src/assets/icons/sponsor/ebv-logo.svg";
 import cineOneLogo from "/src/assets/icons/sponsor/CineOne-logo.svg";
 import hiflixLogo from "/src/assets/icons/sponsor/hiflix-logo.svg";
+import { toast } from "react-toastify";
 
 const MoviesDetailsPages = () => {
   /* Get movie id from url */
@@ -52,7 +53,13 @@ const MoviesDetailsPages = () => {
   /* Handle Order */
   const handleOrder = () => {
     if (!time || !date || !cinema) {
-      alert("Please choose a time, date and cinema");
+      toast.warning(
+        "Please complete the Date, Time, and Cinema fields first.",
+        {
+          position: "top-center",
+          autoClose: 3000,
+        },
+      );
       return;
     }
     /* Sent the data state to orderPages */
