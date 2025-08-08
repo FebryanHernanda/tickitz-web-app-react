@@ -1,8 +1,17 @@
 import { UploadCloud } from "lucide-react";
+import { useState } from "react";
+import { TimePicker } from "../../molecules";
 
 const AdminMovieForm = () => {
+  const [inputTime, setInputTime] = useState(false);
+
+  const handleInputTime = (e) => {
+    e.stopPropagation();
+    setInputTime((prev) => !prev);
+  };
+
   return (
-    <section className="bg-gray-200">
+    <section className="bg-gray-200" onClick={() => setInputTime(false)}>
       <div className="mx-auto w-full max-w-screen-2xl p-5 lg:p-10">
         <div className="flex flex-col gap-5 rounded-lg bg-white p-5 shadow-md lg:p-10">
           <h2 className="text-lg font-semibold">Add New Movie</h2>
@@ -38,8 +47,8 @@ const AdminMovieForm = () => {
           {/* Category */}
 
           {/* Release Date */}
-          <div className="flex flex-col gap-2">
-            <div className="w-full">
+          <div className="flex gap-2">
+            <div className="flex w-full flex-col gap-2">
               <label className="mb-1 block font-medium">Release Date</label>
               <input
                 type="date"
@@ -110,17 +119,34 @@ const AdminMovieForm = () => {
           {/* Add Location */}
 
           {/* Start Date & Time */}
-          <div className="flex flex-col gap-2">
-            <label className="mb-1 block font-medium">Start Date & Time</label>
-            <div className="flex gap-4">
+          <div className="relative flex flex-col gap-2">
+            <label className="mb-1 block font-medium">Set Date & Time</label>
+            <div className="flex flex-col gap-4">
               <input
                 type="date"
-                className="w-1/2 rounded-md border border-gray-400 px-3 py-2 text-sm"
+                className="w-1/3 rounded-md border border-gray-400 px-3 py-2 text-sm"
               />
-              <input
-                type="time"
-                className="w-1/2 rounded-md border border-gray-400 px-3 py-2 text-sm"
-              />
+              <div className="flex items-center gap-10">
+                <button
+                  className="w-20 rounded-md border-1 border-gray-400 p-1 text-blue-700"
+                  onClick={handleInputTime}
+                >
+                  +
+                </button>
+
+                <div
+                  className="absolute top-35"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {inputTime && <TimePicker isOpen={handleInputTime} />}
+                </div>
+
+                <div className="flex gap-10">
+                  <h3>08:30 AM</h3>
+                  <h3>13:30 PM</h3>
+                  <h3>20:30 PM</h3>
+                </div>
+              </div>
             </div>
           </div>
           {/* Start Date & Time */}
