@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { MyButton } from "../../atoms";
 import avaProfile from "/src/assets/background/ava-profile.png";
+import { toast, ToastContainer } from "react-toastify";
 
 const NavbarDropdown = (props) => {
   const { setIsMenuOpen, checkLogin, setIsLoggedIn, dataUser } = props;
@@ -20,6 +21,17 @@ const NavbarDropdown = (props) => {
       path: "/profile",
     },
   ];
+
+  const handleLogout = () => {
+    toast.success("Anda Telah berhasil keluar", {
+      position: "top-right",
+      autoClose: 1000,
+    });
+
+    localStorage.removeItem("userData");
+    setIsLoggedIn(false);
+    setIsMenuOpen(false);
+  };
 
   return (
     <>
@@ -59,11 +71,7 @@ const NavbarDropdown = (props) => {
             <span className="text-xs">Hello, {dataUser.email}</span>
 
             <button
-              onClick={() => {
-                localStorage.removeItem("userData");
-                setIsLoggedIn(false);
-                setIsMenuOpen(false);
-              }}
+              onClick={handleLogout}
               className="w-full rounded-xl bg-blue-700 px-1 py-2 text-white"
             >
               Logout
