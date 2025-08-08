@@ -11,7 +11,7 @@ const MovieCard = ({ movie, genres }) => {
   };
 
   return (
-    <div className="relative w-full overflow-hidden rounded-2xl lg:w-[300px]">
+    <div className="relative w-75 overflow-hidden rounded-2xl lg:w-[300px]">
       {/* Gambar Movie */}
       <div className="relative">
         <img
