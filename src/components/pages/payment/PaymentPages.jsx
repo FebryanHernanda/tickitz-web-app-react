@@ -12,6 +12,7 @@ import danaIcon from "/src/assets/icons/payment-method/dana-icon.svg";
 import bcaIcon from "/src/assets/icons/payment-method/bca-icon.svg";
 import briIcon from "/src/assets/icons/payment-method/bri-icon.svg";
 import ovoIcon from "/src/assets/icons/payment-method/ovo-icon.svg";
+import { toast } from "react-toastify";
 
 const PaymentPages = () => {
   const navigate = useNavigate();
@@ -50,7 +51,13 @@ const PaymentPages = () => {
 
     /* Check if input value === null */
     if (!name || !email || !phoneNumber || !payment) {
-      alert("Please fill in all the columns and choose a payment method");
+      toast.warning(
+        "Please fill in all the columns and choose a payment method",
+        {
+          position: "top-center",
+          autoClose: 3000,
+        },
+      );
       return;
     }
 
