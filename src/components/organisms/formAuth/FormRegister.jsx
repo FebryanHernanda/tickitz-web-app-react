@@ -4,6 +4,7 @@ import { InputField } from "../../molecules";
 import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeClosed } from "lucide-react";
 import { toast } from "react-toastify";
+import { useLocalStorage } from "../../../hooks/useLocalStorage";
 
 const FormRegister = () => {
   const navigate = useNavigate();
@@ -17,6 +18,8 @@ const FormRegister = () => {
   const [checkedError, setCheckedError] = useState("");
 
   const togglePassword = () => setShowPassword((prev) => !prev);
+
+  const [_, setStorageData] = useLocalStorage("userData");
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -61,19 +64,17 @@ const FormRegister = () => {
         password,
       };
 
-      const jsonString = JSON.stringify(user);
-
       toast.success("Register Berhasil!", {
         position: "top-center",
-        autoClose: 2000,
+        autoClose: 1000,
       });
 
       /* Set Data Storage */
-      localStorage.setItem("userData", jsonString);
+      setStorageData(user);
 
       setTimeout(() => {
         navigate("/auth/login");
-      }, 3000);
+      }, 2000);
     }
   };
 

@@ -4,9 +4,14 @@ import { InputField } from "../../molecules";
 import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeClosed } from "lucide-react";
 import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
+import { useLocalStorage } from "../../../hooks/useLocalStorage";
 
 const FormLogin = () => {
   const navigate = useNavigate();
+  const { userAdmin } = useSelector((state) => state.admin);
+
+  const [storageData, setStorageData] = useLocalStorage("userData");
 
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState("");
@@ -18,40 +23,78 @@ const FormLogin = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const userData = JSON.parse(localStorage.getItem("userData"));
-    let isValid = true;
 
-    if (!userData) {
+    const userData = storageData;
+    let isValid = true;
+    let role = "";
+
+    if (!userData && !userAdmin) {
       isValid = false;
       toast.error("Data tidak ditemukan!", {
         position: "top-center",
         autoClose: 3000,
       });
-    } else {
-      if (email !== userData.email) {
-        isValid = false;
-        setEmailError("Email tidak cocok!");
-      } else {
+    } else if (userData) {
+      if (email === userData.email) {
         setEmailError("");
+      } else {
+        setEmailError("Email tidak cocok!");
+        isValid = false;
       }
 
-      if (password !== userData.password) {
-        isValid = false;
-        setPasswordError("Password tidak cocok!");
-      } else {
+      if (password === userData.password) {
         setPasswordError("");
+        role = "User";
+      } else {
+        setPasswordError("Password tidak cocok!");
+        isValid = false;
+      }
+    } else if (userAdmin) {
+      if (email === userAdmin.email) {
+        setEmailError("");
+      } else {
+        setEmailError("Email tidak cocok!");
+        isValid = false;
+      }
+
+      if (password === userAdmin.password) {
+        setPasswordError("");
+        role = "Admin";
+      } else {
+        setPasswordError("Password tidak cocok!");
+        isValid = false;
       }
     }
 
-    if (isValid) {
+    if (isValid && role) {
       toast.success("Login Berhasil!", {
         position: "top-center",
         autoClose: 1000,
       });
 
-      setTimeout(() => {
-        navigate("/");
-      }, 1500);
+      if (role === "Admin") {
+        const newUserData = {
+          ...userAdmin,
+          role: "admin",
+        };
+
+        setStorageData(newUserData);
+
+        setTimeout(() => {
+          navigate("/admin");
+        }, 1500);
+      } else {
+        const newUserData = {
+          ...userData,
+          role: "user",
+        };
+
+        setStorageData(newUserData);
+
+        setTimeout(() => {
+          navigate("/");
+        }, 1500);
+      }
     }
   };
 
