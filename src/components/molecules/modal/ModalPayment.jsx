@@ -9,13 +9,15 @@ const ModalPayment = (props) => {
   /* props data */
   const { isOpen, prices, data, onClose } = props;
 
+  const orderData = { ...data, prices };
+
   if (!isOpen) return null;
 
   /* Handle Payment */
   const handlePayment = () => {
     navigate("results", {
       state: {
-        data,
+        orderData,
       },
     });
     toast.success("Your ticket is ready — it’s been printed successfully!", {
