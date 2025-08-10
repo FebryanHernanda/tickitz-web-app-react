@@ -10,7 +10,7 @@ const ResultsPages = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { data } = location.state;
+  const { orderData } = location.state;
 
   // set Data to local storage for Temporary data
   useEffect(() => {
@@ -24,19 +24,20 @@ const ResultsPages = () => {
 
     /* Check Duplicate Id true or false? */
     const isDuplicate = getUserData.order.some((item) => {
-      return item.orderId === data.orderId;
+      return item.orderId === orderData.orderId;
     });
 
     /* if not false, push data to order array */
     if (!isDuplicate) {
-      getUserData.order.push(data);
+      getUserData.order.push(orderData);
       localStorage.setItem("userData", JSON.stringify(getUserData));
       return;
     }
-  }, [data]);
+  }, [orderData]);
+  console.log(orderData);
 
   /* Convert Date */
-  const moviesDate = new Date(data.dateShow).toLocaleString("en-US", {
+  const moviesDate = new Date(orderData.dateShow).toLocaleString("en-US", {
     year: "numeric",
     month: "long",
     day: "numeric",
@@ -101,7 +102,7 @@ const ResultsPages = () => {
                 <div className="flex flex-col gap-5">
                   <div>
                     <h4 className="text-lg text-gray-400">Movie</h4>
-                    <h4 className="">{`${data.details.title.slice(0, 15)} ...`}</h4>
+                    <h4 className="">{`${orderData.details.title.slice(0, 15)} ...`}</h4>
                   </div>
                   <div>
                     <h4 className="text-lg text-gray-400">Date</h4>
@@ -109,7 +110,7 @@ const ResultsPages = () => {
                   </div>
                   <div>
                     <h4 className="text-lg text-gray-400">Count</h4>
-                    <h4 className="">{`${data.seat.length} pcs`}</h4>
+                    <h4 className="">{`${orderData.seat.length} pcs`}</h4>
                   </div>
                 </div>
                 <div className="flex flex-col gap-5">
@@ -119,12 +120,14 @@ const ResultsPages = () => {
                   </div>
                   <div>
                     <h4 className="text-lg text-gray-400">Time</h4>
-                    <h4 className="">{`${data.time}`}</h4>
+                    <h4 className="">{`${orderData.time}`}</h4>
                   </div>
                   <div>
                     <h4 className="text-lg text-gray-400">Seats</h4>
                     <h4 className="">
-                      {data.seat.length > 0 ? data.seat.join(", ") : "-"}
+                      {orderData.seat.length > 0
+                        ? orderData.seat.join(", ")
+                        : "-"}
                     </h4>
                   </div>
                 </div>
@@ -132,7 +135,7 @@ const ResultsPages = () => {
 
               <div className="flex w-full justify-between rounded-lg border-1 border-gray-200 p-2">
                 <h3 className="">Total</h3>
-                <h3 className="text-lg text-blue-700">{`$${data.seat.length * 10}`}</h3>
+                <h3 className="text-lg text-blue-700">{orderData.prices}</h3>
               </div>
             </div>
           </div>
