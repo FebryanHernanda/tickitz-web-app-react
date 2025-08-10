@@ -2,9 +2,13 @@ import { useNavigate } from "react-router-dom";
 
 const MovieCard = ({ movie, genres }) => {
   const navigate = useNavigate();
+
   const findGenres = movie.genre_ids
-    .map((id) => genres.find((genre) => genre.id === id))
-    .slice(0, 3);
+    .map((id) => {
+      const found = genres.find((genre) => genre.id === id);
+      return found;
+    })
+    .slice(0, 5);
 
   const handleDetails = () => {
     navigate(`/movies/details/${movie.id}`);
@@ -43,14 +47,18 @@ const MovieCard = ({ movie, genres }) => {
           {movie.title}
         </h3>
         <div className="flex flex-wrap gap-2">
-          {findGenres.map((genre) => (
-            <span
-              key={genre.id}
-              className="rounded-md bg-gray-200 px-2 py-1 text-xs text-gray-700"
-            >
-              {genre.name}
-            </span>
-          ))}
+          {findGenres &&
+            findGenres.length > 0 &&
+            findGenres
+              .filter((genre) => genre && genre.name)
+              .map((genre) => (
+                <span
+                  key={genre.id}
+                  className="rounded-md bg-gray-200 px-2 py-1 text-xs text-gray-700"
+                >
+                  {genre.name}
+                </span>
+              ))}
         </div>
       </div>
     </div>
