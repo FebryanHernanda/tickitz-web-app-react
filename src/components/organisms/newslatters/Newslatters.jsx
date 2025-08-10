@@ -2,7 +2,7 @@ import circleOrnament from "/src/assets/icons/circle.svg";
 
 const NewstLatters = () => {
   return (
-    <section className="">
+    <section className="mb-10">
       <div className="relative flex flex-col justify-center gap-10 overflow-hidden rounded-2xl bg-blue-600 px-5 py-20 lg:px-15">
         <h1 className="font-regular text-center text-4xl text-white">
           Subscribe to our newsletter
