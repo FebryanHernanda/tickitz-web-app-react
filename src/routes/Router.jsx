@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import {
   AdminDashboard,
   AdminData,
+  AdminEditForm,
   AdminMovieForm,
   LandingPages,
   LoginPages,
@@ -17,8 +18,6 @@ import { AuthLayout, MainLayout } from "../layouts";
 
 import PrivateRoutes from "./PrivateRoutes";
 import { ToastContainer } from "react-toastify";
-// query params
-// paginations
 
 function Router() {
   return (
@@ -39,15 +38,24 @@ function Router() {
             {/* Movies */}
 
             {/* Admin */}
-            <Route path="admin">
-              <Route index element={<AdminDashboard />}></Route>
-              <Route path="data" element={<AdminData />}></Route>
-              <Route path="data/add-movie" element={<AdminMovieForm />}></Route>
+            <Route element={<PrivateRoutes role="admin" />}>
+              <Route path="admin">
+                <Route index element={<AdminDashboard />}></Route>
+                <Route path="data" element={<AdminData />}></Route>
+                <Route
+                  path="data/add-movies"
+                  element={<AdminMovieForm />}
+                ></Route>
+                <Route
+                  path="data/:movieEditId/edit"
+                  element={<AdminEditForm />}
+                ></Route>
+              </Route>
             </Route>
             {/* Admin */}
 
             {/* Private Routes */}
-            <Route element={<PrivateRoutes />}>
+            <Route element={<PrivateRoutes role="user" />}>
               <Route path="payment">
                 <Route index element={<PaymentPages />}></Route>
                 <Route path="results" element={<ResultsPages />}></Route>
