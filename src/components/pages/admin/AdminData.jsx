@@ -1,51 +1,24 @@
 import { Eye, Pencil, Trash2 } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import {
+  deleteMoviesData,
+  editMoviesData,
+} from "../../../store/slices/adminSlice";
 
 const AdminData = () => {
-  /* Dummy Data */
-  const movies = [
-    {
-      id: 1,
-      thumbnail: "https://i.redd.it/56rzjfuo578z.jpg",
-      name: "Spiderman HomeComing",
-      category: "Action, Adventure",
-      releaseDate: "2023-07-05",
-      duration: "2 Hours 15 Minute",
-    },
-    {
-      id: 2,
-      thumbnail:
-        "https://media.themoviedb.org/t/p/w220_and_h330_face/jhS6f1ynxdADs92B1bRGwCMb0Eu.jpg",
-      name: "Avengers End Game",
-      category: "Sci-fi, Adventure",
-      releaseDate: "2023-10-04",
-      duration: "2 Hours 15 Minute",
-    },
-    {
-      id: 3,
-      thumbnail: "https://i.redd.it/56rzjfuo578z.jpg",
-      name: "Spiderman HomeComing",
-      category: "Action, Adventure",
-      releaseDate: "2023-02-03",
-      duration: "2 Hours 15 Minute",
-    },
-    {
-      id: 4,
-      thumbnail:
-        "https://media.themoviedb.org/t/p/w220_and_h330_face/jhS6f1ynxdADs92B1bRGwCMb0Eu.jpg",
-      name: "Avengers End Game",
-      category: "Sci-fi, Adventure",
-      releaseDate: "2023-01-09",
-      duration: "2 Hours 15 Minute",
-    },
-    {
-      id: 5,
-      thumbnail: "https://i.redd.it/56rzjfuo578z.jpg",
-      name: "Spiderman HomeComing",
-      category: "Action, Adventure",
-      releaseDate: "2023-07-08",
-      duration: "2 Hours 15 Minute",
-    },
-  ];
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { dataMovies } = useSelector((state) => state.admin);
+
+  const handleDelete = (id) => {
+    dispatch(deleteMoviesData(id));
+  };
+
+  const handleEditData = (id) => {
+    dispatch(editMoviesData(id));
+    navigate(`${id}/edit`);
+  };
 
   return (
     <section className="bg-gray-200">
@@ -57,8 +30,12 @@ const AdminData = () => {
               <input
                 type="month"
                 className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+                defaultValue="2025-08"
               />
-              <button className="rounded-md bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700">
+              <button
+                className="rounded-md bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700"
+                onClick={() => navigate("add-movies")}
+              >
                 Add Movies
               </button>
             </div>
@@ -79,12 +56,12 @@ const AdminData = () => {
                 </tr>
               </thead>
               <tbody>
-                {movies.map((movie, index) => (
+                {dataMovies.map((movie, idx) => (
                   <tr
                     key={movie.id}
                     className="border-b border-gray-300 text-center hover:bg-gray-50"
                   >
-                    <td>{index + 1}</td>
+                    <td>{idx + 1}</td>
                     <td>
                       <div className="flex h-full w-full items-center justify-center">
                         <img
@@ -98,19 +75,23 @@ const AdminData = () => {
                       {movie.name}
                     </td>
                     <td className="p-5">{movie.category}</td>
-                    <td className="p-5">
-                      {new Date(movie.releaseDate).toLocaleDateString("en-GB")}
-                    </td>
-                    <td className="p-5">{movie.duration}</td>
+                    <td className="p-5">{movie.releaseDate}</td>
+                    <td className="p-5">{`${movie.durationHours} Hours ${movie.durationMinutes} Minutes`}</td>
                     <td className="gap-2 p-5">
                       <div className="flex justify-center gap-3">
                         <button className="rounded bg-blue-600 p-2 text-white hover:bg-blue-700">
                           <Eye size={14} />
                         </button>
-                        <button className="rounded bg-indigo-500 p-2 text-white hover:bg-indigo-600">
+                        <button
+                          className="rounded bg-indigo-500 p-2 text-white hover:bg-indigo-600"
+                          onClick={() => handleEditData(movie.id)}
+                        >
                           <Pencil size={14} />
                         </button>
-                        <button className="rounded bg-red-500 p-2 text-white hover:bg-red-600">
+                        <button
+                          className="rounded bg-red-500 p-2 text-white hover:bg-red-600"
+                          onClick={() => handleDelete(movie.id)}
+                        >
                           <Trash2 size={14} />
                         </button>
                       </div>
