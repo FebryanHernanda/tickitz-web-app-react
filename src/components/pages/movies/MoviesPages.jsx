@@ -2,13 +2,80 @@ import { ArrowRight, Search } from "lucide-react";
 import { MoviesList, Newslatters } from "../../organisms";
 
 import heroBg from "/src/assets/background/background.png";
+import { useSearchParams } from "react-router-dom";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  fetchMovies,
+  fetchMoviesByGenres,
+  fetchSearchMovies,
+  setSelectedGenres,
+} from "../../../store/slices/moviesSlice";
 
 const MoviesPages = () => {
+  const dispatch = useDispatch();
+
+  const { searchResults, movies, genres, selectedGenres, loading } =
+    useSelector((state) => state.movies);
+
+  const [searchParams, setSearchParams] = useSearchParams("");
+
+  const querySearch = searchParams.get("query") || "";
+  const currentPage = Number(searchParams.get("pages") || "1");
+
+  /* Reset Url Search Params */
+  useEffect(() => {
+    setSearchParams("");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  /* fetching Movies by genres */
+  useEffect(() => {
+    if (selectedGenres) {
+      dispatch(fetchMoviesByGenres(selectedGenres));
+    }
+  }, [dispatch, selectedGenres]);
+
+  /* fetching Movies by search */
+  useEffect(() => {
+    if (querySearch && querySearch.trim() !== "") {
+      dispatch(fetchSearchMovies({ query: querySearch, page: currentPage }));
+    } else {
+      dispatch(fetchMovies({ page: currentPage }));
+    }
+  }, [dispatch, querySearch, currentPage]);
+
+  /* Handle Search */
+  const handleSearch = (e) => {
+    const { value } = e.target;
+    setSearchParams({ query: value, page: 1 });
+  };
+
+  /* Handle Paginations */
+  const handlePaginations = (page) => {
+    setSearchParams({ query: querySearch, pages: page });
+  };
+
+  /* Handle Filter */
+  const handleFilter = (genreId, value) => {
+    dispatch(setSelectedGenres(genreId));
+    setSearchParams({ filter: value });
+  };
+
+  const listFilterGenres = {
+    53: "Thriller",
+    27: "Horror",
+    10749: "Romance",
+    878: "Sci-Fi",
+  };
+
+  const moviesData = querySearch ? searchResults : movies;
+
   return (
     <>
-      <div className="">
+      <div>
         <section
-          className="flex h-[700px] items-center justify-center bg-cover bg-center bg-no-repeat"
+          className="flex h-[700px] items-center bg-cover bg-center bg-no-repeat lg:justify-center"
           style={{
             backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.7)), url(${heroBg})`,
           }}
@@ -34,6 +101,8 @@ const MoviesPages = () => {
                       type="text"
                       placeholder="Search"
                       className="w-full rounded-md border border-gray-300 p-2 pl-10 text-sm focus:border-transparent focus:ring-2 focus:ring-blue-600 focus:outline-none"
+                      value={querySearch}
+                      onChange={handleSearch}
                     />
                   </div>
                 </div>
@@ -41,43 +110,55 @@ const MoviesPages = () => {
                 <div className="flex flex-col gap-5">
                   <h3 className="text-xl font-semibold">Filter</h3>
                   <ul className="flex gap-10">
-                    <li className="cursor-pointer rounded-lg p-2 hover:bg-blue-700 hover:text-white">
-                      Thriller
-                    </li>
-                    <li className="cursor-pointer rounded-lg p-2 hover:bg-blue-700 hover:text-white">
-                      Horror
-                    </li>
-                    <li className="cursor-pointer rounded-lg p-2 hover:bg-blue-700 hover:text-white">
-                      Romantic
-                    </li>
-                    <li className="cursor-pointer rounded-lg p-2 hover:bg-blue-700 hover:text-white">
-                      Sci-Fi
-                    </li>
+                    {Object.entries(listFilterGenres).map(([key, value]) => {
+                      return (
+                        <li
+                          key={key}
+                          className={`cursor-pointer rounded-lg p-2 hover:bg-blue-700 hover:text-white ${selectedGenres === key && "bg-blue-700 text-white"}`}
+                          onClick={() => handleFilter(key, value)}
+                        >
+                          {value}
+                        </li>
+                      );
+                    })}
                   </ul>
                 </div>
               </div>
 
               <div className="flex w-full flex-wrap justify-between gap-5">
-                <MoviesList />
+                {querySearch === "" ||
+                querySearch === null ||
+                querySearch === undefined ||
+                searchResults.length > 0 ? (
+                  <MoviesList
+                    movies={moviesData}
+                    genres={genres}
+                    loading={loading}
+                  />
+                ) : (
+                  <p className="w-full text-center text-black">
+                    Film tidak ditemukan!
+                  </p>
+                )}
               </div>
 
               {/* <!-- Next list  --> */}
               <div className="flex items-center justify-center gap-5">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-600 text-white">
-                  1
-                </div>
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-200">
-                  2
-                </div>
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-200">
-                  3
-                </div>
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-200">
-                  4
-                </div>
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-600 text-white">
+                {[1, 2, 3, 4, 5].map((page) => {
+                  return (
+                    <button
+                      key={page}
+                      className={`flex h-10 w-10 items-center justify-center rounded-full ${page === currentPage ? "bg-blue-600 text-white" : "bg-blue-200"} `}
+                      onClick={() => handlePaginations(page)}
+                    >
+                      {page}
+                    </button>
+                  );
+                })}
+
+                <button className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-600 text-white">
                   <ArrowRight />
-                </div>
+                </button>
               </div>
               {/* <!-- Next List --> */}
             </section>
