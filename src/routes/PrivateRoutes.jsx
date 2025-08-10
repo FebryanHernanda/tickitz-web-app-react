@@ -1,9 +1,12 @@
 import { Navigate, Outlet } from "react-router-dom";
 
-const PrivateRoutes = () => {
+const PrivateRoutes = ({ role = "user" }) => {
   const user = JSON.parse(localStorage.getItem("userData"));
 
   if (!user) {
+    return <Navigate to="/" />;
+  }
+  if (user.role !== role) {
     return <Navigate to="/" />;
   }
 
