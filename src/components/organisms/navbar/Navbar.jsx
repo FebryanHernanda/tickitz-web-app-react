@@ -10,18 +10,26 @@ import logoBlue from "/src/assets/icons/logo/tickitz-logo-blue.svg";
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
 
   const handleMenuToggle = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
-  const dataStorage = JSON.parse(localStorage.getItem("userData"));
+  const userData = JSON.parse(localStorage.getItem("userData"));
 
   useEffect(() => {
-    if (dataStorage) {
+    if (userData?.role === "user") {
       setIsLoggedIn(true);
+      setIsAdminLoggedIn(false);
+    } else if (userData?.role === "admin") {
+      setIsAdminLoggedIn(true);
+      setIsLoggedIn(false);
+    } else {
+      setIsLoggedIn(false);
+      setIsAdminLoggedIn(false);
     }
-  }, [dataStorage]);
+  }, [userData]);
 
   return (
     <header className="relative z-50 bg-white shadow-md">
@@ -34,19 +42,32 @@ const Navbar = () => {
             <Link className="hover:text-blue-800" to="/">
               Home
             </Link>
-            <Link className="hover:text-blue-800" to="/movies">
-              Movies
-            </Link>
-            <Link className="hover:text-blue-800" to="#">
-              Buy Tickets
-            </Link>
+            {isAdminLoggedIn ? (
+              <>
+                <Link className="hover:text-blue-800" to="/admin">
+                  Dashboard
+                </Link>
+                <Link className="hover:text-blue-800" to="/admin/data">
+                  Movies Data
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link className="hover:text-blue-800" to="/movies">
+                  Movies
+                </Link>
+                <Link className="hover:text-blue-800" to="#">
+                  Buy Tickets
+                </Link>
+              </>
+            )}
           </nav>
 
           {/* Desktop isLoggedin */}
           <div className="hidden items-center gap-5 lg:flex">
-            {isLoggedIn ? (
+            {isLoggedIn || isAdminLoggedIn ? (
               <div className="flex items-center gap-5">
-                <span className="text-sm">Hello, {dataStorage.email}</span>
+                <span className="text-sm">Hello, {userData.email}</span>
                 <Search />
                 <img
                   src={avaProfile}
@@ -77,9 +98,11 @@ const Navbar = () => {
         {isMenuOpen && (
           <NavbarDropdown
             setIsMenuOpen={setIsMenuOpen}
-            checkLogin={isLoggedIn}
+            checkUserLogin={isLoggedIn}
+            checkAdminLogin={isAdminLoggedIn}
             setIsLoggedIn={setIsLoggedIn}
-            dataUser={dataStorage}
+            setIsAdminLoggedIn={setIsAdminLoggedIn}
+            dataUser={userData}
           />
         )}
       </div>

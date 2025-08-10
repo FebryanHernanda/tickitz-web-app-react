@@ -1,26 +1,17 @@
 import { Link } from "react-router-dom";
 import { MyButton } from "../../atoms";
 import avaProfile from "/src/assets/background/ava-profile.png";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 
 const NavbarDropdown = (props) => {
-  const { setIsMenuOpen, checkLogin, setIsLoggedIn, dataUser } = props;
-
-  const listLogin = [
-    { name: "Home", path: "/" },
-    {
-      name: "Movies",
-      path: "/movies",
-    },
-    {
-      name: "Buy Tickets",
-      path: "/movies",
-    },
-    {
-      name: "Profile",
-      path: "/profile",
-    },
-  ];
+  const {
+    setIsMenuOpen,
+    checkUserLogin,
+    checkAdminLogin,
+    setIsLoggedIn,
+    setIsAdminLoggedIn,
+    dataUser,
+  } = props;
 
   const handleLogout = () => {
     toast.success("Anda Telah berhasil keluar", {
@@ -31,6 +22,8 @@ const NavbarDropdown = (props) => {
     localStorage.removeItem("userData");
     setIsLoggedIn(false);
     setIsMenuOpen(false);
+    setIsAdminLoggedIn(false);
+    window.location.reload(false);
   };
 
   return (
@@ -38,30 +31,36 @@ const NavbarDropdown = (props) => {
       <div className="absolute right-5 w-60 rounded-xl border-1 border-gray-300 bg-white p-4 shadow-2xl lg:top-30 lg:right-10 2xl:right-40">
         {/* Navigation */}
         <div className="flex flex-col gap-4 border-b pb-4">
-          {checkLogin
-            ? listLogin.map((item, id) => (
-                <Link
-                  key={id}
-                  to={item.path}
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {item.name}
-                </Link>
-              ))
-            : listLogin.slice(0, 3).map((item, id) => (
-                <Link
-                  key={id}
-                  to={item.path}
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {item.name}
-                </Link>
-              ))}
+          <Link className="hover:text-blue-800" to="/">
+            Home
+          </Link>
+          {checkAdminLogin ? (
+            <>
+              <Link className="hover:text-blue-800" to="/admin">
+                Dashboard
+              </Link>
+              <Link className="hover:text-blue-800" to="/admin/data">
+                Movies Data
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link className="hover:text-blue-800" to="/movies">
+                Movies
+              </Link>
+              <Link className="hover:text-blue-800" to="#">
+                Buy Tickets
+              </Link>
+              <Link className="hover:text-blue-800" to="/profile">
+                Profile
+              </Link>
+            </>
+          )}
         </div>
         {/* Navigation */}
 
         {/* User Account */}
-        {checkLogin ? (
+        {checkUserLogin || checkAdminLogin ? (
           <div className="mt-4 flex w-full flex-col items-center justify-center gap-3">
             <img
               src={avaProfile}
