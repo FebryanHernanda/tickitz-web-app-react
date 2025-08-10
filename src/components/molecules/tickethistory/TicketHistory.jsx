@@ -97,7 +97,7 @@ const TicketHistory = (props) => {
                     </h4>
                     <h4 className="font-regular text-gray-500">:</h4>
                   </div>
-                  <h3 className="font-regular text-blue-600">$30</h3>
+                  <h3 className="font-regular text-blue-600">{order.prices}</h3>
                 </div>
                 <p className="text-gray-500">
                   Pay this payment bill before it is due,{" "}
