@@ -19,7 +19,11 @@ const MovieCard = ({ movie, genres }) => {
       {/* Gambar Movie */}
       <div className="relative">
         <img
-          src={`https://image.tmdb.org/t/p/original${movie.poster_path}`}
+          src={
+            movie.poster_path
+              ? `https://image.tmdb.org/t/p/original${movie.poster_path}`
+              : "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/640px-No-Image-Placeholder.svg.png"
+          }
           alt={movie.title}
           className="h-[400px] w-full rounded-2xl border-1 border-gray-200 object-cover"
         />
