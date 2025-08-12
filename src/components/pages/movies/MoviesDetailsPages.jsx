@@ -140,7 +140,7 @@ const MoviesDetailsPages = () => {
                   <div className="flex flex-col gap-2">
                     <h4 className="text-gray-400">Directed by</h4>
                     <h3 className="font-regular" id="directorMovies">
-                      {isLoading ? "Loading..." : directorName.name}
+                      {isLoading ? "Loading..." : directorName?.name}
                     </h3>
                   </div>
                   <div className="flex flex-col gap-2 lg:w-90 xl:w-full">
