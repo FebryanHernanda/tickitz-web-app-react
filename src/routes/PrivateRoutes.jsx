@@ -1,12 +1,13 @@
+import { useSelector } from "react-redux";
 import { Navigate, Outlet } from "react-router-dom";
 
-const PrivateRoutes = ({ role = "user" }) => {
-  const user = JSON.parse(localStorage.getItem("userData"));
+const PrivateRoutes = ({ roles = "user" }) => {
+  const { isAuthenticated, role } = useSelector((state) => state.auth);
 
-  if (!user) {
+  if (!isAuthenticated) {
     return <Navigate to="/" />;
   }
-  if (user.role !== role) {
+  if (role !== roles) {
     return <Navigate to="/" />;
   }
 

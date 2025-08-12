@@ -38,7 +38,7 @@ function Router() {
             {/* Movies */}
 
             {/* Admin */}
-            <Route element={<PrivateRoutes role="admin" />}>
+            <Route element={<PrivateRoutes roles="admin" />}>
               <Route path="admin">
                 <Route index element={<AdminDashboard />}></Route>
                 <Route path="data" element={<AdminData />}></Route>
@@ -55,7 +55,7 @@ function Router() {
             {/* Admin */}
 
             {/* Private Routes */}
-            <Route element={<PrivateRoutes role="user" />}>
+            <Route element={<PrivateRoutes roles="user" />}>
               <Route path="payment">
                 <Route index element={<PaymentPages />}></Route>
                 <Route path="results" element={<ResultsPages />}></Route>
