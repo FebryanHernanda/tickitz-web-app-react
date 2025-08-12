@@ -13,10 +13,14 @@ import storage from "redux-persist/lib/storage";
 
 import moviesReducers from "./slices/moviesSlice";
 import adminReducers from "./slices/adminSlice";
+import userReducers from "./slices/userSlice";
+import authReducers from "./slices/authSlice";
 
 // combine all reducers
 const rootReducer = combineReducers({
   admin: adminReducers,
+  user: userReducers,
+  auth: authReducers,
   movies: moviesReducers,
 });
 
