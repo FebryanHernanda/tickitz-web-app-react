@@ -26,6 +26,7 @@ const MoviesPages = () => {
   /* Reset Url Search Params */
   useEffect(() => {
     setSearchParams("");
+    dispatch(setSelectedGenres(""));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -59,7 +60,7 @@ const MoviesPages = () => {
   /* Handle Filter */
   const handleFilter = (genreId, value) => {
     dispatch(setSelectedGenres(genreId));
-    setSearchParams({ filter: value });
+    setSearchParams({ genres: value.toLowerCase() });
   };
 
   const listFilterGenres = {
