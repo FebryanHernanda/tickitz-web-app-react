@@ -15,7 +15,6 @@ export const fetchMovies = createAsyncThunk(
   "movies/fetchMovies",
   async ({ page = 1 }, { rejectWithValue }) => {
     try {
-      //   const page = currentPages || 1;
       const moviesResponse = await axios.get(
         `${BASE_URL}/movie/popular?api_key=${API_KEY}&page=${page}`,
       );
@@ -95,7 +94,7 @@ const moviesSlice = createSlice({
         state.error = action.payload;
       })
 
-      /* data Genres */
+      /* ===========================================fetch data genres Movie=========================================== */
       .addCase(fetchMoviesGenres.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -109,7 +108,7 @@ const moviesSlice = createSlice({
         state.error = action.payload;
       })
 
-      /* Search Movies */
+      /* ===========================================Search Movie=========================================== */
       .addCase(fetchSearchMovies.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -123,7 +122,7 @@ const moviesSlice = createSlice({
         state.error = action.payload;
       })
 
-      /* Search Movies */
+      /* ===========================================Fetch Movie by Genres=========================================== */
       .addCase(fetchMoviesByGenres.pending, (state) => {
         state.loading = true;
         state.error = null;
