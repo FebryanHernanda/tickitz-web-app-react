@@ -4,10 +4,13 @@ import { InputField } from "../../molecules";
 import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeClosed } from "lucide-react";
 import { toast } from "react-toastify";
-import { useLocalStorage } from "../../../hooks/useLocalStorage";
+import { useDispatch, useSelector } from "react-redux";
+import { addUser } from "../../../store/slices/userSlice";
 
 const FormRegister = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { userData } = useSelector((state) => state.user);
 
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState("");
@@ -19,63 +22,47 @@ const FormRegister = () => {
 
   const togglePassword = () => setShowPassword((prev) => !prev);
 
-  const [_, setStorageData] = useLocalStorage("userData");
-
   const handleSubmit = (e) => {
     e.preventDefault();
-
     const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
     const passPattern = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[#?!@$%^&*-]).{8,}$/;
+    const checkUser = userData.find((data) => data.email === email);
 
-    let isValid = true;
+    // Validate Email
+    if (!email) return setEmailError("Kolom Email tidak boleh kosong!");
+    if (!emailPattern.test(email))
+      return setEmailError("Format email tidak valid!");
+    if (checkUser) return setEmailError("Email telah digunakan!");
+    setEmailError("");
 
-    if (!email) {
-      isValid = false;
-      setEmailError("Kolom Email tidak boleh kosong!");
-    } else if (!emailPattern.test(email)) {
-      isValid = false;
-      setEmailError("Format email tidak valid!");
-    } else {
-      setEmailError("");
-    }
-
-    if (!password) {
-      isValid = false;
-      setPasswordError("Kolom Password tidak boleh kosong!");
-    } else if (!passPattern.test(password)) {
-      isValid = false;
-      setPasswordError(
+    // Validate Password
+    if (!password)
+      return setPasswordError("Kolom Password tidak boleh kosong!");
+    if (!passPattern.test(password))
+      return setPasswordError(
         "Password harus minimal 8 karakter, berisi huruf besar, huruf kecil, dan karakter spesial.",
       );
-    } else {
-      setPasswordError("");
-    }
+    setPasswordError("");
 
-    if (!checked) {
-      isValid = false;
-      setCheckedError("Pastikan anda telah menyetujui persyaratan!");
-    } else {
-      setCheckedError("");
-    }
+    // Validate Checkbox
+    if (!checked)
+      return setCheckedError("Pastikan anda telah menyetujui persyaratan!");
+    setCheckedError("");
 
-    if (isValid) {
-      const user = {
-        email,
-        password,
-      };
+    const user = {
+      id: userData.length + 1,
+      email,
+      password,
+      role: "user",
+    };
 
-      toast.success("Register Berhasil!", {
-        position: "top-center",
-        autoClose: 1000,
-      });
+    toast.success("Register Berhasil!", {
+      position: "top-center",
+      autoClose: 1000,
+    });
+    dispatch(addUser(user));
 
-      /* Set Data Storage */
-      setStorageData(user);
-
-      setTimeout(() => {
-        navigate("/auth/login");
-      }, 2000);
-    }
+    setTimeout(() => navigate("/auth/login"), 2000);
   };
 
   const handleEmailChange = (e) => {
@@ -104,7 +91,7 @@ const FormRegister = () => {
           type="email"
           placeholder="Enter your email address!"
           required
-          value={email}
+          defaultValue={email}
           onChange={handleEmailChange}
         />
         <p className="text-sm text-red-500">{emailError}</p>
@@ -117,7 +104,7 @@ const FormRegister = () => {
             type={showPassword ? "text" : "password"}
             placeholder="Enter your password"
             required
-            value={password}
+            defaultValue={password}
             onChange={handlePasswordChange}
           />
           <button
