@@ -2,6 +2,8 @@ import { Link } from "react-router-dom";
 import { MyButton } from "../../atoms";
 import avaProfile from "/src/assets/background/ava-profile.png";
 import { toast } from "react-toastify";
+import { useDispatch } from "react-redux";
+import { setLogout } from "../../../store/slices/authSlice";
 
 const NavbarDropdown = (props) => {
   const {
@@ -13,6 +15,8 @@ const NavbarDropdown = (props) => {
     dataUser,
   } = props;
 
+  const dispatch = useDispatch();
+
   const handlePropagations = (e) => {
     e.stopPropagation();
   };
@@ -23,7 +27,7 @@ const NavbarDropdown = (props) => {
       autoClose: 1000,
     });
 
-    localStorage.removeItem("userData");
+    dispatch(setLogout());
     setIsLoggedIn(false);
     setIsMenuOpen(false);
     setIsAdminLoggedIn(false);
@@ -74,7 +78,7 @@ const NavbarDropdown = (props) => {
               alt="Avatar"
               className="h-15 w-15 rounded-full object-cover"
             />
-            <span className="text-xs">Hello, {dataUser.email}</span>
+            <span className="text-xs">Hello, {dataUser}</span>
 
             <button
               onClick={handleLogout}

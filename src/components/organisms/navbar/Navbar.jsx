@@ -6,30 +6,30 @@ import NavbarDropdown from "./NavbarDropdown";
 
 import avaProfile from "/src/assets/background/ava-profile.png";
 import logoBlue from "/src/assets/icons/logo/tickitz-logo-blue.svg";
+import { useSelector } from "react-redux";
 
 const Navbar = ({ isMenuOpen, setIsMenuOpen }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
+  const { user, role } = useSelector((state) => state.auth);
 
   const handleMenuToggle = (e) => {
     e.stopPropagation();
     setIsMenuOpen(!isMenuOpen);
   };
 
-  const userData = JSON.parse(localStorage.getItem("userData"));
-
   useEffect(() => {
-    if (userData?.role === "user") {
+    if (role === "user") {
       setIsLoggedIn(true);
       setIsAdminLoggedIn(false);
-    } else if (userData?.role === "admin") {
+    } else if (role === "admin") {
       setIsAdminLoggedIn(true);
       setIsLoggedIn(false);
     } else {
       setIsLoggedIn(false);
       setIsAdminLoggedIn(false);
     }
-  }, [userData]);
+  }, [role]);
 
   return (
     <header
@@ -70,7 +70,7 @@ const Navbar = ({ isMenuOpen, setIsMenuOpen }) => {
           <div className="hidden items-center gap-5 lg:flex">
             {isLoggedIn || isAdminLoggedIn ? (
               <div className="flex items-center gap-5">
-                <span className="text-sm">Hello, {userData.email}</span>
+                <span className="text-sm">Hello, {user}</span>
                 <Search />
                 <img
                   src={avaProfile}
@@ -105,7 +105,7 @@ const Navbar = ({ isMenuOpen, setIsMenuOpen }) => {
             checkAdminLogin={isAdminLoggedIn}
             setIsLoggedIn={setIsLoggedIn}
             setIsAdminLoggedIn={setIsAdminLoggedIn}
-            dataUser={userData}
+            dataUser={user}
           />
         )}
       </div>
