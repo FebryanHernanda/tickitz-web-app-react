@@ -7,12 +7,12 @@ import NavbarDropdown from "./NavbarDropdown";
 import avaProfile from "/src/assets/background/ava-profile.png";
 import logoBlue from "/src/assets/icons/logo/tickitz-logo-blue.svg";
 
-const Navbar = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+const Navbar = ({ isMenuOpen, setIsMenuOpen }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
 
-  const handleMenuToggle = () => {
+  const handleMenuToggle = (e) => {
+    e.stopPropagation();
     setIsMenuOpen(!isMenuOpen);
   };
 
@@ -32,7 +32,10 @@ const Navbar = () => {
   }, [userData]);
 
   return (
-    <header className="relative z-50 bg-white shadow-md">
+    <header
+      className="relative z-50 bg-white shadow-md"
+      onClick={() => setIsMenuOpen(false)}
+    >
       <div className="mx-auto max-w-screen-2xl p-5 lg:p-10">
         <div className="flex items-center justify-between">
           <img src={logoBlue} alt="Tickitz Logo" />

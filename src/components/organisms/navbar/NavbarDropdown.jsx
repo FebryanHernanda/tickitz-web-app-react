@@ -13,6 +13,10 @@ const NavbarDropdown = (props) => {
     dataUser,
   } = props;
 
+  const handlePropagations = (e) => {
+    e.stopPropagation();
+  };
+
   const handleLogout = () => {
     toast.success("Anda Telah berhasil keluar", {
       position: "top-right",
@@ -28,7 +32,10 @@ const NavbarDropdown = (props) => {
 
   return (
     <>
-      <div className="absolute right-5 w-60 rounded-xl border-1 border-gray-300 bg-white p-4 shadow-2xl lg:top-30 lg:right-10 2xl:right-40">
+      <div
+        className="absolute right-5 w-60 rounded-xl border-1 border-gray-300 bg-white p-4 shadow-2xl lg:top-30 lg:right-10 2xl:right-40"
+        onClick={handlePropagations}
+      >
         {/* Navigation */}
         <div className="flex flex-col gap-4 border-b pb-4">
           <Link className="hover:text-blue-800" to="/">
