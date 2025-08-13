@@ -24,7 +24,6 @@ const FormLogin = () => {
 
     const foundUser = userData.find((user) => user.email === email);
 
-    console.log(foundUser);
     if (!foundUser) {
       setErrorMsg("Data tidak ditemukan, Silahkan Mendaftar terlebih dahulu!");
       return;
@@ -35,7 +34,7 @@ const FormLogin = () => {
       return;
     }
 
-    dispatch(setLogin({ user: foundUser.email, role: foundUser.role }));
+    dispatch(setLogin({ user: foundUser, role: foundUser.role }));
 
     toast.success("Login Berhasil!", {
       position: "top-center",
