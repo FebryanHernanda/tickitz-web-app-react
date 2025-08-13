@@ -11,11 +11,12 @@ const TicketHistory = (props) => {
 
   /* Cinemas Icon Data */
   const cinemaLogos = {
-    CineOne21: cineOneLogo,
+    cineone21: cineOneLogo,
     ebv: ebvLogo,
     hiflix: hiflixLogo,
   };
 
+  console.log(userData);
   /* Show Details based on OrderId  */
   const handleDetails = (id) => {
     setShowDetails(showDetails === id ? null : id);
@@ -23,7 +24,7 @@ const TicketHistory = (props) => {
 
   return (
     <>
-      {userData.order.map((order, idx) => (
+      {userData.map((data, idx) => (
         /* Ticket Info */
         <div
           key={idx}
@@ -31,13 +32,13 @@ const TicketHistory = (props) => {
         >
           <div className="flex items-center justify-between">
             <div className="flex flex-col gap-2">
-              <h3 className="text-gray-500">{order.dateShow}</h3>
-              <h1 className="text-2xl">{order.details.title}</h1>
+              <h3 className="text-gray-500">{data.orders.dateShow}</h3>
+              <h1 className="text-2xl">{data.orders.details.title}</h1>
             </div>
             <div>
               <img
-                src={cinemaLogos[order.cinema]}
-                alt={`${order.cinema} Logo`}
+                src={cinemaLogos[data.orders.cinema.toLowerCase()]}
+                alt={`${data.orders.cinema} Logo`}
               />
             </div>
           </div>
@@ -63,16 +64,20 @@ const TicketHistory = (props) => {
             </div>
             <button
               className="flex gap-2"
-              onClick={() => handleDetails(order.orderId)}
+              onClick={() => handleDetails(data.orders.orderId)}
             >
               Show Details
-              {order.orderId === showDetails ? <ArrowDown /> : <ArrowRight />}
+              {data.orders.orderId === showDetails ? (
+                <ArrowDown />
+              ) : (
+                <ArrowRight />
+              )}
             </button>
           </div>
           {/* Ticket status */}
 
           {/* Ticket Details */}
-          {order.orderId === showDetails && (
+          {data.orders.orderId === showDetails && (
             <div className="flex flex-col gap-5">
               <h3 className="text-2xl">Ticket Information</h3>
               <div className="flex flex-col gap-5">
@@ -97,13 +102,15 @@ const TicketHistory = (props) => {
                     </h4>
                     <h4 className="font-regular text-gray-500">:</h4>
                   </div>
-                  <h3 className="font-regular text-blue-600">{order.prices}</h3>
+                  <h3 className="font-regular text-blue-600">
+                    {data.orders.prices}
+                  </h3>
                 </div>
                 <p className="text-gray-500">
                   Pay this payment bill before it is due,{" "}
-                  <span className="text-red-500">{order.dateShow}</span>. If the
-                  bill has not been paid by the specified time, it will be
-                  forfeited
+                  <span className="text-red-500">{data.orders.dateShow}</span>.
+                  If the bill has not been paid by the specified time, it will
+                  be forfeited
                 </p>
                 <button className="rounded-md bg-blue-700 px-4 py-2 text-white transition hover:bg-blue-700 xl:w-50">
                   Cek Pembayaran
