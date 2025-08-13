@@ -1,10 +1,14 @@
 // components/molecules/PaymentModal.jsx
 import { X } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { addOrder } from "../../../store/slices/userSlice";
 
 const ModalPayment = (props) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const userData = useSelector((state) => state.auth.user);
 
   /* props data */
   const { isOpen, prices, data, onClose } = props;
@@ -13,17 +17,57 @@ const ModalPayment = (props) => {
 
   if (!isOpen) return null;
 
+  const handleCancelPayment = () => {
+    toast.warning("You are required to pay for the ticket.", {
+      position: "top-center",
+      autoClose: 3000,
+    });
+
+    /* Check Duplicate Id true or false? */
+    const isDuplicate = userData.order.some((item) => {
+      return item.orderId === orderData.orderId;
+    });
+
+    navigate("/");
+
+    /* if not false, push data to order array */
+    if (!isDuplicate) {
+      dispatch(
+        addOrder({
+          userId: userData.id,
+          orders: orderData,
+          isPaid: false,
+        }),
+      );
+    }
+
+    onClose(false);
+  };
+
   /* Handle Payment */
   const handlePayment = () => {
-    navigate("results", {
-      state: {
-        orderData,
-      },
-    });
     toast.success("Your ticket is ready — it’s been printed successfully!", {
       position: "top-center",
       autoClose: 3000,
     });
+
+    navigate("results");
+
+    /* Check Duplicate Id true or false? */
+    const isDuplicate = userData.order.some((item) => {
+      return item.orderId === orderData.orderId;
+    });
+
+    /* if not false, push data to order array */
+    if (!isDuplicate) {
+      dispatch(
+        addOrder({
+          userId: userData.id,
+          orders: orderData,
+          isPaid: true,
+        }),
+      );
+    }
   };
 
   return (
@@ -64,7 +108,7 @@ const ModalPayment = (props) => {
             Check Payment
           </button>
           <button
-            onClick={onClose}
+            onClick={handleCancelPayment}
             className="rounded-md border border-gray-300 px-4 py-2 transition hover:bg-gray-100"
           >
             Pay Later
