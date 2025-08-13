@@ -16,7 +16,6 @@ const TicketHistory = (props) => {
     hiflix: hiflixLogo,
   };
 
-  console.log(userData);
   /* Show Details based on OrderId  */
   const handleDetails = (id) => {
     setShowDetails(showDetails === id ? null : id);
