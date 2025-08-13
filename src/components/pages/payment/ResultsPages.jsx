@@ -1,43 +1,24 @@
 import { MoveDown, MoveRight } from "lucide-react";
-import { useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import heroBg from "/src/assets/background/background.png";
 import logoWhite from "/src/assets/icons/logo/tickitz-logo-white.svg";
 import barcodeImg from "/barcode.svg";
+import { useSelector } from "react-redux";
 
 const ResultsPages = () => {
   const navigate = useNavigate();
-  const location = useLocation();
+  const { user } = useSelector((state) => state.auth);
+  const { userData } = useSelector((state) => state.user);
 
-  const { orderData } = location.state;
+  const currentUser = userData.find((data) => data.id === user.id);
 
-  // set Data to local storage for Temporary data
-  useEffect(() => {
-    const userData = localStorage.getItem("userData");
-    const getUserData = JSON.parse(userData);
+  const lastOrder = currentUser.order?.[currentUser.order.length - 1] || null;
 
-    /* Check array Order, if dont have create order array */
-    if (!Array.isArray(getUserData.order)) {
-      getUserData.order = [];
-    }
-
-    /* Check Duplicate Id true or false? */
-    const isDuplicate = getUserData.order.some((item) => {
-      return item.orderId === orderData.orderId;
-    });
-
-    /* if not false, push data to order array */
-    if (!isDuplicate) {
-      getUserData.order.push(orderData);
-      localStorage.setItem("userData", JSON.stringify(getUserData));
-      return;
-    }
-  }, [orderData]);
-  console.log(orderData);
+  console.log(lastOrder.orders);
 
   /* Convert Date */
-  const moviesDate = new Date(orderData.dateShow).toLocaleString("en-US", {
+  const moviesDate = new Date(lastOrder.dateShow).toLocaleString("en-US", {
     year: "numeric",
     month: "long",
     day: "numeric",
@@ -102,7 +83,7 @@ const ResultsPages = () => {
                 <div className="flex flex-col gap-5">
                   <div>
                     <h4 className="text-lg text-gray-400">Movie</h4>
-                    <h4 className="">{`${orderData.details.title.slice(0, 15)} ...`}</h4>
+                    <h4 className="">{`${lastOrder.orders.details.title.slice(0, 15)} ...`}</h4>
                   </div>
                   <div>
                     <h4 className="text-lg text-gray-400">Date</h4>
@@ -110,7 +91,7 @@ const ResultsPages = () => {
                   </div>
                   <div>
                     <h4 className="text-lg text-gray-400">Count</h4>
-                    <h4 className="">{`${orderData.seat.length} pcs`}</h4>
+                    <h4 className="">{`${lastOrder.orders.seat.length} pcs`}</h4>
                   </div>
                 </div>
                 <div className="flex flex-col gap-5">
@@ -120,13 +101,13 @@ const ResultsPages = () => {
                   </div>
                   <div>
                     <h4 className="text-lg text-gray-400">Time</h4>
-                    <h4 className="">{`${orderData.time}`}</h4>
+                    <h4 className="">{`${lastOrder.time}`}</h4>
                   </div>
                   <div>
                     <h4 className="text-lg text-gray-400">Seats</h4>
                     <h4 className="">
-                      {orderData.seat.length > 0
-                        ? orderData.seat.join(", ")
+                      {lastOrder.orders.seat.length > 0
+                        ? lastOrder.orders.seat.join(", ")
                         : "-"}
                     </h4>
                   </div>
@@ -135,7 +116,9 @@ const ResultsPages = () => {
 
               <div className="flex w-full justify-between rounded-lg border-1 border-gray-200 p-2">
                 <h3 className="">Total</h3>
-                <h3 className="text-lg text-blue-700">{orderData.prices}</h3>
+                <h3 className="text-lg text-blue-700">
+                  {lastOrder.orders.prices}
+                </h3>
               </div>
             </div>
           </div>
