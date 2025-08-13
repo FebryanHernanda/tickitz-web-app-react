@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { Circle, Line } from "../../atoms";
 import { ModalPayment } from "../../molecules";
-import { Check } from "lucide-react";
+import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { Check } from "lucide-react";
 
 import gpayIcon from "/src/assets/icons/payment-method/googlepay-icon.svg";
 import visaIcon from "/src/assets/icons/payment-method/visa-icon.svg";
@@ -12,11 +14,13 @@ import danaIcon from "/src/assets/icons/payment-method/dana-icon.svg";
 import bcaIcon from "/src/assets/icons/payment-method/bca-icon.svg";
 import briIcon from "/src/assets/icons/payment-method/bri-icon.svg";
 import ovoIcon from "/src/assets/icons/payment-method/ovo-icon.svg";
-import { toast } from "react-toastify";
 
 const PaymentPages = () => {
   const navigate = useNavigate();
   const location = useLocation();
+
+  /* Get UserData */
+  const userData = useSelector((state) => state.auth.user);
 
   /* State */
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -32,9 +36,6 @@ const PaymentPages = () => {
   if (!location.state) return null;
 
   const { details, time, dateShow, cinema, seat } = location.state;
-
-  /* Get UserData from localstorage */
-  const user = JSON.parse(localStorage.getItem("userData"));
 
   /* count Price */
   const countPrices = () => {
@@ -205,7 +206,8 @@ const PaymentPages = () => {
                 name="personalEmail"
                 id="personal-email"
                 className="mt-2 block w-full rounded-md border border-gray-300 p-2"
-                placeholder={user.email}
+                placeholder={userData.email}
+                defaultValue={userData.email}
               />
             </div>
             <div className="payment-info-wrapper flex flex-col">
@@ -310,7 +312,7 @@ const PaymentPages = () => {
         isOpen={isModalOpen}
         data={location.state}
         prices={countPrices()}
-        onClose={() => setIsModalOpen(false)}
+        onClose={setIsModalOpen}
       />
     </section>
   );
