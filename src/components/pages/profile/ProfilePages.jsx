@@ -1,13 +1,22 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AccountSettings, OrderHistory } from "../../organisms";
 
 import avaProfile from "/src/assets/background/ava-profile.png";
 import ellips1 from "/src/assets/icons/ornament/ellips1.svg";
 import ellips2 from "/src/assets/icons/ornament/ellips2.svg";
 import star from "/src/assets/icons/ornament/star.svg";
+import { useSearchParams } from "react-router-dom";
 
 const ProfilePages = () => {
   const [page, setPage] = useState("settings");
+
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  useEffect(() => {
+    if (page) {
+      setSearchParams({ page });
+    }
+  }, [page, setSearchParams]);
 
   return (
     <>
