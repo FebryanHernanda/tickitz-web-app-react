@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { Circle, Line } from "../../atoms";
 import { ModalPayment } from "../../molecules";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 import { Check } from "lucide-react";
 
 import gpayIcon from "/src/assets/icons/payment-method/googlepay-icon.svg";
@@ -14,10 +13,13 @@ import danaIcon from "/src/assets/icons/payment-method/dana-icon.svg";
 import bcaIcon from "/src/assets/icons/payment-method/bca-icon.svg";
 import briIcon from "/src/assets/icons/payment-method/bri-icon.svg";
 import ovoIcon from "/src/assets/icons/payment-method/ovo-icon.svg";
+import { emailPattern, phoneNumberPattern } from "../../../utils/regex";
+import { editUser } from "../../../store/slices/userSlice";
 
 const PaymentPages = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const dispatch = useDispatch();
 
   /* Get UserData */
   const userData = useSelector((state) => state.auth.user);
@@ -25,6 +27,23 @@ const PaymentPages = () => {
   /* State */
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [payment, setPayment] = useState("");
+  const [errorMsg, setErrorMsg] = useState({});
+  const [formData, setFormData] = useState({
+    fullName: "",
+    email: userData?.email,
+    phoneNumber: "",
+    paymentMethod: "",
+  });
+
+  /* Check payment state for paymentmethod */
+  useEffect(() => {
+    if (payment) {
+      setFormData((prev) => ({
+        ...prev,
+        paymentMethod: payment,
+      }));
+    }
+  }, [payment]);
 
   /* Check if location state null back to home */
   useEffect(() => {
@@ -43,26 +62,70 @@ const PaymentPages = () => {
     return `$ ${price}`;
   };
 
+  /* Check form valid */
+  const isFormValid = Object.values(formData).every(
+    (value) => value.trim() !== "",
+  );
+
+  /* Handle controlled input */
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
+    setErrorMsg({});
+  };
+
+  const validate = () => {
+    const newErrors = {};
+    let personalNumber;
+
+    /* ======================================Validate Fullname Field====================================== */
+    if (!formData.fullName.trim()) {
+      newErrors.fullName = "Kolom tidak boleh kosong!";
+    }
+
+    /* ======================================Validate Email====================================== */
+    if (!formData.email.trim()) {
+      newErrors.email = "Kolom tidak boleh kosong!";
+    } else {
+      if (!emailPattern.test(formData.email)) {
+        newErrors.email = "Format email tidak valid!";
+      }
+    }
+
+    /* ======================================Validate Phone Number====================================== */
+    if (!formData.phoneNumber) {
+      newErrors.phoneNumber = "Kolom tidak boleh kosong!";
+    } else {
+      personalNumber = formData.phoneNumber.startsWith("62")
+        ? formData.phoneNumber
+        : `62${formData.phoneNumber}`;
+      if (!phoneNumberPattern.test(personalNumber)) {
+        newErrors.phoneNumber =
+          "Format tidak valid! Maksimal 13 karakter dan tidak diawali dengan 0. Contoh: 81345678991";
+      } else {
+        formData.phoneNumber = personalNumber;
+      }
+    }
+
+    setErrorMsg(newErrors);
+
+    return Object.keys(newErrors).length === 0;
+  };
+
   /* Handle Form */
   const handleForm = (e) => {
     e.preventDefault();
-    const name = e.target.personalName.value;
-    const email = e.target.personalEmail.value;
-    const phoneNumber = e.target.personalNumber.value;
 
-    /* Check if input value === null */
-    if (!name || !email || !phoneNumber || !payment) {
-      toast.warning(
-        "Please fill in all the columns and choose a payment method",
-        {
-          position: "top-center",
-          autoClose: 3000,
-        },
-      );
-      return;
+    if (validate()) {
+      console.log("berhasil di input ", formData);
+      dispatch(editUser({ userId: userData.id, formData }));
+      setIsModalOpen(true);
     }
-
-    setIsModalOpen(true);
   };
 
   return (
@@ -188,11 +251,16 @@ const PaymentPages = () => {
               </label>
               <input
                 type="text"
-                name="personalName"
+                name="fullName"
                 id="personal-name"
                 className="mt-2 block w-full rounded-md border border-gray-300 p-2"
                 placeholder="Jonas El Rodriguez"
+                defaultValue={formData.fullName}
+                onChange={handleChange}
               />
+              {errorMsg.fullName && (
+                <p className="text-sm text-red-500">{errorMsg.fullName}</p>
+              )}
             </div>
             <div className="payment-info-wrapper">
               <label
@@ -203,12 +271,16 @@ const PaymentPages = () => {
               </label>
               <input
                 type="email"
-                name="personalEmail"
+                name="email"
                 id="personal-email"
                 className="mt-2 block w-full rounded-md border border-gray-300 p-2"
                 placeholder={userData.email}
-                defaultValue={userData.email}
+                defaultValue={formData.email}
+                onChange={handleChange}
               />
+              {errorMsg.email && (
+                <p className="text-sm text-red-500">{errorMsg.email}</p>
+              )}
             </div>
             <div className="payment-info-wrapper flex flex-col">
               <label
@@ -223,11 +295,16 @@ const PaymentPages = () => {
                 </span>
                 <input
                   type="tel"
-                  name="personalNumber"
+                  name="phoneNumber"
                   id="personal-number"
                   className="mt-2 block w-full rounded-md border border-gray-300 p-2 pl-17"
                   placeholder="81445687121"
+                  defaultValue={formData.phoneNumber}
+                  onChange={handleChange}
                 />
+                {errorMsg.phoneNumber && (
+                  <p className="text-sm text-red-500">{errorMsg.phoneNumber}</p>
+                )}
               </div>
             </div>
           </div>
@@ -301,7 +378,8 @@ const PaymentPages = () => {
 
           <button
             type="submit"
-            className="w-full rounded-md bg-blue-600 p-3 text-white shadow hover:bg-blue-700"
+            className={`w-full rounded-md bg-blue-600 p-3 text-white shadow hover:bg-blue-700 ${!isFormValid ? "cursor-not-allowed bg-gray-400" : "cursor-pointer bg-blue-700 hover:bg-blue-800"}`}
+            disabled={!isFormValid}
           >
             Pay your order
           </button>
@@ -313,6 +391,7 @@ const PaymentPages = () => {
         data={location.state}
         prices={countPrices()}
         onClose={setIsModalOpen}
+        paymentMethod={payment}
       />
     </section>
   );
