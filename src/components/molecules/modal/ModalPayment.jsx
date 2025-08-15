@@ -11,9 +11,9 @@ const ModalPayment = (props) => {
   const userData = useSelector((state) => state.auth.user);
 
   /* props data */
-  const { isOpen, prices, data, onClose } = props;
+  const { isOpen, prices, data, onClose, paymentMethod } = props;
 
-  const orderData = { ...data, prices };
+  const orderData = { ...data, prices, paymentMethod };
 
   if (!isOpen) return null;
 
@@ -28,7 +28,7 @@ const ModalPayment = (props) => {
       return item.orderId === orderData.orderId;
     });
 
-    navigate("/");
+    navigate("/movies");
 
     /* if not false, push data to order array */
     if (!isDuplicate) {
@@ -116,7 +116,7 @@ const ModalPayment = (props) => {
         </div>
 
         <button
-          onClick={onClose}
+          onClick={() => onClose(false)}
           className="absolute top-2 right-3 text-lg text-gray-400 hover:text-black"
         >
           <X />
