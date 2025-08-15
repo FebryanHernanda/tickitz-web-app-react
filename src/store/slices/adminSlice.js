@@ -1,11 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  userAdmin: {
-    email: "admin@gmail.com",
-    password: "@Admin12345",
-    role: "admin",
-  },
   dataMovies: [],
   lastId: 0,
 };
