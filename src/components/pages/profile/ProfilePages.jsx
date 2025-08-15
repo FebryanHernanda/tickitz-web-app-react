@@ -10,6 +10,7 @@ import { useSearchParams } from "react-router-dom";
 const ProfilePages = () => {
   const [page, setPage] = useState("settings");
 
+  // eslint-disable-next-line no-unused-vars
   const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
