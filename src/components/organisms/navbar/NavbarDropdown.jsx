@@ -78,7 +78,7 @@ const NavbarDropdown = (props) => {
               alt="Avatar"
               className="h-15 w-15 rounded-full object-cover"
             />
-            <span className="text-xs">Hello, {dataUser}</span>
+            <span className="text-xs">Hello, {dataUser.email}</span>
 
             <button
               onClick={handleLogout}
