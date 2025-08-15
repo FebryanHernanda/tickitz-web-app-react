@@ -6,6 +6,7 @@ import { Eye, EyeClosed } from "lucide-react";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { addUser } from "../../../store/slices/userSlice";
+import { emailPattern, passPattern } from "../../../utils/regex";
 
 const FormRegister = () => {
   const navigate = useNavigate();
@@ -24,8 +25,6 @@ const FormRegister = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-    const passPattern = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[#?!@$%^&*-]).{8,}$/;
     const checkUser = userData.find((data) => data.email === email);
 
     // Validate Email
@@ -54,6 +53,7 @@ const FormRegister = () => {
       email,
       password,
       role: "user",
+      order: [],
     };
 
     toast.success("Register Berhasil!", {
