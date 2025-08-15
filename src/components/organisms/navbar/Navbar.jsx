@@ -11,7 +11,8 @@ import { useSelector } from "react-redux";
 const Navbar = ({ isMenuOpen, setIsMenuOpen }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
-  const { user, role } = useSelector((state) => state.auth);
+  const { role } = useSelector((state) => state.auth);
+  const userData = useSelector((state) => state.auth.user);
 
   const handleMenuToggle = (e) => {
     e.stopPropagation();
@@ -70,7 +71,7 @@ const Navbar = ({ isMenuOpen, setIsMenuOpen }) => {
           <div className="hidden items-center gap-5 lg:flex">
             {isLoggedIn || isAdminLoggedIn ? (
               <div className="flex items-center gap-5">
-                <span className="text-sm">Hello, {user}</span>
+                <span className="text-sm">Hello, {userData.email}</span>
                 <Search />
                 <img
                   src={avaProfile}
@@ -105,7 +106,7 @@ const Navbar = ({ isMenuOpen, setIsMenuOpen }) => {
             checkAdminLogin={isAdminLoggedIn}
             setIsLoggedIn={setIsLoggedIn}
             setIsAdminLoggedIn={setIsAdminLoggedIn}
-            dataUser={user}
+            dataUser={userData}
           />
         )}
       </div>
