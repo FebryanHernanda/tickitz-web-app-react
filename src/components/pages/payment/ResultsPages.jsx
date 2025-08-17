@@ -1,10 +1,11 @@
-import { MoveDown, MoveRight } from "lucide-react";
+import { useSelector } from "react-redux";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { MoveDown, MoveRight } from "lucide-react";
 
 import heroBg from "/src/assets/background/background.png";
 import logoWhite from "/src/assets/icons/logo/tickitz-logo-white.svg";
-import barcodeImg from "/barcode.svg";
-import { useSelector } from "react-redux";
+import barcodeImg from "/src/assets/barcode.svg";
 
 const ResultsPages = () => {
   const navigate = useNavigate();
@@ -15,14 +16,24 @@ const ResultsPages = () => {
 
   const lastOrder = currentUser.order?.[currentUser.order.length - 1] || null;
 
-  console.log(lastOrder.orders);
+  /* Check data null back to landing */
+  useEffect(() => {
+    if (!lastOrder) {
+      navigate("/");
+    }
+  }, [lastOrder, navigate]);
+
+  if (!lastOrder) return null;
 
   /* Convert Date */
-  const moviesDate = new Date(lastOrder.dateShow).toLocaleString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+  const moviesDate = new Date(lastOrder.orders.dateShow).toLocaleString(
+    "en-US",
+    {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    },
+  );
 
   /* HandleButton Done */
   const handleButton = () => {
@@ -37,7 +48,7 @@ const ResultsPages = () => {
           style={{
             backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.7)), url(${heroBg})`,
           }}
-          className="h-150 w-full bg-cover lg:h-200"
+          className="h-150 w-full bg-cover lg:h-250"
         >
           <div className="flex h-full w-full flex-row items-center px-5 lg:px-10 2xl:pl-40">
             <div className="flex flex-col items-center gap-5 lg:items-start">
@@ -101,7 +112,7 @@ const ResultsPages = () => {
                   </div>
                   <div>
                     <h4 className="text-lg text-gray-400">Time</h4>
-                    <h4 className="">{`${lastOrder.time}`}</h4>
+                    <h4 className="">{`${lastOrder.orders.time}`}</h4>
                   </div>
                   <div>
                     <h4 className="text-lg text-gray-400">Seats</h4>
