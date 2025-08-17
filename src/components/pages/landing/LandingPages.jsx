@@ -1,5 +1,5 @@
-import { LucideCircleChevronRight } from "lucide-react";
-import { MoviesList, Newslatters } from "../../organisms";
+import { ArrowLeft, ArrowRight, LucideCircleChevronRight } from "lucide-react";
+import { MoviesList, MoviesSoonList, Newslatters } from "../../organisms";
 import { Link } from "react-router-dom";
 
 import shieldIcon from "/src/assets/icons/whychooseus/shield-icon.svg";
@@ -7,23 +7,40 @@ import checklistIcon from "/src/assets/icons/whychooseus/checklist-icon.svg";
 import chatIcon from "/src/assets/icons/whychooseus/chat-icon.svg";
 import { useDispatch, useSelector } from "react-redux";
 import { IMG_BASE_URL } from "../../../utils/constants";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import {
   fetchMovies,
   fetchMoviesGenres,
+  fetchUpcomingMovies,
 } from "../../../store/slices/moviesSlice";
 
 const LandingPages = () => {
   const dispatch = useDispatch();
-  const { movies, genres } = useSelector((state) => state.movies);
+  const { movies, upcomingMovies, genres } = useSelector(
+    (state) => state.movies,
+  );
+
+  /* Slider upcoming movies */
+  const sliderRef = useRef(null);
+
+  const scroll = (direction) => {
+    if (sliderRef.current) {
+      sliderRef.current.scrollBy({
+        left: direction === "left" ? -300 : 300,
+        behavior: "smooth",
+      });
+    }
+  };
+  /* Slider upcoming movies */
 
   /* Check if state Data is null */
   useEffect(() => {
-    if (!movies.length || !genres.length) {
+    if (!movies.length || !genres.length || !upcomingMovies.length) {
       dispatch(fetchMoviesGenres());
       dispatch(fetchMovies({ page: 1 }));
+      dispatch(fetchUpcomingMovies());
     }
-  }, [dispatch, movies.length, genres.length]);
+  }, [dispatch, movies.length, genres.length, upcomingMovies.length]);
 
   const moviesPoster = {
     heroOne: movies?.[0]?.poster_path,
@@ -35,7 +52,7 @@ const LandingPages = () => {
   return (
     <>
       {/* <!-- Container --> */}
-      <div className="mx-auto mt-10 flex max-w-screen-2xl flex-col gap-30 px-5 lg:px-10">
+      <div className="mx-auto mt-25 flex max-w-screen-2xl flex-col gap-30 px-5 lg:px-10">
         {/* <!-- Hero --> */}
         <section className="flex flex-wrap justify-center gap-10 lg:justify-between xl:flex-nowrap">
           <div className="flex flex-col justify-center gap-20 text-center xl:text-left">
@@ -155,28 +172,34 @@ const LandingPages = () => {
         {/* <!-- Exciting Movies --> */}
 
         {/* <!-- Upcoming Movies --> */}
-        <section className="flex flex-col gap-10">
-          <div className="flex flex-col gap-10 text-center">
-            <h3 className="text-2xl text-blue-700">UPCOMING MOVIES</h3>
-            <div className="flex flex-col gap-5">
+        <section className="flex flex-col gap-15">
+          <div className="flex items-end justify-between gap-5">
+            <div className="flex w-full flex-col gap-10 text-center lg:text-left">
+              <h3 className="text-2xl text-blue-700">UPCOMING MOVIES</h3>
               <h1 className="text-5xl font-semibold">
                 Exciting Movie Coming Soon
               </h1>
-              <div className="next-button">
-                <div className="circle">
-                  <i className="fa-solid fa-arrow-left fa-lg"></i>
-                </div>
-                <div className="circle blue">
-                  <i className="fa-solid fa-arrow-right fa-lg"></i>
-                </div>
-              </div>
+            </div>
+            <div className="hidden gap-5 lg:flex">
+              <button
+                className="flex h-15 w-15 items-center justify-center rounded-full bg-gray-400 text-white hover:bg-blue-700"
+                onClick={() => scroll("left")}
+              >
+                <ArrowLeft size={30} />
+              </button>
+              <button
+                className="flex h-15 w-15 items-center justify-center rounded-full bg-gray-400 text-white hover:bg-blue-700"
+                onClick={() => scroll("right")}
+              >
+                <ArrowRight size={30} />
+              </button>
             </div>
           </div>
-
-          <div className="w-full overflow-x-scroll md:overflow-x-auto">
-            <div className="flex w-[1200px] gap-5 md:w-full md:flex-wrap md:justify-between">
-              <MoviesList limits={4} movies={movies} genres={genres} />
-            </div>
+          <div
+            ref={sliderRef}
+            className="scrollbar-hide flex snap-x snap-mandatory justify-between gap-20 overflow-x-scroll scroll-smooth p-4"
+          >
+            <MoviesSoonList limits={10} movies={upcomingMovies} />
           </div>
         </section>
         {/* <!-- Upcoming Movies --> */}
