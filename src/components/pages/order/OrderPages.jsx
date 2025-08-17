@@ -4,6 +4,7 @@ import { ArrowDown, ArrowRight, Check } from "lucide-react";
 import { ChooseSeat } from "../../organisms";
 import { Circle, Line } from "../../atoms";
 import { toast } from "react-toastify";
+import { cinemaLogos } from "../../../data/cinema";
 
 const OrderPages = () => {
   const navigate = useNavigate();
@@ -11,6 +12,7 @@ const OrderPages = () => {
 
   /* Set state Seat */
   const [seat, setSeat] = useState([]);
+
   /* Check data null back to landing */
   useEffect(() => {
     if (!location.state) {
@@ -50,6 +52,7 @@ const OrderPages = () => {
       });
     }
     navigate("/payment", {
+      replace: true,
       state: {
         details,
         time,
@@ -87,9 +90,9 @@ const OrderPages = () => {
           <div className="flex flex-col items-center justify-between gap-5 rounded-2xl border-1 border-gray-200 p-3 sm:flex-row lg:h-40">
             <div className="h-40 w-full lg:h-full lg:w-200">
               <img
-                src={`https://image.tmdb.org/t/p/original${details.poster_path}`}
+                src={`https://image.tmdb.org/t/p/original${details.backdrop_path}`}
                 alt="Movies Posters"
-                className="h-full w-full rounded-md object-cover object-[20%_10%]"
+                className="h-full w-full rounded-md object-cover"
               />
             </div>
             <div className="flex w-full flex-col gap-5">
@@ -170,9 +173,9 @@ const OrderPages = () => {
               <div className="flex flex-col gap-5">
                 <div className="flex flex-col items-center gap-2">
                   <img
-                    src="../src/assets/icons/sponsor/CineOne-logo.svg"
-                    alt="CineOne21 Logo"
-                    className="w-50"
+                    src={cinemaLogos[cinema.toLowerCase()]}
+                    alt={`${cinema} Logo`}
+                    className="w-30"
                   />
                   <h1 className="text-3xl">{`${cinema} Cinema`}</h1>
                 </div>
@@ -188,7 +191,7 @@ const OrderPages = () => {
                   <h3 className="text-gray-500">One ticket price</h3>
                   <h3>$10</h3>
                 </div>
-                <div className="flex justify-between">
+                <div className="flex justify-between gap-5">
                   <h3 className="text-gray-500">Seat Choosed</h3>
                   <h3 className="">
                     {seat.length > 0 ? seat.join(", ") : "-"}
