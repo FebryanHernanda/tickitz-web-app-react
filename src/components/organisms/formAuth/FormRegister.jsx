@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { MyButton } from "../../atoms";
 import { InputField } from "../../molecules";
 import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeClosed } from "lucide-react";
@@ -13,6 +12,9 @@ const FormRegister = () => {
   const dispatch = useDispatch();
   const { userData } = useSelector((state) => state.user);
 
+  const [isValid, setIsValid] = useState(true);
+
+  /* Onchange state */
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState("");
   const [password, setPassword] = useState("");
@@ -60,6 +62,8 @@ const FormRegister = () => {
       position: "top-center",
       autoClose: 1000,
     });
+
+    setIsValid(false);
     dispatch(addUser(user));
 
     setTimeout(() => navigate("/auth/login"), 2000);
@@ -132,13 +136,19 @@ const FormRegister = () => {
         </div>
         <p className="text-sm text-red-500">{checkedError}</p>
 
-        <MyButton type="submit">Join For Free Now</MyButton>
+        <button
+          type="submit"
+          disabled={!isValid}
+          className={`w-full rounded-lg border-none p-3 text-white ${!isValid ? "!cursor-not-allowed bg-gray-400" : "cursor-pointer bg-blue-700 hover:bg-blue-800"}`}
+        >
+          Join For Free Now
+        </button>
 
         <div className="my-5 text-center">
           Already have an account? {""}
           <Link
             to={"/auth/login"}
-            className="cursor-pointer hover:text-blue-800 hover:underline"
+            className="cursor-pointer text-blue-700 hover:text-blue-800 hover:underline"
           >
             Log In
           </Link>
