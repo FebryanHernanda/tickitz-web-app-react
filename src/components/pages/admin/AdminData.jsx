@@ -21,7 +21,7 @@ const AdminData = () => {
   };
 
   return (
-    <section className="bg-gray-200">
+    <section className="min-h-screen bg-gray-200">
       <div className="mx-auto flex max-w-screen-2xl flex-col gap-10 p-5 lg:p-10">
         <div className="rounded-lg bg-white p-6 shadow-md">
           <div className="mb-6 flex items-center justify-between">
@@ -56,48 +56,56 @@ const AdminData = () => {
                 </tr>
               </thead>
               <tbody>
-                {dataMovies.map((movie, idx) => (
-                  <tr
-                    key={movie.id}
-                    className="border-b border-gray-300 text-center hover:bg-gray-50"
-                  >
-                    <td>{idx + 1}</td>
-                    <td>
-                      <div className="flex h-full w-full items-center justify-center">
-                        <img
-                          src={movie.thumbnail}
-                          alt={movie.name}
-                          className="h-10 w-20 items-center justify-center rounded object-cover"
-                        />
-                      </div>
-                    </td>
-                    <td className="cursor-pointer text-blue-600 hover:underline">
-                      {movie.name}
-                    </td>
-                    <td className="p-5">{movie.category}</td>
-                    <td className="p-5">{movie.releaseDate}</td>
-                    <td className="p-5">{`${movie.durationHours} Hours ${movie.durationMinutes} Minutes`}</td>
-                    <td className="gap-2 p-5">
-                      <div className="flex justify-center gap-3">
-                        <button className="rounded bg-blue-600 p-2 text-white hover:bg-blue-700">
-                          <Eye size={14} />
-                        </button>
-                        <button
-                          className="rounded bg-indigo-500 p-2 text-white hover:bg-indigo-600"
-                          onClick={() => handleEditData(movie.id)}
-                        >
-                          <Pencil size={14} />
-                        </button>
-                        <button
-                          className="rounded bg-red-500 p-2 text-white hover:bg-red-600"
-                          onClick={() => handleDelete(movie.id)}
-                        >
-                          <Trash2 size={14} />
-                        </button>
-                      </div>
+                {dataMovies.length > 0 ? (
+                  dataMovies.map((movie, idx) => (
+                    <tr
+                      key={movie.id}
+                      className="border-b border-gray-300 text-center hover:bg-gray-50"
+                    >
+                      <td>{idx + 1}</td>
+                      <td>
+                        <div className="flex h-full w-full items-center justify-center">
+                          <img
+                            src={movie.thumbnail}
+                            alt={movie.name}
+                            className="h-10 w-20 items-center justify-center rounded object-cover"
+                          />
+                        </div>
+                      </td>
+                      <td className="cursor-pointer text-blue-600 hover:underline">
+                        {movie.name}
+                      </td>
+                      <td className="p-5">{movie.category}</td>
+                      <td className="p-5">{movie.releaseDate}</td>
+                      <td className="p-5">{`${movie.durationHours} Hours ${movie.durationMinutes} Minutes`}</td>
+                      <td className="gap-2 p-5">
+                        <div className="flex justify-center gap-3">
+                          <button className="rounded bg-blue-600 p-2 text-white hover:bg-blue-700">
+                            <Eye size={14} />
+                          </button>
+                          <button
+                            className="rounded bg-indigo-500 p-2 text-white hover:bg-indigo-600"
+                            onClick={() => handleEditData(movie.id)}
+                          >
+                            <Pencil size={14} />
+                          </button>
+                          <button
+                            className="rounded bg-red-500 p-2 text-white hover:bg-red-600"
+                            onClick={() => handleDelete(movie.id)}
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr className="border-b border-gray-300">
+                    <td colSpan="8" className="p-5 text-center text-black">
+                      There is no data to display
                     </td>
                   </tr>
-                ))}
+                )}
               </tbody>
             </table>
           </div>
