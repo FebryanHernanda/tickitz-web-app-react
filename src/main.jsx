@@ -5,12 +5,15 @@ import { Router } from "./routes";
 import { Provider } from "react-redux";
 import { persistor, store } from "./store";
 import { PersistGate } from "redux-persist/integration/react";
+import { ResetPasswordProvider } from "./context";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <Provider store={store}>
       <PersistGate persistor={persistor}>
-        <Router />
+        <ResetPasswordProvider>
+          <Router />
+        </ResetPasswordProvider>
       </PersistGate>
     </Provider>
   </StrictMode>,
