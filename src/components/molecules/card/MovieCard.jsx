@@ -28,6 +28,12 @@ const MovieCard = ({ movie, genres }) => {
           className="h-[400px] w-full rounded-2xl border-1 border-gray-200 object-cover"
         />
 
+        {movie.vote_average >= 7.5 && (
+          <span className="absolute top-7 left-0 rounded-r-xl bg-blue-700 px-3 py-1 text-xs font-semibold text-white shadow shadow-2xs">
+            Recommended
+          </span>
+        )}
+
         <div className="group absolute inset-0 flex items-center justify-center rounded-2xl">
           <div className="absolute inset-0 z-0 rounded-2xl bg-black opacity-0 transition duration-300 group-hover:opacity-70"></div>
 
