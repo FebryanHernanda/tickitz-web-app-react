@@ -1,20 +1,12 @@
 import { useState } from "react";
 import { ArrowDown, ArrowRight } from "lucide-react";
+import { cinemaLogos } from "../../../data/cinema";
 
-import cineOneLogo from "/src/assets/icons/sponsor/CineOne-logo.svg";
-import ebvLogo from "/src/assets/icons/sponsor/ebv-logo.svg";
-import hiflixLogo from "/src/assets/icons/sponsor/hiflix-logo.svg";
+import barcodeImg from "/src/assets/barcode.svg";
 
 const TicketHistory = (props) => {
   const [showDetails, setShowDetails] = useState(null);
   const { userData } = props;
-
-  /* Cinemas Icon Data */
-  const cinemaLogos = {
-    cineone21: cineOneLogo,
-    ebv: ebvLogo,
-    hiflix: hiflixLogo,
-  };
 
   /* Show Details based on OrderId  */
   const handleDetails = (id) => {
@@ -80,7 +72,7 @@ const TicketHistory = (props) => {
                   <h3 className="font-bold">Ticket Information</h3>
                   <div className="flex flex-col items-center gap-10 md:flex-row">
                     <img
-                      src="/public/barcode.svg"
+                      src={barcodeImg}
                       alt="Barcode Ticket"
                       className="w-40"
                     />
@@ -90,7 +82,6 @@ const TicketHistory = (props) => {
                         <div>
                           <h4 className="text-gray-500">Category</h4>
                           <h5>PG-13</h5>
-                          {/* ! need data pg-13 */}
                         </div>
                         <div>
                           <h4 className="text-gray-500">Time</h4>
