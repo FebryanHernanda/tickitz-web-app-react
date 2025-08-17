@@ -6,9 +6,15 @@ import ellips1 from "/src/assets/icons/ornament/ellips1.svg";
 import ellips2 from "/src/assets/icons/ornament/ellips2.svg";
 import star from "/src/assets/icons/ornament/star.svg";
 import { useSearchParams } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const ProfilePages = () => {
   const [page, setPage] = useState("settings");
+
+  const { userData } = useSelector((state) => state.user);
+  const { user } = useSelector((state) => state.auth);
+
+  const currentUser = userData.find((data) => data.id === user.id);
 
   // eslint-disable-next-line no-unused-vars
   const [searchParams, setSearchParams] = useSearchParams();
@@ -43,7 +49,9 @@ const ProfilePages = () => {
                     />
                   </div>
                   <div className="flex flex-col gap-[5px] text-center">
-                    <h2 className="text-xl font-bold">Jonas El Rodriguez</h2>
+                    <h2 className="text-xl font-bold">
+                      {currentUser.fullName || currentUser.email}
+                    </h2>
                     <h4 className="text-lg">Moviegoers</h4>
                   </div>
                 </div>
