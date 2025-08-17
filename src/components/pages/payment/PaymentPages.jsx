@@ -14,7 +14,7 @@ import bcaIcon from "/src/assets/icons/payment-method/bca-icon.svg";
 import briIcon from "/src/assets/icons/payment-method/bri-icon.svg";
 import ovoIcon from "/src/assets/icons/payment-method/ovo-icon.svg";
 import { emailPattern, phoneNumberPattern } from "../../../utils/regex";
-import { editUser } from "../../../store/slices/userSlice";
+import { updatePaymentData } from "../../../store/slices/userSlice";
 
 const PaymentPages = () => {
   const navigate = useNavigate();
@@ -122,8 +122,7 @@ const PaymentPages = () => {
     e.preventDefault();
 
     if (validate()) {
-      console.log("berhasil di input ", formData);
-      dispatch(editUser({ userId: userData.id, formData }));
+      dispatch(updatePaymentData({ userId: userData.id, formData }));
       setIsModalOpen(true);
     }
   };
