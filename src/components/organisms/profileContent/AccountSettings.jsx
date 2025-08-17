@@ -33,14 +33,14 @@ const AccountSettings = () => {
 
   useEffect(() => {
     const foundUser = userData.find((data) => data.id === user.id);
-
-    const splitName = foundUser.fullName.trim().split(" ");
-    const firstName = splitName.shift();
-    const lastName = splitName.join(" ");
-
+    if (foundUser.fullName) {
+      const splitName = foundUser?.fullName.trim().split(" ");
+      const firstName = splitName.shift();
+      const lastName = splitName.join(" ");
+      setFirstName(firstName);
+      setLastName(lastName);
+    }
     setCurrentUser(foundUser);
-    setFirstName(firstName);
-    setLastName(lastName);
   }, [userData, user, setCurrentUser, setFirstName, setLastName]);
 
   /* Check if CurrentUser have data change */
