@@ -26,6 +26,22 @@ const userSlice = createSlice({
         user.order.push({ orders, isPaid });
       }
     },
+    updatePaymentData: (state, action) => {
+      const { userId, formData } = action.payload;
+
+      const fullName = `${formData?.firstName} ${formData?.lastName}`;
+
+      const index = state.userData.findIndex((item) => item.id === userId);
+
+      if (index !== -1) {
+        state.userData[index] = {
+          ...state.userData[index],
+          fullName: formData?.fullName || fullName,
+          email: formData?.email,
+          phoneNumber: formData?.phoneNumber,
+        };
+      }
+    },
     editUser: (state, action) => {
       const { userId, formData } = action.payload;
 
@@ -43,9 +59,22 @@ const userSlice = createSlice({
         };
       }
     },
+    resetPassword: (state, action) => {
+      const { userId, formData } = action.payload;
+
+      const index = state.userData.findIndex((item) => item.id === userId);
+
+      if (index !== -1) {
+        state.userData[index] = {
+          ...state.userData[index],
+          password: formData.password,
+        };
+      }
+    },
   },
 });
 
-export const { addUser, addOrder, editUser } = userSlice.actions;
+export const { addUser, addOrder, updatePaymentData, editUser, resetPassword } =
+  userSlice.actions;
 
 export default userSlice.reducer;
