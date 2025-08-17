@@ -1,17 +1,21 @@
 import { useState } from "react";
-import { MyButton } from "../../atoms";
 import { InputField } from "../../molecules";
 import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeClosed } from "lucide-react";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { setLogin } from "../../../store/slices/authSlice";
+import { useResetPassword } from "../../../context";
 
 const FormLogin = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { userData } = useSelector((state) => state.user);
+  const { setUserId } = useResetPassword();
 
+  const [isValid, setIsValid] = useState(true);
+
+  /* State Onchange */
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
@@ -41,6 +45,8 @@ const FormLogin = () => {
       autoClose: 1000,
     });
 
+    setIsValid((prev) => !prev);
+
     if (foundUser.role === "admin") {
       setTimeout(() => {
         navigate("/admin");
@@ -60,6 +66,18 @@ const FormLogin = () => {
   const handlePasswordChange = (e) => {
     setPassword(e.target.value);
     setErrorMsg("");
+  };
+
+  const handleForgotPassword = () => {
+    const foundUser = userData.find((user) => user.email === email);
+
+    if (!foundUser) {
+      setErrorMsg("Data tidak ditemukan, Silahkan Mendaftar terlebih dahulu!");
+      return;
+    }
+
+    setUserId(foundUser.id);
+    navigate("/auth/forgot-password");
   };
 
   return (
@@ -99,10 +117,32 @@ const FormLogin = () => {
           </button>
         </div>
 
-        <MyButton type="submit">Login</MyButton>
-        <Link to="/auth/register" className="text-right hover:text-blue-800">
-          Forgot your password?
-        </Link>
+        <button
+          type="submit"
+          disabled={!isValid}
+          className={`w-full rounded-lg border-none p-3 text-white ${!isValid ? "!cursor-not-allowed bg-gray-400" : "cursor-pointer bg-blue-700 hover:bg-blue-800"}`}
+        >
+          Login
+        </button>
+
+        <div className="flex justify-between">
+          <div>
+            Don't have an account ?
+            <Link
+              to="/auth/register"
+              className="pl-2 text-right text-blue-700 hover:text-blue-800"
+            >
+              Register here
+            </Link>
+          </div>
+          <button
+            type="button"
+            className="text-right text-blue-700 hover:text-blue-800"
+            onClick={handleForgotPassword}
+          >
+            Forgot your password?
+          </button>
+        </div>
       </form>
     </>
   );
