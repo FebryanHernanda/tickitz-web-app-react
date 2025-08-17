@@ -77,7 +77,7 @@ const MoviesDetailsPages = () => {
     <>
       {/* <!-- Hero Image --> */}
       <section
-        className="flex h-[400px] w-full items-center justify-center bg-cover bg-center bg-no-repeat"
+        className="flex h-[530px] w-full items-center justify-center bg-cover bg-center bg-no-repeat"
         style={{
           backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.7)), url(https://image.tmdb.org/t/p/original${details.backdrop_path})`,
         }}
