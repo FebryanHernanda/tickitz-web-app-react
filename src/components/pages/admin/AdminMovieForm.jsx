@@ -33,17 +33,16 @@ const AdminMovieForm = () => {
   const handleDataChange = (e) => {
     const { name, value } = e.target;
 
-    setIsValid(value.length > 0);
-
     setMovieForm((prevData) => ({
       ...prevData,
       [name]: value,
     }));
+
+    setErrorMsg("");
   };
 
   /* Handle Delete Time */
   const handleDeleteTime = (id) => {
-    console.log("masuk");
     const showTimeUpdate = movieForm.showTime.filter((_, idx) => idx !== id);
 
     setMovieForm((prevData) => ({
@@ -52,17 +51,28 @@ const AdminMovieForm = () => {
     }));
   };
 
+  const validate = () => {
+    if (!movieForm.showTime || movieForm.showTime.length === 0) {
+      setErrorMsg("Mohon mengisikan waktu penayangan !");
+      return false;
+    }
+
+    if (Object.values(movieForm).some((value) => !value || value === "")) {
+      setErrorMsg("Mohon isi seluruh kolom field !");
+      return false;
+    }
+
+    return true;
+  };
+
   /* Handle Submit */
   const handleSubmit = () => {
     const newId = dataMovies.length + 1;
-    if (movieForm.showTime.length === 0) {
-      setErrorMsg("Mohon mengisikan waktu penayangan !");
-      return;
-    }
 
-    if (!isValid) {
-      setErrorMsg("Mohon isi seluruh kolom field !");
-      return;
+    if (validate()) {
+      setIsValid(true);
+    } else {
+      return setIsValid(false);
     }
 
     const movieData = {
