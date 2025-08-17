@@ -4,6 +4,7 @@ import {
   AdminData,
   AdminEditForm,
   AdminMovieForm,
+  ForgotPassword,
   LandingPages,
   LoginPages,
   MoviesDetailsPages,
@@ -73,6 +74,7 @@ function Router() {
           <Route path="auth" element={<AuthLayout />}>
             <Route path="login" element={<LoginPages />}></Route>
             <Route path="register" element={<RegisterPages />}></Route>
+            <Route path="forgot-password" element={<ForgotPassword />}></Route>
           </Route>
         </Routes>
       </BrowserRouter>
