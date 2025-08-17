@@ -4,11 +4,12 @@ import { API_KEY, BASE_URL } from "../../utils/constants";
 
 const initialState = {
   movies: [],
+  upcomingMovies: [],
   genres: [],
   searchResults: [],
+  totalPages: 1,
   loading: false,
   error: null,
-  selectedGenres: null,
 };
 
 export const fetchMovies = createAsyncThunk(
@@ -19,7 +20,25 @@ export const fetchMovies = createAsyncThunk(
         `${BASE_URL}/movie/popular?api_key=${API_KEY}&page=${page}`,
       );
 
-      return moviesResponse.data.results;
+      return {
+        results: moviesResponse.data.results,
+        totalPages: moviesResponse.data.total_pages,
+      };
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
+
+export const fetchUpcomingMovies = createAsyncThunk(
+  "movies/fetchUpcomingMovies",
+  async (_, { rejectWithValue }) => {
+    try {
+      const upcomingMoviesResponse = await axios.get(
+        `${BASE_URL}/movie/upcoming?api_key=${API_KEY}&page=1`,
+      );
+
+      return upcomingMoviesResponse.data.results;
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -64,7 +83,10 @@ export const fetchSearchMovies = createAsyncThunk(
         `${BASE_URL}/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(query)}&page=${page}`,
       );
 
-      return searchResponse.data.results;
+      return {
+        results: searchResponse.data.results,
+        totalPages: searchResponse.data.total_pages,
+      };
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -74,11 +96,6 @@ export const fetchSearchMovies = createAsyncThunk(
 const moviesSlice = createSlice({
   name: "movies",
   initialState,
-  reducers: {
-    setSelectedGenres: (state, action) => {
-      state.selectedGenres = action.payload;
-    },
-  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchMovies.pending, (state) => {
@@ -87,9 +104,24 @@ const moviesSlice = createSlice({
       })
       .addCase(fetchMovies.fulfilled, (state, action) => {
         state.loading = false;
-        state.movies = action.payload;
+        state.movies = action.payload.results;
+        state.totalPages = action.payload.totalPages;
       })
       .addCase(fetchMovies.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      /* ===========================================fetch Upcoming Movies=========================================== */
+      .addCase(fetchUpcomingMovies.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchUpcomingMovies.fulfilled, (state, action) => {
+        state.loading = false;
+        state.upcomingMovies = action.payload;
+      })
+      .addCase(fetchUpcomingMovies.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
@@ -115,7 +147,8 @@ const moviesSlice = createSlice({
       })
       .addCase(fetchSearchMovies.fulfilled, (state, action) => {
         state.loading = false;
-        state.searchResults = action.payload;
+        state.searchResults = action.payload.results;
+        state.totalPages = action.payload.totalPages;
       })
       .addCase(fetchSearchMovies.rejected, (state, action) => {
         state.loading = false;
@@ -138,5 +171,4 @@ const moviesSlice = createSlice({
   },
 });
 
-export const { setSelectedGenres } = moviesSlice.actions;
 export default moviesSlice.reducer;
