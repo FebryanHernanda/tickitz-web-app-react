@@ -150,8 +150,8 @@ const LandingPages = () => {
               </h1>
             </div>
 
-            <div className="w-full overflow-x-scroll md:overflow-x-auto">
-              <div className="flex w-[1200px] gap-5 md:w-full md:flex-wrap md:justify-between">
+            <div className="w-full overflow-x-scroll">
+              <div className="flex w-[1200px] gap-5 md:w-full md:flex-wrap md:justify-between lg:justify-center lg:gap-10 xl:justify-between">
                 <MoviesList limits={4} movies={movies} genres={genres} />
               </div>
             </div>
