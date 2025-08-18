@@ -82,12 +82,18 @@ const Navbar = ({ isMenuOpen, setIsMenuOpen }) => {
               </div>
             ) : (
               <>
-                <MyButton>
-                  <Link to="/auth/login">Sign In</Link>
-                </MyButton>
-                <MyButton>
-                  <Link to="/auth/register">Sign Up</Link>
-                </MyButton>
+                <Link
+                  to="/auth/login"
+                  className="w-25 rounded-md border-1 border-blue-600 px-3 py-3 text-center text-blue-700 hover:bg-blue-700 hover:text-white"
+                >
+                  Sign In
+                </Link>
+                <Link
+                  to="/auth/register"
+                  className="w-25 rounded-md border-1 border-blue-600 bg-blue-600 px-3 py-3 text-center text-white hover:bg-blue-700 hover:text-white"
+                >
+                  Sign Up
+                </Link>
               </>
             )}
           </div>
