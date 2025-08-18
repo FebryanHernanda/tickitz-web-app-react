@@ -42,29 +42,56 @@ const NavbarDropdown = (props) => {
       >
         {/* Navigation */}
         <div className="flex flex-col gap-4 border-b pb-4">
-          <Link className="hover:text-blue-800" to="/">
+          <Link
+            className="hover:text-blue-800"
+            to="/"
+            onClick={() => setIsMenuOpen(false)}
+          >
             Home
           </Link>
           {checkAdminLogin ? (
             <>
-              <Link className="hover:text-blue-800" to="/admin">
+              <Link
+                className="hover:text-blue-800"
+                to="/admin"
+                onClick={() => setIsMenuOpen(false)}
+              >
                 Dashboard
               </Link>
-              <Link className="hover:text-blue-800" to="/admin/data">
+              <Link
+                className="hover:text-blue-800"
+                to="/admin/data"
+                onClick={() => setIsMenuOpen(false)}
+              >
                 Movies Data
               </Link>
             </>
           ) : (
             <>
-              <Link className="hover:text-blue-800" to="/movies">
+              <Link
+                className="hover:text-blue-800"
+                to="/movies"
+                onClick={() => setIsMenuOpen(false)}
+              >
                 Movies
               </Link>
-              <Link className="hover:text-blue-800" to="#">
+              <Link
+                className="hover:text-blue-800"
+                to="#"
+                onClick={() => setIsMenuOpen(false)}
+              >
                 Buy Tickets
               </Link>
-              <Link className="hover:text-blue-800" to="/profile">
-                Profile
-              </Link>
+
+              {checkUserLogin && (
+                <Link
+                  className="hover:text-blue-800"
+                  to="/profile"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Profile
+                </Link>
+              )}
             </>
           )}
         </div>
@@ -89,16 +116,20 @@ const NavbarDropdown = (props) => {
           </div>
         ) : (
           <div className="mt-4 flex flex-col gap-3">
-            <MyButton>
-              <Link to="/auth/login" onClick={() => setIsMenuOpen(false)}>
-                Sign In
-              </Link>
-            </MyButton>
-            <MyButton>
-              <Link to="/auth/register" onClick={() => setIsMenuOpen(false)}>
-                Sign Up
-              </Link>
-            </MyButton>
+            <Link
+              to="/auth/login"
+              className="w-full rounded-md border-1 border-blue-600 px-3 py-1 text-center text-blue-700 hover:bg-blue-700 hover:text-white"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Sign In
+            </Link>
+            <Link
+              to="/auth/register"
+              className="w-full rounded-md border-1 border-blue-600 bg-blue-600 px-3 py-1 text-center text-white hover:bg-blue-700 hover:text-white"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Sign Up
+            </Link>
           </div>
         )}
       </div>
