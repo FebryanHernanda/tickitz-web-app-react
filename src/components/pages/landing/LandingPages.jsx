@@ -66,28 +66,26 @@ const LandingPages = () => {
               Sign up and get the ticket with a lot of discount
             </h6>
           </div>
-          <div className="grid w-full grid-cols-[repeat(auto-fit,minmax(150px,300px))] grid-rows-[200px_200px_200px] place-content-center gap-2 p-5">
+          <div className="grid w-full grid-cols-[repeat(auto-fit,minmax(80px,300px))] grid-rows-[200px_200px_200px] place-content-center gap-2 p-5">
             <img
               className="col-start-1 row-start-1 row-end-2 h-full w-full rounded-t-2xl object-cover"
               src={`${IMG_BASE_URL}/w500${moviesPoster.heroOne}`}
-              alt="John Wick Movie Poster "
+              alt="Movies Poster"
             />
             <img
               className="col-start-2 col-end-3 row-start-1 row-end-3 h-full w-full rounded-t-2xl object-cover"
               src={`${IMG_BASE_URL}/w500${moviesPoster.heroTwo}`}
-              alt="Lion King Movie poster"
+              alt="Movies Poster"
             />
             <img
-              // className="absolute bottom-0 col-start-1 row-start-2 lg:bottom-4 xl:bottom-0"
               className="col-start-1 row-start-2 row-end-4 h-full w-full items-end rounded-b-2xl object-cover"
               src={`${IMG_BASE_URL}/w500${moviesPoster.heroThree}`}
-              alt="Spiderman Movie Poster"
+              alt="Movies Poster"
             />
             <img
-              // className="col-start-2 row-start-2 lg:-mt-4 xl:-mt-0"
-              className="col-start-2 row-start-3 h-full w-full rounded-b-2xl object-cover"
+              className="col-start-2 row-start-3 row-end-4 h-full w-full rounded-b-2xl object-cover"
               src={`${IMG_BASE_URL}/w500${moviesPoster.heroFourth}`}
-              alt="Roblox Movie Poster"
+              alt="Movies Poster"
             />
           </div>
         </section>
