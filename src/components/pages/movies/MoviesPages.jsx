@@ -48,18 +48,23 @@ const MoviesPages = () => {
     setSearchParams({ query: value, page: 1 });
   };
 
-  /* Debounce function */
+  /* Debounce function, handle search results */
   const debouncedFetch = useMemo(
     () =>
       debounce((search, page) => {
         if (search && search.trim() !== "") {
           dispatch(fetchSearchMovies({ query: search, page }));
-        } else {
-          dispatch(fetchMovies({ page }));
         }
       }, 1000),
     [dispatch],
   );
+
+  /* Handle pagination movies data results */
+  useEffect(() => {
+    if (!querySearch && querySearch.trim() === "") {
+      dispatch(fetchMovies({ page: currentPage }));
+    }
+  }, [currentPage, querySearch, dispatch]);
 
   /* clear debounce */
   useEffect(() => {
@@ -150,7 +155,7 @@ const MoviesPages = () => {
                 </div>
               </div>
 
-              <div className="flex w-full flex-wrap justify-between gap-5">
+              <div className="flex w-full flex-wrap justify-center gap-5 md:justify-between lg:justify-normal xl:justify-between">
                 {loading ? (
                   <div className="flex w-full justify-center py-10">
                     <Loader2 className="h-10 w-10 animate-spin text-blue-500" />
