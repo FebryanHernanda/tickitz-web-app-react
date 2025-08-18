@@ -21,17 +21,20 @@ const PaymentPages = () => {
   const location = useLocation();
   const dispatch = useDispatch();
 
-  /* Get UserData */
-  const userData = useSelector((state) => state.auth.user);
+  /* Get userAuth */
+  const userAuth = useSelector((state) => state.auth.user);
+  const { userData } = useSelector((state) => state.user);
+
+  const currentUser = userData.find((data) => data.id === userAuth.id);
 
   /* State */
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [payment, setPayment] = useState("");
   const [errorMsg, setErrorMsg] = useState({});
   const [formData, setFormData] = useState({
-    fullName: "",
-    email: userData?.email,
-    phoneNumber: "",
+    fullName: currentUser?.fullName || "",
+    email: userAuth?.email,
+    phoneNumber: currentUser?.phoneNumber || "",
     paymentMethod: "",
   });
 
@@ -122,7 +125,7 @@ const PaymentPages = () => {
     e.preventDefault();
 
     if (validate()) {
-      dispatch(updatePaymentData({ userId: userData.id, formData }));
+      dispatch(updatePaymentData({ userId: userAuth.id, formData }));
       setIsModalOpen(true);
     }
   };
@@ -273,7 +276,7 @@ const PaymentPages = () => {
                 name="email"
                 id="personal-email"
                 className="mt-2 block w-full rounded-md border border-gray-300 p-2"
-                placeholder={userData.email}
+                placeholder={userAuth.email}
                 defaultValue={formData.email}
                 onChange={handleChange}
               />
