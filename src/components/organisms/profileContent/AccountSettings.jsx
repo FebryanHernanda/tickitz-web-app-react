@@ -7,58 +7,63 @@ import {
   phoneNumberPattern,
 } from "../../../utils/regex";
 import { toast } from "react-toastify";
-import { editUser } from "../../../store/slices/userSlice";
+import {
+  getProfile,
+  updatePassword,
+  updateProfile,
+} from "../../../store/slices/userSlice";
 
 const AccountSettings = () => {
   const dispatch = useDispatch();
-  const { userData } = useSelector((state) => state.user);
-  const { user } = useSelector((state) => state.auth);
+  const userData = useSelector((state) => state.user.data);
 
   const [errorMsg, setErrorMsg] = useState({});
 
+  const [reloadData, setReloadData] = useState(false);
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [currentUser, setCurrentUser] = useState({});
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
 
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     phoneNumber: "",
     email: "",
+    avatarPath: "",
+  });
+
+  const [passwordData, setPasswordData] = useState({
+    oldPassword: "",
     newPassword: "",
-    confirmPassword: "",
   });
 
   useEffect(() => {
-    const foundUser = userData.find((data) => data.id === user.id);
-    if (foundUser.fullName) {
-      const splitName = foundUser?.fullName.trim().split(" ");
-      const firstName = splitName.shift();
-      const lastName = splitName.join(" ");
-      setFirstName(firstName);
-      setLastName(lastName);
-    }
-    setCurrentUser(foundUser);
-  }, [userData, user, setCurrentUser, setFirstName, setLastName]);
+    dispatch(getProfile());
+  }, [dispatch, reloadData]);
 
   /* Check if CurrentUser have data change */
   useEffect(() => {
-    if (currentUser) {
-      setFormData({
-        firstName: firstName || "",
-        lastName: lastName || "",
-        phoneNumber: currentUser?.phoneNumber || "",
-        email: currentUser?.email || "",
-        newPassword: currentUser?.password || "",
-        confirmPassword: currentUser?.password || "",
-      });
-    }
-  }, [currentUser, firstName, lastName]);
+    setFormData({
+      firstName: userData?.data.first_name || "",
+      lastName: userData?.data.last_name || "",
+      phoneNumber: userData?.data.phone_number || "",
+      email: userData?.data.email || "",
+      // avatarPath: userData?.data.image_path || "",
+    });
+  }, [userData]);
 
   /* Check form valid */
-  const isFormValid = Object.values(formData).every(
+  const isFormValid = Object.values(formData).every((value) => {
+    if (typeof value === "string") {
+      return value.trim() !== "";
+    }
+    if (value instanceof File) {
+      return value !== null;
+    }
+    return false;
+  });
+
+  const isFormPassValid = Object.values(passwordData).every(
     (value) => value.trim() !== "",
   );
 
@@ -67,9 +72,14 @@ const AccountSettings = () => {
   const toggleConfirmPassword = () => setShowConfirmPassword((prev) => !prev);
 
   const handleInput = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, files } = e.target;
 
     setFormData((prev) => ({
+      ...prev,
+      [name]: type === "file" ? files[0] : value,
+    }));
+
+    setPasswordData((prev) => ({
       ...prev,
       [name]: value,
     }));
@@ -80,7 +90,6 @@ const AccountSettings = () => {
   const validateInput = () => {
     const newErrors = {};
     let personalNumber;
-    let password;
 
     /* ======================================Validate Fullname Field====================================== */
     if (!formData.firstName.trim()) {
@@ -114,21 +123,39 @@ const AccountSettings = () => {
       }
     }
 
+    /* ======================================Validate Profile Image====================================== */
+
+    // if (!formData.newPassword.trim() && !formData.confirmPassword.trim()) {
+    //   newErrors.password = "Kolom tidak boleh kosong!";
+    // } else {
+    //   if (formData.newPassword !== formData.confirmPassword) {
+    //     newErrors.password = "Password tidak sama!";
+    //   } else {
+    //     password = formData.newPassword;
+    //     if (!passPattern.test(password)) {
+    //       newErrors.password =
+    //         "Password harus minimal 8 karakter, berisi huruf besar, huruf kecil, dan karakter spesial";
+    //     } else {
+    //       formData.password = password;
+    //     }
+    //   }
+    // }
+
+    setErrorMsg(newErrors);
+
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const validateInputPassword = () => {
+    const newErrors = {};
     /* ======================================Validate Password====================================== */
 
-    if (!formData.newPassword.trim() && !formData.confirmPassword.trim()) {
+    if (!formData.oldPassword.trim() && !formData.newPassword.trim()) {
       newErrors.password = "Kolom tidak boleh kosong!";
     } else {
-      if (formData.newPassword !== formData.confirmPassword) {
-        newErrors.password = "Password tidak sama!";
-      } else {
-        password = formData.newPassword;
-        if (!passPattern.test(password)) {
-          newErrors.password =
-            "Password harus minimal 8 karakter, berisi huruf besar, huruf kecil, dan karakter spesial";
-        } else {
-          formData.password = password;
-        }
+      if (!passPattern.test(formData.newPassword)) {
+        newErrors.password =
+          "Password harus minimal 8 karakter, berisi huruf besar, huruf kecil, dan karakter spesial";
       }
     }
 
@@ -137,30 +164,56 @@ const AccountSettings = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmitProfile = async (e) => {
     e.preventDefault();
 
     if (validateInput()) {
-      toast.success("Data berhasil diubah!", {
-        position: "top-center",
-        autoClose: 1000,
-      });
+      try {
+        await dispatch(updateProfile(formData)).unwrap();
+        toast.success("Data berhasil diubah!", {
+          position: "top-center",
+          autoClose: 1000,
+        });
 
-      dispatch(
-        editUser({
-          userId: currentUser.id,
-          formData,
-        }),
-      );
+        setReloadData((prev) => !prev);
+      } catch (error) {
+        toast.error(error || "update profile gagal", {
+          position: "top-center",
+          autoClose: 1000,
+        });
+      }
+    }
+  };
+
+  const handleSubmitPassword = async (e) => {
+    e.preventDefault();
+
+    if (validateInputPassword()) {
+      try {
+        await dispatch(updatePassword(passwordData)).unwrap();
+        toast.success("Data berhasil diubah!", {
+          position: "top-center",
+          autoClose: 1000,
+        });
+
+        setPasswordData({
+          oldPassword: "",
+          newPassword: "",
+        });
+
+        setReloadData((prev) => !prev);
+      } catch (error) {
+        toast.error(error || "update password gagal", {
+          position: "top-center",
+          autoClose: 1000,
+        });
+      }
     }
   };
 
   return (
     <>
-      <form
-        className="flex h-full flex-col justify-between gap-[40px]"
-        onSubmit={handleSubmit}
-      >
+      <form className="flex h-full flex-col justify-between gap-[40px]">
         {/* <!-- Container Account settings --> */}
         <div className="relative flex flex-col gap-[30px] overflow-hidden rounded-[24px] bg-white p-[30px]">
           <h1 className="text-medium font-light">Account Settings</h1>
@@ -231,9 +284,31 @@ const AccountSettings = () => {
                 )}
               </div>
             </div>
+            <div className="flex w-full flex-col gap-[10px]">
+              <label htmlFor="avatarPath">Profile Image</label>
+              <input
+                type="file"
+                name="avatarPath"
+                className="cursor-pointer rounded-[16px] border-[1px] border-gray-400 bg-[#fcfdfe] p-[15px]"
+                accept="image/*"
+                onChange={handleInput}
+              />
+              {errorMsg.avatar && (
+                <p className="text-sm text-red-500">{errorMsg.avatar}</p>
+              )}
+            </div>
           </div>
         </div>
         {/* <!-- Container Account settings --> */}
+
+        <button
+          type="submit"
+          className={`w-[400px] rounded-[16px] border-none p-[20px] text-white max-[1025px]:w-full ${!isFormValid ? "cursor-not-allowed bg-gray-400" : "cursor-pointer bg-blue-700 hover:bg-blue-800"}`}
+          disabled={!isFormValid}
+          onClick={handleSubmitProfile}
+        >
+          Update Changes
+        </button>
 
         {/* <!-- Container Privacy Account settings --> */}
         <div className="flex flex-col gap-[30px] overflow-hidden rounded-[24px] bg-white p-[30px]">
@@ -242,13 +317,13 @@ const AccountSettings = () => {
           <div className="flex flex-col gap-[20px]">
             <div className="flex gap-[50px] max-[640px]:flex-wrap max-[640px]:gap-[20px]">
               <div className="relative flex w-full flex-col gap-[10px]">
-                <label htmlFor="newPassword">New Password</label>
+                <label htmlFor="oldPassword">Old Password</label>
                 <input
                   type={showPassword ? "text" : "password"}
-                  name="newPassword"
+                  name="oldPassword"
                   placeholder="Write your password"
                   className="rounded-[16px] border-[1px] border-gray-400 bg-white p-[15px]"
-                  defaultValue={currentUser.password}
+                  value={passwordData.oldPassword || ""}
                   onChange={handleInput}
                 />
                 <button
@@ -260,13 +335,13 @@ const AccountSettings = () => {
                 </button>
               </div>
               <div className="relative flex w-full flex-col gap-[10px]">
-                <label htmlFor="confirmPassword">Confirm Password</label>
+                <label htmlFor="newPassword">New Password</label>
                 <input
                   type={showConfirmPassword ? "text" : "password"}
-                  name="confirmPassword"
+                  name="newPassword"
                   placeholder="Confirm your password"
                   className="rounded-[16px] border-[1px] border-gray-400 bg-white p-[15px]"
-                  defaultValue={currentUser.password}
+                  value={passwordData.newPassword || ""}
                   onChange={handleInput}
                 />
                 <button
@@ -288,8 +363,9 @@ const AccountSettings = () => {
         {/* <!-- Container Privacy Account settings --> */}
         <button
           type="submit"
-          className={`w-[400px] rounded-[16px] border-none p-[20px] text-white max-[1025px]:w-full ${!isFormValid ? "cursor-not-allowed bg-gray-400" : "cursor-pointer bg-blue-700 hover:bg-blue-800"}`}
-          disabled={!isFormValid}
+          className={`w-[400px] rounded-[16px] border-none p-[20px] text-white max-[1025px]:w-full ${!isFormPassValid ? "cursor-not-allowed bg-gray-400" : "cursor-pointer bg-blue-700 hover:bg-blue-800"}`}
+          disabled={!isFormPassValid}
+          onClick={handleSubmitPassword}
         >
           Update Changes
         </button>
