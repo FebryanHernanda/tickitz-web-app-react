@@ -2,8 +2,9 @@ import { Link } from "react-router-dom";
 import { MyButton } from "../../atoms";
 import avaProfile from "/src/assets/background/ava-profile.png";
 import { toast } from "react-toastify";
-import { useDispatch } from "react-redux";
-import { setLogout } from "../../../store/slices/authSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../../../store/slices/authSlice";
+import { resetData } from "../../../store/slices/userSlice";
 
 const NavbarDropdown = (props) => {
   const {
@@ -16,22 +17,25 @@ const NavbarDropdown = (props) => {
   } = props;
 
   const dispatch = useDispatch();
+  const userData = useSelector((state) => state.user.data);
 
   const handlePropagations = (e) => {
     e.stopPropagation();
   };
 
-  const handleLogout = () => {
+  const handleLogout = (e) => {
+    e.preventDefault();
     toast.success("Anda Telah berhasil keluar", {
       position: "top-right",
       autoClose: 1000,
     });
 
-    dispatch(setLogout());
+    dispatch(logout());
+    dispatch(resetData());
+
     setIsLoggedIn(false);
     setIsMenuOpen(false);
     setIsAdminLoggedIn(false);
-    window.location.reload(false);
   };
 
   return (
@@ -101,11 +105,14 @@ const NavbarDropdown = (props) => {
         {checkUserLogin || checkAdminLogin ? (
           <div className="mt-4 flex w-full flex-col items-center justify-center gap-3">
             <img
-              src={avaProfile}
-              alt="Avatar"
+              src={
+                userData?.data?.image_path
+                  ? `http://localhost:8080/public${userData?.data.image_path}`
+                  : avaProfile
+              }
               className="h-15 w-15 rounded-full object-cover"
             />
-            <span className="text-xs">Hello, {dataUser.email}</span>
+            <span className="text-xs">Hello, {dataUser}</span>
 
             <button
               onClick={handleLogout}
