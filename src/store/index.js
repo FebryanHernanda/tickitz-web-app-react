@@ -15,6 +15,7 @@ import moviesReducers from "./slices/moviesSlice";
 import adminReducers from "./slices/adminSlice";
 import userReducers from "./slices/userSlice";
 import authReducers from "./slices/authSlice";
+import cinemaReducers from "./slices/cinemaSlice";
 
 // combine all reducers
 const rootReducer = combineReducers({
@@ -22,13 +23,14 @@ const rootReducer = combineReducers({
   user: userReducers,
   auth: authReducers,
   movies: moviesReducers,
+  cinema: cinemaReducers,
 });
 
 // persist configuration
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["auth"],
+  whitelist: ["auth", "user"],
 };
 
 // warp rootreducer with persist
