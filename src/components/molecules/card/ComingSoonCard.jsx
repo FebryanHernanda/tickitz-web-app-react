@@ -1,18 +1,18 @@
-const ComingSoonCard = ({ movie, genres }) => {
-  const findGenres = movie.genre_ids
-    .map((id) => {
-      const found = genres.find((genre) => genre.id === id);
-      return found;
-    })
-    .slice(0, 3);
+const ComingSoonCard = ({ movie }) => {
+  // const findGenres = movie.genre_ids
+  //   .map((id) => {
+  //     const found = genres.find((genre) => genre.id === id);
+  //     return found;
+  //   })
+  //   .slice(0, 3);
 
   /* Get Date Show */
   const moviesShowDate = new Date(movie.release_date);
-  const getDate = moviesShowDate.toLocaleString("en-US", {
+  const getMonth = moviesShowDate.toLocaleString("en-US", {
     month: "long",
   });
   const getYear = moviesShowDate.getFullYear();
-  const release_date = `${getDate} ${getYear}`;
+  const release_date = `${getMonth} ${getYear}`;
 
   return (
     <div className="relative min-w-75 overflow-hidden rounded-2xl">
@@ -33,7 +33,7 @@ const ComingSoonCard = ({ movie, genres }) => {
         <h2 className="font-semibold text-gray-800">{movie.title}</h2>
         <h4 className="-mt-2 font-semibold text-blue-700">{release_date}</h4>
         <div className="flex flex-wrap gap-2">
-          {findGenres &&
+          {/* {findGenres &&
             findGenres.length > 0 &&
             findGenres
               .filter((genre) => genre && genre.name)
@@ -44,7 +44,18 @@ const ComingSoonCard = ({ movie, genres }) => {
                 >
                   {genre.name}
                 </span>
-              ))}
+              ))} */}
+
+          {movie.genres.map((item, id) => {
+            return (
+              <span
+                key={id}
+                className="rounded-md bg-gray-200 px-2 py-1 text-xs text-gray-700"
+              >
+                {item}
+              </span>
+            );
+          })}
         </div>
       </div>
     </div>
