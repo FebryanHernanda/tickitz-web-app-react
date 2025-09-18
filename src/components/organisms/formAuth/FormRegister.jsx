@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { addUser } from "../../../store/slices/userSlice";
 import { emailPattern, passPattern } from "../../../utils/regex";
+import { register } from "../../../store/slices/authSlice";
 
 const FormRegister = () => {
   const navigate = useNavigate();
@@ -25,15 +26,56 @@ const FormRegister = () => {
 
   const togglePassword = () => setShowPassword((prev) => !prev);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const checkUser = userData.find((data) => data.email === email);
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   const checkUser = userData.find((data) => data.email === email);
 
-    // Validate Email
+  //   // Validate Email
+  //   if (!email) return setEmailError("Kolom Email tidak boleh kosong!");
+  //   if (!emailPattern.test(email))
+  //     return setEmailError("Format email tidak valid!");
+  //   if (checkUser) return setEmailError("Email telah digunakan!");
+  //   setEmailError("");
+
+  //   // Validate Password
+  //   if (!password)
+  //     return setPasswordError("Kolom Password tidak boleh kosong!");
+  //   if (!passPattern.test(password))
+  //     return setPasswordError(
+  //       "Password harus minimal 8 karakter, berisi huruf besar, huruf kecil, dan karakter spesial.",
+  //     );
+  //   setPasswordError("");
+
+  //   // Validate Checkbox
+  //   if (!checked)
+  //     return setCheckedError("Pastikan anda telah menyetujui persyaratan!");
+  //   setCheckedError("");
+
+  //   const user = {
+  //     id: userData.length + 1,
+  //     email,
+  //     password,
+  //     role: "user",
+  //     order: [],
+  //   };
+
+  //   toast.success("Register Berhasil!", {
+  //     position: "top-center",
+  //     autoClose: 1000,
+  //   });
+
+  //   setIsValid(false);
+  //   dispatch(addUser(user));
+
+  //   setTimeout(() => navigate("/auth/login"), 2000);
+  // };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     if (!email) return setEmailError("Kolom Email tidak boleh kosong!");
     if (!emailPattern.test(email))
       return setEmailError("Format email tidak valid!");
-    if (checkUser) return setEmailError("Email telah digunakan!");
+    // if (checkUser) return setEmailError("Email telah digunakan!");
     setEmailError("");
 
     // Validate Password
@@ -50,23 +92,21 @@ const FormRegister = () => {
       return setCheckedError("Pastikan anda telah menyetujui persyaratan!");
     setCheckedError("");
 
-    const user = {
-      id: userData.length + 1,
-      email,
-      password,
-      role: "user",
-      order: [],
-    };
+    try {
+      await dispatch(register({ email, password }));
 
-    toast.success("Register Berhasil!", {
-      position: "top-center",
-      autoClose: 1000,
-    });
+      toast.success("Register Berhasil!", {
+        position: "top-center",
+        autoClose: 1000,
+      });
 
-    setIsValid(false);
-    dispatch(addUser(user));
-
-    setTimeout(() => navigate("/auth/login"), 2000);
+      setTimeout(() => navigate("/auth/login"), 2000);
+    } catch (error) {
+      toast.error(error || "Register gagal", {
+        position: "top-center",
+        autoClose: 2000,
+      });
+    }
   };
 
   const handleEmailChange = (e) => {
