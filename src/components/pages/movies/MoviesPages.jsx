@@ -3,21 +3,15 @@ import { MoviesList, Newslatters } from "../../organisms";
 
 import heroBg from "/src/assets/background/background.png";
 import { useSearchParams } from "react-router-dom";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  fetchMovies,
-  fetchMoviesByGenres,
-  fetchSearchMovies,
-} from "../../../store/slices/moviesSlice";
+import { getMoviesSearch } from "../../../store/slices/moviesSlice";
 import debounce from "lodash.debounce";
 
 const MoviesPages = () => {
   const dispatch = useDispatch();
 
-  const { searchResults, totalPages, movies, genres, loading } = useSelector(
-    (state) => state.movies,
-  );
+  const { totalPages, movies, loading } = useSelector((state) => state.movies);
 
   const [searchParams, setSearchParams] = useSearchParams("");
 
@@ -25,6 +19,11 @@ const MoviesPages = () => {
   const currentPage = Number(searchParams.get("pages") || "1");
 
   const [selectedGenres, setSelectedGenres] = useState(null);
+
+  /* Check Getmovies filter endpoint */
+  useEffect(() => {
+    dispatch(getMoviesSearch());
+  }, [dispatch]);
 
   /* Reset Url Search Params */
   useEffect(() => {
@@ -35,13 +34,6 @@ const MoviesPages = () => {
     }
   }, [querySearch, setSearchParams, searchParams]);
 
-  /* fetching Movies by genres */
-  useEffect(() => {
-    if (selectedGenres) {
-      dispatch(fetchMoviesByGenres(selectedGenres));
-    }
-  }, [dispatch, selectedGenres]);
-
   /* Search Logic with debounce library */
   const handleSearch = (e) => {
     const { value } = e.target;
@@ -49,30 +41,42 @@ const MoviesPages = () => {
   };
 
   /* Debounce function, handle search results */
+
+  const prevSearchRef = useRef(querySearch);
+
   const debouncedFetch = useMemo(
     () =>
-      debounce((search, page) => {
+      debounce((search, page, prevSearch) => {
         if (search && search.trim() !== "") {
-          dispatch(fetchSearchMovies({ query: search, page }));
+          dispatch(
+            getMoviesSearch({
+              search: search,
+              genre: selectedGenres,
+              page: page,
+            }),
+          );
+        } else if (prevSearch && prevSearch.trim() !== "") {
+          dispatch(getMoviesSearch({ search: "", page }));
         }
       }, 1000),
-    [dispatch],
+    [dispatch, selectedGenres],
   );
-
-  /* Handle pagination movies data results */
-  useEffect(() => {
-    if (!querySearch && querySearch.trim() === "") {
-      dispatch(fetchMovies({ page: currentPage }));
-    }
-  }, [currentPage, querySearch, dispatch]);
 
   /* clear debounce */
   useEffect(() => {
-    debouncedFetch(querySearch, currentPage);
+    debouncedFetch(querySearch, currentPage, prevSearchRef.current);
+    prevSearchRef.current = querySearch;
     return () => {
       debouncedFetch.cancel();
     };
   }, [querySearch, currentPage, debouncedFetch]);
+
+  /* Handle pagination movies data results */
+  // useEffect(() => {
+  //   if (!querySearch && querySearch.trim() === "") {
+  //     dispatch(fetchMovies({ page: currentPage }));
+  //   }
+  // }, [currentPage, querySearch, dispatch]);
 
   /* Handle Paginations */
   const handlePaginations = (page) => {
@@ -88,18 +92,17 @@ const MoviesPages = () => {
 
   /* Handle Filter */
   const handleFilter = (genreId, value) => {
-    setSelectedGenres(genreId);
+    setSelectedGenres(value);
     setSearchParams({ genres: value.toLowerCase() });
   };
 
   const listFilterGenres = {
-    53: "Thriller",
-    27: "Horror",
-    10749: "Romance",
-    878: "Sci-Fi",
+    1: "Thriller",
+    2: "Horror",
+    3: "Romance",
+    4: "Sci-Fi",
+    5: "Action",
   };
-
-  const moviesData = querySearch ? searchResults : movies;
 
   return (
     <>
@@ -144,7 +147,7 @@ const MoviesPages = () => {
                       return (
                         <li
                           key={key}
-                          className={`cursor-pointer rounded-lg p-2 hover:bg-blue-700 hover:text-white ${selectedGenres === key && "bg-blue-700 text-white"}`}
+                          className={`cursor-pointer rounded-lg p-2 hover:bg-blue-700 hover:text-white ${selectedGenres === value && "bg-blue-700 text-white"}`}
                           onClick={() => handleFilter(key, value)}
                         >
                           {value}
@@ -160,12 +163,12 @@ const MoviesPages = () => {
                   <div className="flex w-full justify-center py-10">
                     <Loader2 className="h-10 w-10 animate-spin text-blue-500" />
                   </div>
-                ) : searchResults?.length === 0 && querySearch ? (
+                ) : movies?.length === 0 ? (
                   <p className="w-full text-center text-black">
                     Film tidak ditemukan!
                   </p>
                 ) : (
-                  <MoviesList movies={moviesData} genres={genres} />
+                  <MoviesList movies={movies} />
                 )}
               </div>
 
