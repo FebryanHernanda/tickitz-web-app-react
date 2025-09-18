@@ -11,10 +11,8 @@ import { useSelector } from "react-redux";
 const ProfilePages = () => {
   const [page, setPage] = useState("settings");
 
-  const { userData } = useSelector((state) => state.user);
-  const { user } = useSelector((state) => state.auth);
-
-  const currentUser = userData.find((data) => data.id === user.id);
+  const userData = useSelector((state) => state.user.data);
+  const loading = useSelector((state) => state.user.loading);
 
   // eslint-disable-next-line no-unused-vars
   const [searchParams, setSearchParams] = useSearchParams();
@@ -43,14 +41,18 @@ const ProfilePages = () => {
                 <div className="flex flex-col items-center gap-5">
                   <div className="h-20 w-20 overflow-hidden rounded-full bg-orange-500">
                     <img
-                      src={avaProfile}
+                      src={
+                        userData?.data?.image_path
+                          ? `http://localhost:8080/public${userData?.data.image_path}`
+                          : avaProfile
+                      }
                       alt="Photo Profile Avatar"
                       className="h-full w-full object-cover"
                     />
                   </div>
                   <div className="flex flex-col gap-[5px] text-center">
                     <h2 className="text-xl font-bold">
-                      {currentUser.fullName || currentUser.email}
+                      {loading ? "Loading..." : userData?.data.first_name || ""}
                     </h2>
                     <h4 className="text-lg">Moviegoers</h4>
                   </div>
