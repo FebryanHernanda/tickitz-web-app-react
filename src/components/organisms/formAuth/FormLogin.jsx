@@ -3,15 +3,15 @@ import { InputField } from "../../molecules";
 import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeClosed } from "lucide-react";
 import { toast } from "react-toastify";
-import { useDispatch, useSelector } from "react-redux";
-import { setLogin } from "../../../store/slices/authSlice";
-import { useResetPassword } from "../../../context";
+import { useDispatch } from "react-redux";
+import { login } from "../../../store/slices/authSlice";
+// import { useResetPassword } from "../../../context";
+import { getProfile } from "../../../store/slices/userSlice";
 
 const FormLogin = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { userData } = useSelector((state) => state.user);
-  const { setUserId } = useResetPassword();
+  // const { setUserId } = useResetPassword();
 
   const [isValid, setIsValid] = useState(true);
 
@@ -23,38 +23,62 @@ const FormLogin = () => {
 
   const togglePassword = () => setShowPassword((prev) => !prev);
 
-  const handleSubmit = (e) => {
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+
+  //   const foundUser = userData.find((user) => user.email === email);
+
+  //   if (!foundUser) {
+  //     setErrorMsg("Data tidak ditemukan, Silahkan Mendaftar terlebih dahulu!");
+  //     return;
+  //   }
+
+  //   if (foundUser.password !== password) {
+  //     setErrorMsg("Username/Password salah!");
+  //     return;
+  //   }
+
+  //   dispatch(setLogin({ user: foundUser, role: foundUser.role }));
+
+  //   toast.success("Login Berhasil!", {
+  //     position: "top-center",
+  //     autoClose: 1000,
+  //   });
+
+  //   setIsValid((prev) => !prev);
+
+  //   if (foundUser.role === "admin") {
+  //     setTimeout(() => {
+  //       navigate("/admin");
+  //     }, 1500);
+  //   } else {
+  //     setTimeout(() => {
+  //       navigate("/");
+  //     }, 1500);
+  //   }
+  // };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const foundUser = userData.find((user) => user.email === email);
+    try {
+      const resultLogin = await dispatch(login({ email, password })).unwrap();
+      toast.success("Login Berhasil!", {
+        position: "top-center",
+        autoClose: 1000,
+      });
 
-    if (!foundUser) {
-      setErrorMsg("Data tidak ditemukan, Silahkan Mendaftar terlebih dahulu!");
-      return;
-    }
-
-    if (foundUser.password !== password) {
-      setErrorMsg("Username/Password salah!");
-      return;
-    }
-
-    dispatch(setLogin({ user: foundUser, role: foundUser.role }));
-
-    toast.success("Login Berhasil!", {
-      position: "top-center",
-      autoClose: 1000,
-    });
-
-    setIsValid((prev) => !prev);
-
-    if (foundUser.role === "admin") {
-      setTimeout(() => {
-        navigate("/admin");
-      }, 1500);
-    } else {
-      setTimeout(() => {
-        navigate("/");
-      }, 1500);
+      if (resultLogin.role == "admin") {
+        setTimeout(() => navigate("/admin"), 1500);
+      } else {
+        dispatch(getProfile());
+        setTimeout(() => navigate("/"), 1500);
+      }
+    } catch (error) {
+      toast.error(error || "Login gagal", {
+        position: "top-center",
+        autoClose: 1000,
+      });
     }
   };
 
@@ -64,21 +88,27 @@ const FormLogin = () => {
   };
 
   const handlePasswordChange = (e) => {
-    setPassword(e.target.value);
+    const value = e.target.value;
+    setPassword(value);
     setErrorMsg("");
-  };
-
-  const handleForgotPassword = () => {
-    const foundUser = userData.find((user) => user.email === email);
-
-    if (!foundUser) {
-      setErrorMsg("Data tidak ditemukan, Silahkan Mendaftar terlebih dahulu!");
-      return;
+    if (value) {
+      setIsValid(true);
+    } else {
+      setIsValid(false);
     }
-
-    setUserId(foundUser.id);
-    navigate("/auth/forgot-password");
   };
+
+  // const handleForgotPassword = () => {
+  //   const foundUser = userData.find((user) => user.email === email);
+
+  //   if (!foundUser) {
+  //     setErrorMsg("Data tidak ditemukan, Silahkan Mendaftar terlebih dahulu!");
+  //     return;
+  //   }
+
+  //   setUserId(foundUser.id);
+  //   navigate("/auth/forgot-password");
+  // };
 
   return (
     <>
@@ -138,7 +168,7 @@ const FormLogin = () => {
           <button
             type="button"
             className="text-right text-blue-700 hover:text-blue-800"
-            onClick={handleForgotPassword}
+            // onClick={handleForgotPassword}
           >
             Forgot your password?
           </button>
