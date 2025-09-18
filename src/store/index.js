@@ -28,6 +28,7 @@ const rootReducer = combineReducers({
 const persistConfig = {
   key: "root",
   storage,
+  whitelist: ["auth"],
 };
 
 // warp rootreducer with persist
