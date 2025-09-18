@@ -1,14 +1,14 @@
 import { useNavigate } from "react-router-dom";
 
-const MovieCard = ({ movie, genres }) => {
+const MovieCard = ({ movie }) => {
   const navigate = useNavigate();
 
-  const findGenres = movie.genre_ids
-    .map((id) => {
-      const found = genres.find((genre) => genre.id === id);
-      return found;
-    })
-    .slice(0, 3);
+  // const findGenres = movie.genre_ids
+  //   .map((id) => {
+  //     const found = genres.find((genre) => genre.id === id);
+  //     return found;
+  //   })
+  //   .slice(0, 3);
 
   const handleDetails = () => {
     navigate(`/movies/details/${movie.id}`);
@@ -57,7 +57,7 @@ const MovieCard = ({ movie, genres }) => {
       <div className="flex flex-col justify-between gap-5 px-2 pt-1 lg:h-fit">
         <h3 className="text-lg font-semibold text-gray-800">{movie.title}</h3>
         <div className="flex flex-wrap gap-2">
-          {findGenres &&
+          {/* {findGenres &&
             findGenres.length > 0 &&
             findGenres
               .filter((genre) => genre && genre.name)
@@ -68,7 +68,17 @@ const MovieCard = ({ movie, genres }) => {
                 >
                   {genre.name}
                 </span>
-              ))}
+              ))} */}
+          {movie.genres.map((item, id) => {
+            return (
+              <span
+                key={id}
+                className="rounded-md bg-gray-200 px-2 py-1 text-xs text-gray-700"
+              >
+                {item}
+              </span>
+            );
+          })}
         </div>
 
         <div className="flex gap-2 lg:hidden">
