@@ -9,14 +9,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { IMG_BASE_URL } from "../../../utils/constants";
 import { useEffect, useRef } from "react";
 import {
-  fetchMovies,
-  fetchMoviesGenres,
-  fetchUpcomingMovies,
+  getPopularMovies,
+  getUpcomingMovies,
 } from "../../../store/slices/moviesSlice";
 
 const LandingPages = () => {
   const dispatch = useDispatch();
-  const { movies, upcomingMovies, genres } = useSelector(
+  const { movies, upcomingMovies, popularMovies } = useSelector(
     (state) => state.movies,
   );
 
@@ -34,13 +33,20 @@ const LandingPages = () => {
   /* Slider upcoming movies */
 
   /* Check if state Data is null */
+  // useEffect(() => {
+  //   if (!movies.length || !genres.length || !upcomingMovies.length) {
+  //     dispatch(fetchMoviesGenres());
+  //     dispatch(fetchMovies({ page: 1 }));
+  //     dispatch(fetchUpcomingMovies());
+  //   }
+  // }, [dispatch, movies.length, genres.length, upcomingMovies.length]);
+
   useEffect(() => {
-    if (!movies.length || !genres.length || !upcomingMovies.length) {
-      dispatch(fetchMoviesGenres());
-      dispatch(fetchMovies({ page: 1 }));
-      dispatch(fetchUpcomingMovies());
+    if (!popularMovies.length && !upcomingMovies.length) {
+      dispatch(getPopularMovies());
+      dispatch(getUpcomingMovies());
     }
-  }, [dispatch, movies.length, genres.length, upcomingMovies.length]);
+  }, [dispatch, popularMovies.length, upcomingMovies.length]);
 
   const moviesPoster = {
     heroOne: movies?.[0]?.poster_path,
@@ -150,7 +156,7 @@ const LandingPages = () => {
 
             <div className="w-full overflow-x-scroll">
               <div className="flex w-[1200px] gap-5 md:w-full md:flex-wrap md:justify-between lg:justify-center lg:gap-10 xl:justify-between">
-                <MoviesList limits={4} movies={movies} genres={genres} />
+                <MoviesList limits={4} movies={popularMovies} />
               </div>
             </div>
           </div>
