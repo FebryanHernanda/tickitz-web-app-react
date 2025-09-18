@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../../store/slices/authSlice";
 import { resetData } from "../../../store/slices/userSlice";
+import { persistor } from "../../../store";
 
 const NavbarDropdown = (props) => {
   const {
@@ -32,6 +33,7 @@ const NavbarDropdown = (props) => {
 
     dispatch(logout());
     dispatch(resetData());
+    persistor.purge();
 
     setIsLoggedIn(false);
     setIsMenuOpen(false);
