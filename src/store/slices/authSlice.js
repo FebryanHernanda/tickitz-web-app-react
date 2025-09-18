@@ -123,6 +123,7 @@ const authSlice = createSlice({
         state.loading = false;
         state.token = null;
         state.role = null;
+        state.user = null;
       })
       .addCase(logout.rejected, (state, action) => {
         state.loading = false;
