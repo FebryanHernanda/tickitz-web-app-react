@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Circle, Line } from "../../atoms";
 import { ModalPayment } from "../../molecules";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Check } from "lucide-react";
 
@@ -14,27 +14,30 @@ import bcaIcon from "/src/assets/icons/payment-method/bca-icon.svg";
 import briIcon from "/src/assets/icons/payment-method/bri-icon.svg";
 import ovoIcon from "/src/assets/icons/payment-method/ovo-icon.svg";
 import { emailPattern, phoneNumberPattern } from "../../../utils/regex";
-import { updatePaymentData } from "../../../store/slices/userSlice";
 
 const PaymentPages = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
   /* Get userAuth */
   const userAuth = useSelector((state) => state.auth.user);
-  const { userData } = useSelector((state) => state.user);
+  const { data } = useSelector((state) => state.user.data);
 
-  const currentUser = userData.find((data) => data.id === userAuth.id);
+  const fullName = `${data.first_name} ${data.last_name}`;
+
+  /* Split code phonenumber */
+  const phone = data.phone_number;
+  const phoneNumber = phone.replace(/^62/, "");
 
   /* State */
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [payment, setPayment] = useState("");
+  const [payment, setPayment] = useState(0);
   const [errorMsg, setErrorMsg] = useState({});
   const [formData, setFormData] = useState({
-    fullName: currentUser?.fullName || "",
-    email: userAuth?.email,
-    phoneNumber: currentUser?.phoneNumber || "",
+    fullName: fullName || "",
+    email: data.email,
+    phoneNumber: phoneNumber || "",
     paymentMethod: "",
   });
 
@@ -57,17 +60,12 @@ const PaymentPages = () => {
 
   if (!location.state) return null;
 
-  const { details, time, dateShow, cinema, seat } = location.state;
-
-  /* count Price */
-  const countPrices = () => {
-    const price = seat.length * 10;
-    return `$ ${price}`;
-  };
+  const { moviesDetails, selectedCinema, getDate, seat, totalPrices } =
+    location.state;
 
   /* Check form valid */
   const isFormValid = Object.values(formData).every(
-    (value) => value.trim() !== "",
+    (value) => value !== null && value !== undefined && value !== "",
   );
 
   /* Handle controlled input */
@@ -125,7 +123,6 @@ const PaymentPages = () => {
     e.preventDefault();
 
     if (validate()) {
-      dispatch(updatePaymentData({ userId: userAuth.id, formData }));
       setIsModalOpen(true);
     }
   };
@@ -170,7 +167,7 @@ const PaymentPages = () => {
                 name="date-showing"
                 id="date-showing"
                 className="mt-2 block w-full rounded-md border border-gray-300 p-2"
-                value={`${dateShow} at ${time}pm`}
+                value={`${getDate} at ${selectedCinema.ScheduleTime}pm`}
                 disabled
               />
             </div>
@@ -186,7 +183,7 @@ const PaymentPages = () => {
                 name="movie-title"
                 id="movie-title"
                 className="mt-2 block w-full rounded-md border border-gray-300 p-2"
-                value={details.title}
+                value={moviesDetails?.title}
                 disabled
               />
             </div>
@@ -202,7 +199,7 @@ const PaymentPages = () => {
                 name="cinema-name"
                 id="cinema-name"
                 className="mt-2 block w-full rounded-md border border-gray-300 p-2"
-                value={`${cinema} Cinema`}
+                value={`${selectedCinema.CinemaName} Cinema`}
                 disabled
               />
             </div>
@@ -234,7 +231,7 @@ const PaymentPages = () => {
                 name="total-payment"
                 id="total-payment"
                 className="mt-2 block w-full rounded-md border border-gray-300 p-2"
-                value={countPrices()}
+                value={totalPrices}
                 disabled
               />
             </div>
@@ -249,7 +246,7 @@ const PaymentPages = () => {
                 className="block text-sm font-medium text-gray-700"
                 htmlFor="personal-name"
               >
-                Full Name
+                Name
               </label>
               <input
                 type="text"
@@ -318,59 +315,59 @@ const PaymentPages = () => {
             <div className="payment-method-wrapper flex flex-wrap justify-between gap-5">
               <button
                 type="button"
-                className={`flex w-full justify-center rounded-md border-1 border-gray-200 p-3 shadow lg:w-40 ${payment === "Gpay" ? "bg-blue-500 text-white" : "bg-white hover:bg-gray-100"}`}
-                onClick={() => setPayment("Gpay")}
+                className={`flex w-full justify-center rounded-md border-1 border-gray-200 p-3 shadow lg:w-40 ${payment === 8 ? "bg-blue-500 text-white" : "bg-white hover:bg-gray-100"}`}
+                onClick={() => setPayment(8)}
               >
                 <img src={gpayIcon} alt="Google Pay Icon" />
               </button>
               <button
                 type="button"
                 value="VISA"
-                className={`flex w-full justify-center rounded-md border-1 border-gray-200 p-3 shadow lg:w-40 ${payment === "VISA" ? "bg-blue-500 text-white" : "bg-white hover:bg-gray-100"}`}
-                onClick={() => setPayment("VISA")}
+                className={`flex w-full justify-center rounded-md border-1 border-gray-200 p-3 shadow lg:w-40 ${payment === 4 ? "bg-blue-500 text-white" : "bg-white hover:bg-gray-100"}`}
+                onClick={() => setPayment(4)}
               >
                 <img src={visaIcon} alt="Visa Icon" />
               </button>
               <button
                 type="button"
-                className={`flex w-full justify-center rounded-md border-1 border-gray-200 p-3 shadow lg:w-40 ${payment === "Gopay" ? "bg-blue-500 text-white" : "bg-white hover:bg-gray-100"}`}
-                onClick={() => setPayment("Gopay")}
+                className={`flex w-full justify-center rounded-md border-1 border-gray-200 p-3 shadow lg:w-40 ${payment === 2 ? "bg-blue-500 text-white" : "bg-white hover:bg-gray-100"}`}
+                onClick={() => setPayment(2)}
               >
                 <img src={gopayIcon} alt="Gopay Icon" />
               </button>
               <button
                 type="button"
-                className={`flex w-full justify-center rounded-md border-1 border-gray-200 p-3 shadow lg:w-40 ${payment === "Paypal" ? "bg-blue-500 text-white" : "bg-white hover:bg-gray-100"}`}
-                onClick={() => setPayment("Paypal")}
+                className={`flex w-full justify-center rounded-md border-1 border-gray-200 p-3 shadow lg:w-40 ${payment === 5 ? "bg-blue-500 text-white" : "bg-white hover:bg-gray-100"}`}
+                onClick={() => setPayment(5)}
               >
                 <img src={paypalIcon} alt="Paypal Icon" />
               </button>
               <button
                 type="button"
-                className={`flex w-full justify-center rounded-md border-1 border-gray-200 p-3 shadow lg:w-40 ${payment === "DANA" ? "bg-blue-500 text-white" : "bg-white hover:bg-gray-100"}`}
-                onClick={() => setPayment("DANA")}
+                className={`flex w-full justify-center rounded-md border-1 border-gray-200 p-3 shadow lg:w-40 ${payment === 6 ? "bg-blue-500 text-white" : "bg-white hover:bg-gray-100"}`}
+                onClick={() => setPayment(6)}
               >
                 <img src={danaIcon} alt="Dana Icon" />
               </button>
               <button
                 type="button"
                 value="BCA"
-                className={`flex w-full justify-center rounded-md border-1 border-gray-200 p-3 shadow lg:w-40 ${payment === "BCA" ? "bg-blue-500 text-white" : "bg-white hover:bg-gray-100"}`}
-                onClick={() => setPayment("BCA")}
+                className={`flex w-full justify-center rounded-md border-1 border-gray-200 p-3 shadow lg:w-40 ${payment === 3 ? "bg-blue-500 text-white" : "bg-white hover:bg-gray-100"}`}
+                onClick={() => setPayment(3)}
               >
                 <img src={bcaIcon} alt="BCA Icon" />
               </button>
               <button
                 type="button"
-                className={`flex w-full justify-center rounded-md border-1 border-gray-200 p-3 shadow lg:w-40 ${payment === "BRI" ? "bg-blue-500 text-white" : "bg-white hover:bg-gray-100"}`}
-                onClick={() => setPayment("BRI")}
+                className={`flex w-full justify-center rounded-md border-1 border-gray-200 p-3 shadow lg:w-40 ${payment === 7 ? "bg-blue-500 text-white" : "bg-white hover:bg-gray-100"}`}
+                onClick={() => setPayment(7)}
               >
                 <img src={briIcon} alt="BRI Icon" />
               </button>
               <button
                 type="button"
-                className={`flex w-full justify-center rounded-md border-1 border-gray-200 p-3 shadow lg:w-40 ${payment === "OVO" ? "bg-blue-500 text-white" : "bg-white hover:bg-gray-100"}`}
-                onClick={() => setPayment("OVO")}
+                className={`flex w-full justify-center rounded-md border-1 border-gray-200 p-3 shadow lg:w-40 ${payment === 1 ? "bg-blue-500 text-white" : "bg-white hover:bg-gray-100"}`}
+                onClick={() => setPayment(1)}
               >
                 <img src={ovoIcon} alt="OVO Icon" />
               </button>
@@ -390,10 +387,13 @@ const PaymentPages = () => {
       {/* Modal Payment Component, call if state isModalOpen = true */}
       <ModalPayment
         isOpen={isModalOpen}
-        data={location.state}
-        prices={countPrices()}
+        ScheduleTime={getDate}
+        seatData={seat}
         onClose={setIsModalOpen}
         paymentMethod={payment}
+        cinemaData={selectedCinema}
+        prices={totalPrices}
+        formData={formData}
       />
     </section>
   );
