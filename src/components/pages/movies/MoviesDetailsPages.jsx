@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getMoviesDetails } from "../../../store/slices/moviesSlice";
 import { getCinemaSchedule } from "../../../store/slices/cinemaSlice";
 import getCinemaLogo from "../../../data/cinema/getCinemaLogo";
+import { API_URL } from "../../../utils/constants";
 
 const MoviesDetailsPages = () => {
   const dispatch = useDispatch();
@@ -75,7 +76,7 @@ const MoviesDetailsPages = () => {
       <section
         className="flex h-[530px] w-full items-center justify-center bg-cover bg-center bg-no-repeat"
         style={{
-          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.7)), url(https://image.tmdb.org/t/p/original${moviesDetails.backdrop_path})`,
+          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.7)), url(${API_URL}/public/movies${moviesDetails.backdrop_path})`,
         }}
       ></section>
       {/* <!-- Hero  Image--> */}
@@ -85,7 +86,7 @@ const MoviesDetailsPages = () => {
         <section>
           <div className="relative bottom-55 -mb-50 flex w-full flex-col items-center gap-10 md:bottom-35 md:-mb-30 md:flex-row lg:bottom-45 lg:-mb-35 xl:bottom-51 xl:-mb-45">
             <img
-              src={`https://image.tmdb.org/t/p/original${moviesDetails.poster_path}`}
+              src={`${API_URL}/public/movies${moviesDetails.poster_path}`}
               alt="Poster Poster Movies"
               className="w-60 rounded-2xl shadow-lg md:w-70 lg:w-70"
             />
