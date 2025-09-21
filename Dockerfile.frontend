@@ -8,7 +8,9 @@ RUN npm install
 
 # Copy source & env
 COPY . .
-COPY .env .
+
+# remove for ci/cd ghcr
+# COPY .env .
 
 # Build Vite project
 RUN npm run build
