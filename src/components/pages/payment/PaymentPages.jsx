@@ -24,11 +24,12 @@ const PaymentPages = () => {
   const userAuth = useSelector((state) => state.auth.user);
   const { data } = useSelector((state) => state.user.data);
 
-  const fullName = `${data.first_name} ${data.last_name}`;
+  const fullName = `${data?.first_name ?? ""} ${data?.last_name ?? ""}`.trim();
 
   /* Split code phonenumber */
-  const phone = data.phone_number;
-  const phoneNumber = phone.replace(/^62/, "");
+  const phoneNumber = data?.phone_number
+    ? data.phone_number.replace(/^62/, "")
+    : "";
 
   /* State */
   const [isModalOpen, setIsModalOpen] = useState(false);
