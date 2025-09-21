@@ -4,9 +4,16 @@ import hiflixLogo from "/src/assets/icons/sponsor/hiflix-logo.svg";
 
 /* Cinemas Icon Data */
 const cinemaLogos = {
-  cineone21: cineOneLogo,
-  ebv: ebvLogo,
-  hiflix: hiflixLogo,
+  EBV: ebvLogo,
+  CineOne: cineOneLogo,
+  Hiflix: hiflixLogo,
 };
 
-export default cinemaLogos;
+const getCinemaLogo = (cinemaName) => {
+  if (!cinemaName) return null;
+
+  const brand = cinemaName.split(" ")[0];
+  return cinemaLogos[brand] || null;
+};
+
+export default getCinemaLogo;
