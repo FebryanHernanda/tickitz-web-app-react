@@ -33,4 +33,4 @@ jobs:
           context: .
           file: Dockerfile.frontend
           push: true
-          tags: ghcr.io/febryanhernanda/tickitz-web-app-react:latest
+          tags: ghcr.io/FebryanHernanda/tickitz-web-app-react:latest
