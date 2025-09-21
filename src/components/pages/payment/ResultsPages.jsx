@@ -1,6 +1,4 @@
-import { useSelector } from "react-redux";
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { MoveDown, MoveRight } from "lucide-react";
 
 import heroBg from "/src/assets/background/background.png";
@@ -9,31 +7,23 @@ import barcodeImg from "/src/assets/barcode.svg";
 
 const ResultsPages = () => {
   const navigate = useNavigate();
-  const { user } = useSelector((state) => state.auth);
-  const { userData } = useSelector((state) => state.user);
+  const location = useLocation();
 
-  const currentUser = userData.find((data) => data.id === user.id);
+  const { cinemaData, cinemaBooking } = location.state;
 
-  const lastOrder = currentUser.order?.[currentUser.order.length - 1] || null;
+  console.log(cinemaData);
+  console.log(cinemaBooking);
 
-  /* Check data null back to landing */
-  useEffect(() => {
-    if (!lastOrder) {
-      navigate("/");
-    }
-  }, [lastOrder, navigate]);
+  /* Convert SeatsID */
+  const rows = ["A", "B", "C", "D", "E", "F", "G"];
+  const totalCols = 14;
 
-  if (!lastOrder) return null;
-
-  /* Convert Date */
-  const moviesDate = new Date(lastOrder.orders.dateShow).toLocaleString(
-    "en-US",
-    {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    },
-  );
+  const getSeatLabel = (seat_id) => {
+    const rowIndex = Math.floor((seat_id - 1) / totalCols);
+    const colIndex = ((seat_id - 1) % totalCols) + 1;
+    return `${rows[rowIndex]}${colIndex}`;
+  };
+  /* Convert SeatsID */
 
   /* HandleButton Done */
   const handleButton = () => {
@@ -94,15 +84,24 @@ const ResultsPages = () => {
                 <div className="flex flex-col gap-5">
                   <div>
                     <h4 className="text-lg text-gray-400">Movie</h4>
-                    <h4 className="">{`${lastOrder.orders.details.title.slice(0, 15)} ...`}</h4>
+                    <h4 className="">{`${cinemaData?.MovieName.slice(0, 15)} ...`}</h4>
                   </div>
                   <div>
                     <h4 className="text-lg text-gray-400">Date</h4>
-                    <h4 className="">{moviesDate}</h4>
+                    <h4 className="">
+                      {" "}
+                      {new Date(cinemaData.ScheduleDate).toLocaleDateString(
+                        "en-GB",
+                        {
+                          day: "2-digit",
+                          month: "short",
+                        },
+                      )}
+                    </h4>
                   </div>
                   <div>
                     <h4 className="text-lg text-gray-400">Count</h4>
-                    <h4 className="">{`${lastOrder.orders.seat.length} pcs`}</h4>
+                    <h4 className="">{`${cinemaBooking.seats.length} pcs`}</h4>
                   </div>
                 </div>
                 <div className="flex flex-col gap-5">
@@ -112,13 +111,15 @@ const ResultsPages = () => {
                   </div>
                   <div>
                     <h4 className="text-lg text-gray-400">Time</h4>
-                    <h4 className="">{`${lastOrder.orders.time}`}</h4>
+                    <h4 className="">{`${cinemaData.ScheduleTime}`}</h4>
                   </div>
                   <div>
                     <h4 className="text-lg text-gray-400">Seats</h4>
-                    <h4 className="">
-                      {lastOrder.orders.seat.length > 0
-                        ? lastOrder.orders.seat.join(", ")
+                    <h4>
+                      {cinemaBooking?.seats.length > 0
+                        ? cinemaBooking.seats
+                            .map((s) => getSeatLabel(s.seat_id))
+                            .join(", ")
                         : "-"}
                     </h4>
                   </div>
@@ -128,7 +129,11 @@ const ResultsPages = () => {
               <div className="flex w-full justify-between rounded-lg border-1 border-gray-200 p-2">
                 <h3 className="">Total</h3>
                 <h3 className="text-lg text-blue-700">
-                  {lastOrder.orders.prices}
+                  {new Intl.NumberFormat("id-ID", {
+                    style: "currency",
+                    currency: "IDR",
+                    minimumFractionDigits: 0,
+                  }).format(cinemaBooking.total_prices)}
                 </h3>
               </div>
             </div>
