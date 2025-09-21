@@ -67,18 +67,6 @@ export const logout = createAsyncThunk(
 const authSlice = createSlice({
   initialState,
   name: "auth",
-  // reducers: {
-  //   setLogin: (state, action) => {
-  //     state.isAuthenticated = true;
-  //     state.user = action.payload.user;
-  //     state.role = action.payload.role;
-  //   },
-  //   setLogout: (state) => {
-  //     state.isAuthenticated = false;
-  //     state.user = {};
-  //     state.role = "";
-  //   },
-  // },
   extraReducers: (builder) => {
     builder
       /* =========================================== Register =========================================== */
