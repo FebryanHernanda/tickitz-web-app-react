@@ -38,15 +38,17 @@ const AdminData = () => {
       const resultAction = await dispatch(deleteMoviesData({ id }));
 
       if (deleteMoviesData.fulfilled.match(resultAction)) {
-        toast.success("Movie berhasil dihapus!", { position: "top-center" });
+        toast.success("Movie successfully deleted!", {
+          position: "top-center",
+        });
       } else {
-        toast.error(resultAction.payload?.message || "Gagal menghapus movie", {
+        toast.error(resultAction.payload?.message || "Failed to delete movie", {
           position: "top-center",
         });
       }
     } catch (err) {
       console.error(err);
-      toast.error("Terjadi kesalahan saat menghapus movie", {
+      toast.error("An error occurred while deleting the movie", {
         position: "top-center",
       });
     }
