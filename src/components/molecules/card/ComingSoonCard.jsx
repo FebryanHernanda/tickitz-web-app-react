@@ -1,3 +1,5 @@
+import { API_URL } from "../../../utils/constants";
+
 const ComingSoonCard = ({ movie }) => {
   // const findGenres = movie.genre_ids
   //   .map((id) => {
@@ -21,7 +23,7 @@ const ComingSoonCard = ({ movie }) => {
         <img
           src={
             movie.poster_path
-              ? `https://image.tmdb.org/t/p/original${movie.poster_path}`
+              ? `${API_URL}/public/movies${movie.poster_path}`
               : "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/640px-No-Image-Placeholder.svg.png"
           }
           alt={movie.title}
