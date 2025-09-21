@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { API_URL } from "../../../utils/constants";
 
 const MovieCard = ({ movie }) => {
   const navigate = useNavigate();
@@ -21,7 +22,7 @@ const MovieCard = ({ movie }) => {
         <img
           src={
             movie.poster_path
-              ? `https://image.tmdb.org/t/p/original${movie.poster_path}`
+              ? `${API_URL}/public/movies${movie.poster_path}`
               : "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/640px-No-Image-Placeholder.svg.png"
           }
           alt={movie.title}
