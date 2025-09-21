@@ -3,20 +3,56 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
   deleteMoviesData,
-  editMoviesData,
+  getAllDataMovies,
 } from "../../../store/slices/adminSlice";
+import { useEffect } from "react";
+import {
+  getCastsMovies,
+  getDirectorsMovies,
+  getGenresMovies,
+} from "../../../store/slices/moviesSlice";
+import {
+  getCinemaList,
+  getCinemaLocation,
+} from "../../../store/slices/cinemaSlice";
+import { toast } from "react-toastify";
 
 const AdminData = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { dataMovies } = useSelector((state) => state.admin);
 
-  const handleDelete = (id) => {
-    dispatch(deleteMoviesData(id));
+  useEffect(() => {
+    dispatch(getAllDataMovies());
+    dispatch(getGenresMovies());
+    dispatch(getCastsMovies());
+    dispatch(getDirectorsMovies());
+    dispatch(getCinemaList());
+    dispatch(getCinemaLocation());
+  }, [dispatch]);
+
+  const handleDelete = async (id) => {
+    console.log("movie id:", id);
+
+    try {
+      const resultAction = await dispatch(deleteMoviesData({ id }));
+
+      if (deleteMoviesData.fulfilled.match(resultAction)) {
+        toast.success("Movie berhasil dihapus!", { position: "top-center" });
+      } else {
+        toast.error(resultAction.payload?.message || "Gagal menghapus movie", {
+          position: "top-center",
+        });
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Terjadi kesalahan saat menghapus movie", {
+        position: "top-center",
+      });
+    }
   };
 
   const handleEditData = (id) => {
-    dispatch(editMoviesData(id));
     navigate(`${id}/edit`);
   };
 
@@ -66,18 +102,31 @@ const AdminData = () => {
                       <td>
                         <div className="flex h-full w-full items-center justify-center">
                           <img
-                            src={movie.thumbnail}
-                            alt={movie.name}
+                            src={`http://localhost:8080/public/movies${movie.poster_path}`}
+                            alt={movie.title}
                             className="h-10 w-20 items-center justify-center rounded object-cover"
                           />
                         </div>
                       </td>
                       <td className="cursor-pointer text-blue-600 hover:underline">
-                        {movie.name}
+                        {movie.title}
                       </td>
-                      <td className="p-5">{movie.category}</td>
-                      <td className="p-5">{movie.releaseDate}</td>
-                      <td className="p-5">{`${movie.durationHours} Hours ${movie.durationMinutes} Minutes`}</td>
+                      <td className="p-5">{movie.genres.join(", ")}</td>
+                      <td className="p-5">
+                        {" "}
+                        {new Date(movie.release_date).toLocaleDateString(
+                          "en-US",
+                          {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          },
+                        )}
+                      </td>
+                      <td className="p-5">
+                        {" "}
+                        {`${Math.floor(movie.duration / 60)} hours ${movie.duration % 60} minutes`}
+                      </td>
                       <td className="gap-2 p-5">
                         <div className="flex justify-center gap-3">
                           <button className="rounded bg-blue-600 p-2 text-white hover:bg-blue-700">
