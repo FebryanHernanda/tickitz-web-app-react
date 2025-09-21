@@ -2,13 +2,11 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { MapPin } from "lucide-react";
 
-import ebvLogo from "/src/assets/icons/sponsor/ebv-logo.svg";
-import cineOneLogo from "/src/assets/icons/sponsor/CineOne-logo.svg";
-import hiflixLogo from "/src/assets/icons/sponsor/hiflix-logo.svg";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { getMoviesDetails } from "../../../store/slices/moviesSlice";
 import { getCinemaSchedule } from "../../../store/slices/cinemaSlice";
+import getCinemaLogo from "../../../data/cinema/getCinemaLogo";
 
 const MoviesDetailsPages = () => {
   const dispatch = useDispatch();
@@ -21,35 +19,11 @@ const MoviesDetailsPages = () => {
   /* Navigate React Router */
   const navigate = useNavigate();
 
-  // /* state for get all data */
-  // const [details, setDetails] = useState([]);
-  // const [credits, setCredits] = useState([]);
   // // const [isLoading, setIsLoading] = useState(true);
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
   const [location, setLocation] = useState("");
-  const [selectedCinema, setSelectedCinema] = useState(null);
-
-  /* Fetching data */
-  // useEffect(() => {
-  //   const fetchAllData = async () => {
-  //     try {
-  //       const apiKey = import.meta.env.VITE_META_API_KEY;
-  //       const [movieDetails, movieCredits] = await Promise.all([
-  //         getDetailsMovies(apiKey, movieId),
-  //         getCreditsMovies(apiKey, movieId),
-  //       ]);
-  //       setDetails(movieDetails);
-  //       setCredits(movieCredits);
-  //     } catch (error) {
-  //       console.error("Fetch error:", error);
-  //     } finally {
-  //       setIsLoading(false);
-  //     }
-  //   };
-
-  //   fetchAllData();
-  // }, [movieId]);
+  const [selectedCinema, setSelectedCinema] = useState({});
 
   useEffect(() => {
     dispatch(getMoviesDetails(movieId));
@@ -74,41 +48,23 @@ const MoviesDetailsPages = () => {
     }
   };
 
-  /* Mapping Cinema Logos */
-  const cinemasLogos = {
-    EBV: ebvLogo,
-    CineOne: cineOneLogo,
-    Hiflix: hiflixLogo,
-  };
-
-  const getCinemaLogo = (cinemaName) => {
-    if (!cinemaName) return null;
-
-    const brand = cinemaName.split(" ")[0];
-    return cinemasLogos[brand] || null;
-  };
-  /* Mapping Cinema Logos */
-
   /* Handle Order */
   const handleOrder = () => {
-    if (!time || !date || !location) {
-      toast.warning(
-        "Please complete the Date, Time, and Cinema fields first.",
-        {
-          position: "top-center",
-          autoClose: 3000,
-        },
-      );
+    if (!selectedCinema) {
+      toast.warning("Please Choose your cinema !", {
+        position: "top-center",
+        autoClose: 3000,
+      });
       return;
     }
 
     /* Sent the data state to orderPages */
     navigate(`/order`, {
       state: {
-        // details,
+        moviesDetails,
         time,
         date,
-        // cinema,
+        selectedCinema,
       },
     });
   };
@@ -182,7 +138,6 @@ const MoviesDetailsPages = () => {
                   <div className="flex flex-col gap-2">
                     <h4 className="text-gray-400">Directed by</h4>
                     <h3 className="font-regular" id="directorMovies">
-                      {/* {isLoading ? "Loading..." : moviesDetails.director} */}
                       {moviesDetails.director}
                     </h3>
                   </div>
@@ -258,6 +213,7 @@ const MoviesDetailsPages = () => {
                     className="h-full w-full border-0 pl-2"
                     onChange={(e) => setLocation(e.target.value)}
                   >
+                    <option value="">-- Select Location --</option>
                     <option value="Jakarta">Jakarta</option>
                     <option value="Bandung">Bandung</option>
                   </select>
@@ -276,7 +232,7 @@ const MoviesDetailsPages = () => {
             {/* Input Container */}
           </div>
 
-          {/* Choose Cinema container */}
+          {/* Choose Cinema Card container */}
           <div className="flex flex-row justify-center gap-5">
             {isLoading ? (
               <p className="py-6 text-center text-gray-500">
@@ -291,11 +247,11 @@ const MoviesDetailsPages = () => {
                 <div
                   key={idx}
                   className={`flex cursor-pointer overflow-hidden rounded-xl border ${
-                    selectedCinema === show.CinemaScheduleID
+                    selectedCinema?.CinemaScheduleID === show.CinemaScheduleID
                       ? "border-indigo-600 bg-indigo-50 shadow-lg"
                       : "border-gray-200 bg-white shadow-md"
                   }`}
-                  onClick={() => selectedCardSchedule(show.CinemaScheduleID)}
+                  onClick={() => selectedCardSchedule(show)}
                 >
                   <div className="w-fit rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition hover:shadow-md">
                     {/* Logo */}
@@ -346,7 +302,7 @@ const MoviesDetailsPages = () => {
               ))
             )}
           </div>
-          {/* Choose Cinema container */}
+          {/* Choose Cinema Card container */}
 
           {/* Pagination */}
           <div className="flex justify-center gap-5">
