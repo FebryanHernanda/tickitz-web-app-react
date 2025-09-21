@@ -1,49 +1,57 @@
+import { useDispatch, useSelector } from "react-redux";
+import { getSoldSeat } from "../../../store/slices/cinemaSlice";
+import { useEffect } from "react";
+
 const rows = ["A", "B", "C", "D", "E", "F", "G"];
 const leftCols = [1, 2, 3, 4, 5, 6, 7];
 const rightCols = [8, 9, 10, 11, 12, 13, 14];
-
-/* Dummy Sold Seats data */
-const soldSeats = [
-  "A6",
-  "B2",
-  "B3",
-  "D2",
-  "E4",
-  "G3",
-  "A13",
-  "C9",
-  "C15",
-  "C12",
-  "D9",
-  "D12",
-  "F13",
-];
+const totalCols = 14;
 
 const ChooseSeat = (props) => {
-  const { setSeat } = props;
+  const { setSeat, setSeatLabel, cinemasID } = props;
+  const dispatch = useDispatch();
+  const { seatData } = useSelector((state) => state.cinema);
 
-  /* Handle Seat Change Value */
+  useEffect(() => {
+    dispatch(getSoldSeat(cinemasID));
+  }, [dispatch, cinemasID]);
+
+  // Convert Seat_id for for get the seat label
+  const getSeatLabel = (seat_id) => {
+    const rowIndex = Math.floor((seat_id - 1) / totalCols);
+    const colIndex = ((seat_id - 1) % totalCols) + 1;
+    return `${rows[rowIndex]}${colIndex}`;
+  };
+
+  // Handle Seat Change Value
   const handleChange = (e) => {
-    const seat = e.target.value;
+    const seat_id = Number(e.target.value);
+    const label = getSeatLabel(seat_id);
+
     if (e.target.checked) {
-      setSeat((prev) => [...prev, seat]);
+      setSeat((prev) => [...prev, seat_id]);
+      setSeatLabel((prev) => [...prev, label]);
     } else {
-      setSeat((prev) => prev.filter((s) => s !== seat));
+      setSeat((prev) => prev.filter((s) => s !== seat_id));
+      setSeatLabel((prev) => prev.filter((l) => l !== label));
     }
   };
 
-  /* Render All Seat  */
+  // Render All Seat
   const renderSeat = (row, col) => {
-    const seat = `${row}${col}`;
+    const rowIndex = rows.indexOf(row);
+    const seat_id = rowIndex * totalCols + col;
+    const seatLabel = getSeatLabel(seat_id);
 
-    const isSold = soldSeats.includes(seat);
+    const soldSeatIds = (seatData || []).map((item) => item.seat_id);
+    const isSold = soldSeatIds.includes(seat_id);
 
     return (
-      <label key={seat} className="relative">
+      <label key={seatLabel} className="relative">
         <input
           type="checkbox"
           name="seats"
-          value={seat}
+          value={seat_id}
           disabled={isSold}
           onChange={handleChange}
           className="peer hidden"
@@ -61,7 +69,7 @@ const ChooseSeat = (props) => {
 
   return (
     <div className="flex flex-col items-center gap-5">
-      {/* Sreen */}
+      {/* Screen */}
       <div className="lg:text-md w-full rounded-sm bg-gray-100 p-2 text-center text-gray-500 md:rounded-md xl:w-210">
         Screen
       </div>
@@ -77,57 +85,45 @@ const ChooseSeat = (props) => {
               <div className="hidden h-5 w-5 items-center justify-center text-sm md:flex md:h-8 md:w-8 md:text-xl">
                 {row}
               </div>
-              {/* Row Label */}
-
-              {/* Left Grid, render left cols grid*/}
+              {/* Left Grid */}
               <div className="grid grid-cols-7 gap-2">
                 {leftCols.map((col) => renderSeat(row, col))}
               </div>
-              {/* Left Grid, render left cols grid*/}
             </div>
 
-            {/* Right grid, render right cols grid */}
+            {/* Right Grid */}
             <div className="grid grid-cols-7 gap-2">
               {rightCols.map((col) => renderSeat(row, col))}
             </div>
-            {/* Right grid, render right cols grid */}
           </div>
         ))}
-        {/* Show all Seat */}
 
         {/* Seat Column Label */}
         <div className="relative">
-          {/* left Label */}
+          {/* Left Label */}
           <div className="absolute hidden grid-cols-7 gap-[6px] md:left-16 md:grid md:gap-[20px] lg:left-8 lg:gap-[6px] xl:left-27 xl:gap-[8px] 2xl:left-36">
-            {leftCols.map((col, idx) => {
-              return (
-                <div
-                  key={idx}
-                  className="text-md flex h-5 w-5 cursor-pointer items-center justify-center rounded-md font-medium lg:h-8 lg:w-8"
-                >
-                  {col}
-                </div>
-              );
-            })}
+            {leftCols.map((col, idx) => (
+              <div
+                key={idx}
+                className="text-md flex h-5 w-5 items-center justify-center rounded-md font-medium lg:h-8 lg:w-8"
+              >
+                {col}
+              </div>
+            ))}
           </div>
-          {/* left Label */}
 
           {/* Right Label */}
           <div className="absolute right-[-2px] hidden grid-cols-7 gap-[6px] md:right-[30px] md:grid md:gap-[20px] lg:right-[-2px] lg:gap-[6px] xl:right-[70px] xl:gap-[8px] 2xl:right-[110px]">
-            {rightCols.map((col, idx) => {
-              return (
-                <div
-                  key={idx}
-                  className="text-md flex h-5 w-5 cursor-pointer items-center justify-center rounded-md font-medium lg:h-8 lg:w-8"
-                >
-                  {col}
-                </div>
-              );
-            })}
+            {rightCols.map((col, idx) => (
+              <div
+                key={idx}
+                className="text-md flex h-5 w-5 items-center justify-center rounded-md font-medium lg:h-8 lg:w-8"
+              >
+                {col}
+              </div>
+            ))}
           </div>
-          {/* Right Label */}
         </div>
-        {/* Seat Label */}
       </div>
     </div>
   );
