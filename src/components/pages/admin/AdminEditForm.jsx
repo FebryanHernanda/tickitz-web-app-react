@@ -196,6 +196,7 @@ const AdminEditForm = () => {
       if (editMoviesData.fulfilled.match(resultAction)) {
         toast.success("Movie successfully updated!", {
           position: "top-center",
+          autoClose: 1000,
         });
         navigate("/admin/data");
       } else {
