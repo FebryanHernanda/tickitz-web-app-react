@@ -115,7 +115,6 @@ const TicketHistory = (props) => {
                     <div>
                       <h4 className="text-gray-500">Total</h4>
                       <h2 className="text-2xl">
-                        {" "}
                         {new Intl.NumberFormat("id-ID", {
                           style: "currency",
                           currency: "IDR",
@@ -154,7 +153,11 @@ const TicketHistory = (props) => {
                           <h4 className="font-regular text-gray-500">:</h4>
                         </div>
                         <h3 className="font-regular text-blue-600">
-                          {data.total_prices}
+                          {new Intl.NumberFormat("id-ID", {
+                            style: "currency",
+                            currency: "IDR",
+                            minimumFractionDigits: 0,
+                          }).format(data.total_prices)}
                         </h3>
                       </div>
                       <p className="text-gray-500">
