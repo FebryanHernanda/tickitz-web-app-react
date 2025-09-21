@@ -16,6 +16,7 @@ import {
   getCinemaLocation,
 } from "../../../store/slices/cinemaSlice";
 import { toast } from "react-toastify";
+import { API_URL } from "../../../utils/constants";
 
 const AdminData = () => {
   const navigate = useNavigate();
@@ -40,12 +41,14 @@ const AdminData = () => {
       if (deleteMoviesData.fulfilled.match(resultAction)) {
         toast.success("Movie successfully deleted!", {
           position: "top-center",
+          autoClose: 1000,
         });
       } else {
         toast.error(resultAction.payload?.message || "Failed to delete movie", {
           position: "top-center",
         });
       }
+      dispatch(getAllDataMovies());
     } catch (err) {
       console.error(err);
       toast.error("An error occurred while deleting the movie", {
@@ -104,7 +107,7 @@ const AdminData = () => {
                       <td>
                         <div className="flex h-full w-full items-center justify-center">
                           <img
-                            src={`http://localhost:8080/public/movies${movie.poster_path}`}
+                            src={`${API_URL}/public/movies${movie.poster_path}`}
                             alt={movie.title}
                             className="h-10 w-20 items-center justify-center rounded object-cover"
                           />
