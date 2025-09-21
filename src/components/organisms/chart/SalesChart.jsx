@@ -14,7 +14,7 @@ import {
   Filler,
 } from "chart.js";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchMovies } from "../../../store/slices/moviesSlice";
+// import { fetchMovies } from "../../../store/slices/moviesSlice";
 
 ChartJS.register(
   CategoryScale,
@@ -35,9 +35,9 @@ const SalesChart = () => {
   const [timeCategory, setTimeCategory] = useState("monthly");
   const [chartData, setChartData] = useState(getDataSalesByCategory("monthly"));
 
-  useEffect(() => {
-    if (!movies.length) dispatch(fetchMovies({ page: 1 }));
-  }, [dispatch, movies]);
+  // useEffect(() => {
+  //   if (!movies.length) dispatch(fetchMovies({ page: 1 }));
+  // }, [dispatch, movies]);
 
   const handleTimeChange = (e) => setTimeCategory(e.target.value);
   const handleMoviesName = (e) => setMoviesName(e.target.value);
