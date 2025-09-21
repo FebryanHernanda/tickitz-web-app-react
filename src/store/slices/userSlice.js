@@ -28,21 +28,13 @@ export const getProfile = createAsyncThunk(
 
 export const updateProfile = createAsyncThunk(
   "user/profile",
-  async (fileData, { getState, rejectWithValue }) => {
+  async (profileData, { getState, rejectWithValue }) => {
     try {
       const token = getState().auth.token;
-      console.log(fileData);
-
-      const formData = new FormData();
-      formData.append("first_name", fileData.firstName);
-      formData.append("last_name", fileData.lastName);
-      formData.append("phone_number", fileData.phoneNumber);
-      formData.append("email", fileData.email);
-      formData.append("image", fileData.avatarPath);
 
       const response = await axios.patch(
         "http://127.0.0.1:8080/profile/edit",
-        formData,
+        profileData,
         {
           headers: {
             Authorization: `Bearer ${token}`,
