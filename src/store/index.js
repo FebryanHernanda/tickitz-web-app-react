@@ -16,6 +16,7 @@ import adminReducers from "./slices/adminSlice";
 import userReducers from "./slices/userSlice";
 import authReducers from "./slices/authSlice";
 import cinemaReducers from "./slices/cinemaSlice";
+import orderReducers from "./slices/orderSlice";
 
 // combine all reducers
 const rootReducer = combineReducers({
@@ -24,6 +25,7 @@ const rootReducer = combineReducers({
   auth: authReducers,
   movies: moviesReducers,
   cinema: cinemaReducers,
+  orders: orderReducers,
 });
 
 // persist configuration
