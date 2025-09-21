@@ -7,6 +7,7 @@ import { logout } from "../../../store/slices/authSlice";
 import { resetData } from "../../../store/slices/userSlice";
 import { persistor } from "../../../store";
 import { resetDataOrders } from "../../../store/slices/orderSlice";
+import { API_URL } from "../../../utils/constants";
 
 const NavbarDropdown = (props) => {
   const {
@@ -111,7 +112,7 @@ const NavbarDropdown = (props) => {
             <img
               src={
                 userData?.data?.image_path
-                  ? `http://localhost:8080/public${userData?.data.image_path}`
+                  ? `${API_URL}/public${userData?.data.image_path}`
                   : avaProfile
               }
               className="h-15 w-15 rounded-full object-cover"

@@ -7,6 +7,7 @@ import NavbarDropdown from "./NavbarDropdown";
 import avaProfile from "/src/assets/background/ava-profile.png";
 import logoBlue from "/src/assets/icons/logo/tickitz-logo-blue.svg";
 import { useSelector } from "react-redux";
+import { API_URL } from "../../../utils/constants";
 
 const Navbar = ({ isMenuOpen, setIsMenuOpen }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -76,7 +77,7 @@ const Navbar = ({ isMenuOpen, setIsMenuOpen }) => {
                 <img
                   src={
                     userData?.data?.image_path
-                      ? `http://localhost:8080/public${userData?.data.image_path}`
+                      ? `${API_URL}/public${userData?.data.image_path}`
                       : avaProfile
                   }
                   alt="Avatar"
