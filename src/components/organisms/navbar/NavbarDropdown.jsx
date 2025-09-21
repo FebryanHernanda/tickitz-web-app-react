@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../../store/slices/authSlice";
 import { resetData } from "../../../store/slices/userSlice";
 import { persistor } from "../../../store";
+import { resetDataOrders } from "../../../store/slices/orderSlice";
 
 const NavbarDropdown = (props) => {
   const {
@@ -33,6 +34,7 @@ const NavbarDropdown = (props) => {
 
     dispatch(logout());
     dispatch(resetData());
+    dispatch(resetDataOrders());
     persistor.purge();
 
     setIsLoggedIn(false);
