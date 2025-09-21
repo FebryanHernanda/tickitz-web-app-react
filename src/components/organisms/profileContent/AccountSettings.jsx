@@ -167,10 +167,17 @@ const AccountSettings = () => {
   const handleSubmitProfile = async (e) => {
     e.preventDefault();
 
+    const formDataPayload = new FormData();
+    formDataPayload.append("first_name", formData.firstName);
+    formDataPayload.append("last_name", formData.lastName);
+    formDataPayload.append("phone_number", formData.phoneNumber);
+    formDataPayload.append("email", formData.email);
+    formDataPayload.append("image", formData.avatarPath);
+
     if (validateInput()) {
       try {
-        await dispatch(updateProfile(formData)).unwrap();
-        toast.success("Data berhasil diubah!", {
+        await dispatch(updateProfile(formDataPayload)).unwrap();
+        toast.success("Data profile berhasil diubah!", {
           position: "top-center",
           autoClose: 1000,
         });
