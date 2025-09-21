@@ -1,19 +1,46 @@
 // components/molecules/PaymentModal.jsx
 import { X } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { addOrder } from "../../../store/slices/userSlice";
+import { createOrder } from "../../../store/slices/orderSlice";
+import { updateProfile } from "../../../store/slices/userSlice";
+// import { addOrder } from "../../../store/slices/userSlice";
 
 const ModalPayment = (props) => {
+  /* props data */
+  const {
+    isOpen,
+    cinemaData,
+    ScheduleTime,
+    seatData,
+    onClose,
+    paymentMethod,
+    prices,
+    formData,
+  } = props;
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const userData = useSelector((state) => state.auth.user);
+  const { data } = useSelector((state) => state.user.data);
 
-  /* props data */
-  const { isOpen, prices, data, onClose, paymentMethod } = props;
+  const mappingSeats = seatData.map((s) => ({
+    seat_id: parseInt(s, 10),
+    status: "booked",
+  }));
 
-  const orderData = { ...data, prices, paymentMethod };
+  const cinemaBooking = {
+    cinemas_schedule_id: cinemaData.CinemaScheduleID,
+    payment_method_id: paymentMethod,
+    seats: mappingSeats,
+    total_prices: cinemaData.TicketPrice * mappingSeats.length,
+  };
+
+  // Update profileData Payload
+  const formDataPayload = new FormData();
+  formDataPayload.append("first_name", formData.fullName);
+  formDataPayload.append("phone_number", formData.phoneNumber);
+  formDataPayload.append("email", formData.email);
 
   if (!isOpen) return null;
 
@@ -23,23 +50,15 @@ const ModalPayment = (props) => {
       autoClose: 3000,
     });
 
-    /* Check Duplicate Id true or false? */
-    const isDuplicate = userData.order.some((item) => {
-      return item.orderId === orderData.orderId;
-    });
+    const bookingData = {
+      ...cinemaBooking,
+      is_active: false,
+      is_paid: false,
+    };
 
+    dispatch(createOrder(bookingData));
+    dispatch(updateProfile(formDataPayload));
     navigate("/movies");
-
-    /* if not false, push data to order array */
-    if (!isDuplicate) {
-      dispatch(
-        addOrder({
-          userId: userData.id,
-          orders: orderData,
-          isPaid: false,
-        }),
-      );
-    }
 
     onClose(false);
   };
@@ -51,23 +70,18 @@ const ModalPayment = (props) => {
       autoClose: 3000,
     });
 
-    navigate("results");
+    const bookingData = {
+      ...cinemaBooking,
+      is_active: true,
+      is_paid: true,
+    };
 
-    /* Check Duplicate Id true or false? */
-    const isDuplicate = userData.order.some((item) => {
-      return item.orderId === orderData.orderId;
+    dispatch(createOrder(bookingData));
+    dispatch(updateProfile(formDataPayload));
+    navigate("results", {
+      replace: true,
+      state: { cinemaData, cinemaBooking },
     });
-
-    /* if not false, push data to order array */
-    if (!isDuplicate) {
-      dispatch(
-        addOrder({
-          userId: userData.id,
-          orders: orderData,
-          isPaid: true,
-        }),
-      );
-    }
   };
 
   return (
@@ -80,7 +94,7 @@ const ModalPayment = (props) => {
           <div className="mb-4">
             <h4 className="text-sm text-gray-500">No. Rekening Virtual</h4>
             <div className="mt-1 flex items-center justify-between">
-              <h3 className="text-base">12321328913829724</h3>
+              <h3 className="text-base">{data.virtual_account}</h3>
               <button className="text-sm text-blue-600 hover:underline">
                 Copy
               </button>
@@ -94,7 +108,7 @@ const ModalPayment = (props) => {
 
           <p className="text-sm leading-relaxed text-gray-500">
             Pay this payment bill before it is due,
-            <span className="font-medium text-red-500">{` on ${data.dateShow}`}</span>
+            <span className="font-medium text-red-500">{` on ${ScheduleTime}`}</span>
             . If the bill has not been paid by the specified time, it will be
             forfeited.
           </p>
