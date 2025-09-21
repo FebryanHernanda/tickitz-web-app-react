@@ -6,7 +6,7 @@ import shieldIcon from "/src/assets/icons/whychooseus/shield-icon.svg";
 import checklistIcon from "/src/assets/icons/whychooseus/checklist-icon.svg";
 import chatIcon from "/src/assets/icons/whychooseus/chat-icon.svg";
 import { useDispatch, useSelector } from "react-redux";
-import { IMG_BASE_URL } from "../../../utils/constants";
+import { API_URL, IMG_BASE_URL } from "../../../utils/constants";
 import { useEffect, useRef } from "react";
 import {
   getPopularMovies,
@@ -15,7 +15,7 @@ import {
 
 const LandingPages = () => {
   const dispatch = useDispatch();
-  const { movies, upcomingMovies, popularMovies } = useSelector(
+  const { upcomingMovies, popularMovies } = useSelector(
     (state) => state.movies,
   );
 
@@ -30,16 +30,6 @@ const LandingPages = () => {
       });
     }
   };
-  /* Slider upcoming movies */
-
-  /* Check if state Data is null */
-  // useEffect(() => {
-  //   if (!movies.length || !genres.length || !upcomingMovies.length) {
-  //     dispatch(fetchMoviesGenres());
-  //     dispatch(fetchMovies({ page: 1 }));
-  //     dispatch(fetchUpcomingMovies());
-  //   }
-  // }, [dispatch, movies.length, genres.length, upcomingMovies.length]);
 
   useEffect(() => {
     if (!popularMovies.length && !upcomingMovies.length) {
@@ -47,12 +37,13 @@ const LandingPages = () => {
       dispatch(getUpcomingMovies());
     }
   }, [dispatch, popularMovies.length, upcomingMovies.length]);
+  console.log(upcomingMovies);
 
   const moviesPoster = {
-    heroOne: movies?.[0]?.poster_path,
-    heroTwo: movies?.[5]?.poster_path,
-    heroThree: movies?.[10]?.poster_path,
-    heroFourth: movies?.[15]?.poster_path,
+    heroOne: popularMovies?.[5]?.poster_path,
+    heroTwo: popularMovies?.[9]?.poster_path,
+    heroThree: popularMovies?.[8]?.poster_path,
+    heroFourth: popularMovies?.[6]?.poster_path,
   };
 
   return (
@@ -75,22 +66,22 @@ const LandingPages = () => {
           <div className="grid w-full grid-cols-[repeat(auto-fit,minmax(80px,300px))] grid-rows-[200px_200px_200px] place-content-center gap-2 p-5">
             <img
               className="col-start-1 row-start-1 row-end-2 h-full w-full rounded-t-2xl object-cover"
-              src={`${IMG_BASE_URL}/w500${moviesPoster.heroOne}`}
+              src={`${API_URL}/public/movies${moviesPoster.heroOne}`}
               alt="Movies Poster"
             />
             <img
               className="col-start-2 col-end-3 row-start-1 row-end-3 h-full w-full rounded-t-2xl object-cover"
-              src={`${IMG_BASE_URL}/w500${moviesPoster.heroTwo}`}
+              src={`${API_URL}/public/movies${moviesPoster.heroTwo}`}
               alt="Movies Poster"
             />
             <img
               className="col-start-1 row-start-2 row-end-4 h-full w-full items-end rounded-b-2xl object-cover"
-              src={`${IMG_BASE_URL}/w500${moviesPoster.heroThree}`}
+              src={`${API_URL}/public/movies${moviesPoster.heroThree}`}
               alt="Movies Poster"
             />
             <img
               className="col-start-2 row-start-3 row-end-4 h-full w-full rounded-b-2xl object-cover"
-              src={`${IMG_BASE_URL}/w500${moviesPoster.heroFourth}`}
+              src={`${API_URL}/public/movies${moviesPoster.heroFourth}`}
               alt="Movies Poster"
             />
           </div>
