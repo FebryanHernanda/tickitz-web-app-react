@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
+import { API_URL } from "../../utils/constants";
 
 const initialState = {
   data: [],
@@ -14,7 +15,7 @@ export const getCinemaList = createAsyncThunk(
   "cinema/list",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get("http://127.0.0.1:8080/cinemas/list");
+      const response = await axios.get(`${API_URL}/cinemas/list`);
 
       return response.data;
     } catch (error) {
@@ -29,9 +30,7 @@ export const getCinemaLocation = createAsyncThunk(
   "cinema/location",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get(
-        "http://127.0.0.1:8080/cinemas/location",
-      );
+      const response = await axios.get(`${API_URL}/cinemas/location`);
 
       return response.data;
     } catch (error) {
@@ -55,7 +54,7 @@ export const getCinemaSchedule = createAsyncThunk(
       if (params.time) query.append("time", params.time);
 
       const response = await axios.get(
-        `http://localhost:8080/cinemas/${movieID}?${query.toString()}`,
+        `${API_URL}/cinemas/${movieID}?${query.toString()}`,
       );
 
       return response.data;
@@ -72,7 +71,7 @@ export const getSoldSeat = createAsyncThunk(
   async (cinemaID, { rejectWithValue }) => {
     try {
       const response = await axios.get(
-        `http://localhost:8080/cinemas/available-seats/${cinemaID}`,
+        `${API_URL}/cinemas/available-seats/${cinemaID}`,
       );
 
       return response.data;

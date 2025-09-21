@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
+import { API_URL } from "../../utils/constants";
 
 const initialState = {
   data: null,
@@ -13,7 +14,7 @@ export const getProfile = createAsyncThunk(
     try {
       const token = getState().auth.token;
 
-      const response = await axios.get("http://127.0.0.1:8080/profile", {
+      const response = await axios.get(`${API_URL}/profile`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -33,7 +34,7 @@ export const updateProfile = createAsyncThunk(
       const token = getState().auth.token;
 
       const response = await axios.patch(
-        "http://127.0.0.1:8080/profile/edit",
+        ` ${API_URL}/profile/edit`,
         profileData,
         {
           headers: {
@@ -61,7 +62,7 @@ export const updatePassword = createAsyncThunk(
       formData.append("new_password", fileData.newPassword);
 
       const response = await axios.patch(
-        "http://127.0.0.1:8080/profile/editpassword",
+        `${API_URL}/profile/editpassword`,
         formData,
         {
           headers: {

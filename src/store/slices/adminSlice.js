@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
+import { API_URL } from "../../utils/constants";
 
 const initialState = {
   dataMovies: [],
@@ -16,7 +17,7 @@ export const getAllDataMovies = createAsyncThunk(
     try {
       const token = getState().auth.token;
 
-      const response = await axios.get("http://127.0.0.1:8080/admin/movies", {
+      const response = await axios.get(`${API_URL}/admin/movies`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -38,7 +39,7 @@ export const getMovieEditDetail = createAsyncThunk(
       const token = getState().auth.token;
 
       const response = await axios.get(
-        `http://localhost:8080/admin/movies/${movieEditId}/edit-details`,
+        `${API_URL}/admin/movies/${movieEditId}/edit-details`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -62,7 +63,7 @@ export const editMoviesData = createAsyncThunk(
       const token = getState().auth.token;
 
       const response = await axios.patch(
-        `http://localhost:8080/admin/movies/edit/${id}`,
+        `${API_URL}/admin/movies/edit/${id}`,
         formData,
         {
           headers: {
@@ -87,7 +88,7 @@ export const deleteMoviesData = createAsyncThunk(
       const token = getState().auth.token;
 
       const response = await axios.delete(
-        `http://localhost:8080/admin/movies/delete/${id}`,
+        `${API_URL}/admin/movies/delete/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -110,7 +111,7 @@ export const addMoviesData = createAsyncThunk(
       const token = getState().auth.token;
 
       const response = await axios.post(
-        "http://127.0.0.1:8080/admin/movies/add",
+        `${API_URL}/admin/movies/add`,
         formData,
         {
           headers: {
@@ -135,7 +136,7 @@ export const addCinemasSchedule = createAsyncThunk(
       const token = getState().auth.token;
 
       const { data } = await axios.post(
-        "http://127.0.0.1:8080/admin/movies/cinemaschedule/add",
+        `${API_URL}/admin/movies/cinemaschedule/add`,
         payload,
         {
           headers: {

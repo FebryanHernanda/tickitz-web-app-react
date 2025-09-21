@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
+import { API_URL } from "../../utils/constants";
 
 const initialState = {
   orderData: null,
@@ -14,16 +15,12 @@ export const createOrder = createAsyncThunk(
     try {
       const token = getState().auth.token;
 
-      const response = await axios.post(
-        "http://127.0.0.1:8080/orders/",
-        orderData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
+      const response = await axios.post(`${API_URL}/orders/`, orderData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
         },
-      );
+      });
       return response.data;
     } catch (error) {
       rejectWithValue(error.response?.data?.error || "Insert data gagal");
@@ -37,7 +34,7 @@ export const getOrderHistory = createAsyncThunk(
     try {
       const token = getState().auth.token;
 
-      const response = await axios.get("http://127.0.0.1:8080/orders/history", {
+      const response = await axios.get(`${API_URL}/orders/history`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

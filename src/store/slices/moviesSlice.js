@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import { API_KEY, BASE_URL } from "../../utils/constants";
+import { API_KEY, API_URL, BASE_URL } from "../../utils/constants";
 
 const initialState = {
   movies: [],
@@ -20,7 +20,7 @@ export const getGenresMovies = createAsyncThunk(
   "movies/genres",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get("http://127.0.0.1:8080/movies/genres");
+      const response = await axios.get(`${API_URL}/movies/genres`);
 
       return response.data;
     } catch (error) {
@@ -35,7 +35,7 @@ export const getCastsMovies = createAsyncThunk(
   "movies/casts",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get("http://127.0.0.1:8080/movies/casts");
+      const response = await axios.get(`${API_URL}/movies/casts`);
 
       return response.data;
     } catch (error) {
@@ -50,9 +50,7 @@ export const getDirectorsMovies = createAsyncThunk(
   "movies/directors",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get(
-        "http://127.0.0.1:8080/movies/directors",
-      );
+      const response = await axios.get(`${API_URL}/movies/directors`);
 
       return response.data;
     } catch (error) {
@@ -67,7 +65,7 @@ export const getPopularMovies = createAsyncThunk(
   "movies/popular",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get("http://127.0.0.1:8080/movies/popular");
+      const response = await axios.get(`${API_URL}/movies/popular`);
 
       return response.data;
     } catch (error) {
@@ -82,7 +80,7 @@ export const getUpcomingMovies = createAsyncThunk(
   "movies/upcoming",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get("http://127.0.0.1:8080/movies/upcoming");
+      const response = await axios.get(`${API_URL}/movies/upcoming`);
 
       return response.data;
     } catch (error) {
@@ -102,7 +100,7 @@ export const getMoviesSearch = createAsyncThunk(
 
     try {
       const response = await axios.get(
-        `http://localhost:8080/movies?search=${search}&genre=${genre}&page=${page}`,
+        `${API_URL}/movies?search=${search}&genre=${genre}&page=${page}`,
       );
 
       return response.data;
@@ -118,9 +116,7 @@ export const getMoviesDetails = createAsyncThunk(
   "movies/details",
   async (movieID, { rejectWithValue }) => {
     try {
-      const response = await axios.get(
-        `http://localhost:8080/movies/${movieID}/details`,
-      );
+      const response = await axios.get(`${API_URL}/movies/${movieID}/details`);
 
       return response.data;
     } catch (error) {
