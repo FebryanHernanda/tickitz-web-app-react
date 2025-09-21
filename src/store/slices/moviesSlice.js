@@ -7,90 +7,58 @@ const initialState = {
   moviesDetails: [],
   upcomingMovies: [],
   popularMovies: [],
-  genres: [],
-  searchResults: [],
+  genresList: [],
+  directorsList: [],
+  castList: [],
+  // searchResults: [],
   totalPages: 1,
   loading: false,
   error: null,
 };
 
-export const fetchMovies = createAsyncThunk(
-  "movies/fetchMovies",
-  async ({ page = 1 }, { rejectWithValue }) => {
-    try {
-      const moviesResponse = await axios.get(
-        `${BASE_URL}/movie/popular?api_key=${API_KEY}&page=${page}`,
-      );
-
-      return {
-        results: moviesResponse.data.results,
-        totalPages: moviesResponse.data.total_pages,
-      };
-    } catch (error) {
-      return rejectWithValue(error.message);
-    }
-  },
-);
-
-export const fetchUpcomingMovies = createAsyncThunk(
-  "movies/fetchUpcomingMovies",
+export const getGenresMovies = createAsyncThunk(
+  "movies/genres",
   async (_, { rejectWithValue }) => {
     try {
-      const upcomingMoviesResponse = await axios.get(
-        `${BASE_URL}/movie/upcoming?api_key=${API_KEY}&page=1`,
-      );
+      const response = await axios.get("http://127.0.0.1:8080/movies/genres");
 
-      return upcomingMoviesResponse.data.results;
+      return response.data;
     } catch (error) {
-      return rejectWithValue(error.message);
+      return rejectWithValue(
+        error.response?.data?.error || "Gagal mengambil data",
+      );
     }
   },
 );
 
-export const fetchMoviesGenres = createAsyncThunk(
-  "movies/fetchMoviesGenres",
+export const getCastsMovies = createAsyncThunk(
+  "movies/casts",
   async (_, { rejectWithValue }) => {
     try {
-      const genreResponse = await axios.get(
-        `${BASE_URL}/genre/movie/list?api_key=${API_KEY}`,
-      );
+      const response = await axios.get("http://127.0.0.1:8080/movies/casts");
 
-      return genreResponse.data.genres;
+      return response.data;
     } catch (error) {
-      return rejectWithValue(error.message);
+      return rejectWithValue(
+        error.response?.data?.error || "Gagal mengambil data",
+      );
     }
   },
 );
 
-export const fetchMoviesByGenres = createAsyncThunk(
-  "movies/fetchMoviesByGenres",
-  async (selectedGenres, { rejectWithValue }) => {
+export const getDirectorsMovies = createAsyncThunk(
+  "movies/directors",
+  async (_, { rejectWithValue }) => {
     try {
-      const filterResponse = await axios.get(
-        `${BASE_URL}/discover/movie?api_key=${API_KEY}&with_genres=${selectedGenres}`,
+      const response = await axios.get(
+        "http://127.0.0.1:8080/movies/directors",
       );
 
-      return filterResponse.data.results;
+      return response.data;
     } catch (error) {
-      return rejectWithValue(error.message);
-    }
-  },
-);
-
-export const fetchSearchMovies = createAsyncThunk(
-  "movies/search",
-  async ({ query, page = 1 }, { rejectWithValue }) => {
-    try {
-      const searchResponse = await axios.get(
-        `${BASE_URL}/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(query)}&page=${page}`,
+      return rejectWithValue(
+        error.response?.data?.error || "Gagal mengambil data",
       );
-
-      return {
-        results: searchResponse.data.results,
-        totalPages: searchResponse.data.total_pages,
-      };
-    } catch (error) {
-      return rejectWithValue(error.message);
     }
   },
 );
@@ -168,6 +136,45 @@ const moviesSlice = createSlice({
   initialState,
   extraReducers: (builder) => {
     builder
+      /* =========================================== Get Genres Movies=========================================== */
+      .addCase(getGenresMovies.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getGenresMovies.fulfilled, (state, action) => {
+        state.loading = false;
+        state.genresList = action.payload.data;
+      })
+      .addCase(getGenresMovies.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      /* =========================================== Get Casts Movies=========================================== */
+      .addCase(getCastsMovies.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getCastsMovies.fulfilled, (state, action) => {
+        state.loading = false;
+        state.castList = action.payload.data;
+      })
+      .addCase(getCastsMovies.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      /* =========================================== Get Directors Movies=========================================== */
+      .addCase(getDirectorsMovies.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getDirectorsMovies.fulfilled, (state, action) => {
+        state.loading = false;
+        state.directorsList = action.payload.data;
+      })
+      .addCase(getDirectorsMovies.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
       /* =========================================== Get Popular Movies=========================================== */
       .addCase(getPopularMovies.pending, (state) => {
         state.loading = true;
@@ -222,78 +229,6 @@ const moviesSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       });
-    /* ! OLD DATA */
-    // /* ===========================================fetch  Movies=========================================== */
-    // .addCase(fetchMovies.pending, (state) => {
-    //   state.loading = true;
-    //   state.error = null;
-    // })
-    // .addCase(fetchMovies.fulfilled, (state, action) => {
-    //   state.loading = false;
-    //   state.movies = action.payload.results;
-    //   state.totalPages = action.payload.totalPages;
-    // })
-    // .addCase(fetchMovies.rejected, (state, action) => {
-    //   state.loading = false;
-    //   state.error = action.payload;
-    // })
-
-    // /* ===========================================fetch Upcoming Movies=========================================== */
-    // .addCase(fetchUpcomingMovies.pending, (state) => {
-    //   state.loading = true;
-    //   state.error = null;
-    // })
-    // .addCase(fetchUpcomingMovies.fulfilled, (state, action) => {
-    //   state.loading = false;
-    //   state.upcomingMovies = action.payload;
-    // })
-    // .addCase(fetchUpcomingMovies.rejected, (state, action) => {
-    //   state.loading = false;
-    //   state.error = action.payload;
-    // })
-
-    // /* ===========================================fetch data genres Movie=========================================== */
-    // .addCase(fetchMoviesGenres.pending, (state) => {
-    //   state.loading = true;
-    //   state.error = null;
-    // })
-    // .addCase(fetchMoviesGenres.fulfilled, (state, action) => {
-    //   state.loading = false;
-    //   state.genres = action.payload;
-    // })
-    // .addCase(fetchMoviesGenres.rejected, (state, action) => {
-    //   state.loading = false;
-    //   state.error = action.payload;
-    // })
-
-    // /* ===========================================Search Movie=========================================== */
-    // .addCase(fetchSearchMovies.pending, (state) => {
-    //   state.loading = true;
-    //   state.error = null;
-    // })
-    // .addCase(fetchSearchMovies.fulfilled, (state, action) => {
-    //   state.loading = false;
-    //   state.searchResults = action.payload.results;
-    //   state.totalPages = action.payload.totalPages;
-    // })
-    // .addCase(fetchSearchMovies.rejected, (state, action) => {
-    //   state.loading = false;
-    //   state.error = action.payload;
-    // })
-
-    // /* ===========================================Fetch Movie by Genres=========================================== */
-    // .addCase(fetchMoviesByGenres.pending, (state) => {
-    //   state.loading = true;
-    //   state.error = null;
-    // })
-    // .addCase(fetchMoviesByGenres.fulfilled, (state, action) => {
-    //   state.loading = false;
-    //   state.movies = action.payload;
-    // })
-    // .addCase(fetchMoviesByGenres.rejected, (state, action) => {
-    //   state.loading = false;
-    //   state.error = action.payload;
-    // });
   },
 });
 
