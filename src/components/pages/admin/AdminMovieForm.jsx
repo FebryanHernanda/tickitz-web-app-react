@@ -5,9 +5,11 @@ import {
   addCinemasSchedule,
   addMoviesData,
 } from "../../../store/slices/adminSlice";
+import { useNavigate } from "react-router-dom";
 
 const AdminMovieForm = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { genresList, directorsList, castList } = useSelector(
     (state) => state.movies,
   );
@@ -164,7 +166,7 @@ const AdminMovieForm = () => {
           backdrop: null,
         });
         setSchedules([]);
-        // navigate("/admin/data");
+        navigate("/admin/data");
       } else {
         console.error("Movie add failed: ", resultAction.payload);
         toast.error("Gagal menambahkan movie");
