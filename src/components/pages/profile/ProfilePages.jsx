@@ -6,9 +6,11 @@ import ellips1 from "/src/assets/icons/ornament/ellips1.svg";
 import ellips2 from "/src/assets/icons/ornament/ellips2.svg";
 import star from "/src/assets/icons/ornament/star.svg";
 import { useSearchParams } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { getOrderHistory } from "../../../store/slices/orderSlice";
 
 const ProfilePages = () => {
+  const dispatch = useDispatch();
   const [page, setPage] = useState("settings");
 
   const userData = useSelector((state) => state.user.data);
@@ -22,6 +24,10 @@ const ProfilePages = () => {
       setSearchParams({ page });
     }
   }, [page, setSearchParams]);
+
+  useEffect(() => {
+    dispatch(getOrderHistory());
+  }, [dispatch]);
 
   return (
     <>
