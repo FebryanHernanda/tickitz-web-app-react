@@ -1,38 +1,236 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import axios from "axios";
 
 const initialState = {
   dataMovies: [],
+  addMoviesData: [],
+  movieEditDetail: null,
   lastId: 0,
+  loading: false,
+  error: null,
 };
+
+export const getAllDataMovies = createAsyncThunk(
+  "admin/allmovies",
+  async (_, { getState, rejectWithValue }) => {
+    try {
+      const token = getState().auth.token;
+
+      const response = await axios.get("http://127.0.0.1:8080/admin/movies", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.error || "Gagal mengambil data",
+      );
+    }
+  },
+);
+
+export const getMovieEditDetail = createAsyncThunk(
+  "admin/getMovieEditDetail",
+  async (movieEditId, { getState, rejectWithValue }) => {
+    try {
+      const token = getState().auth.token;
+
+      const response = await axios.get(
+        `http://localhost:8080/admin/movies/${movieEditId}/edit-details`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.error || "Gagal mengambil detail movie",
+      );
+    }
+  },
+);
+
+export const editMoviesData = createAsyncThunk(
+  "admin/editMoviesData",
+  async ({ id, formData }, { getState, rejectWithValue }) => {
+    try {
+      const token = getState().auth.token;
+
+      const response = await axios.patch(
+        `http://localhost:8080/admin/movies/edit/${id}`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        },
+      );
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(
+        err.response?.data || { message: "Gagal update movie" },
+      );
+    }
+  },
+);
+
+export const deleteMoviesData = createAsyncThunk(
+  "admin/deletemoviesdata",
+  async ({ id }, { getState, rejectWithValue }) => {
+    try {
+      const token = getState().auth.token;
+
+      const response = await axios.delete(
+        `http://localhost:8080/admin/movies/delete/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(
+        err.response?.data || { message: "Gagal update movie" },
+      );
+    }
+  },
+);
+
+export const addMoviesData = createAsyncThunk(
+  "admin/addMoviesData",
+  async (formData, { getState, rejectWithValue }) => {
+    try {
+      const token = getState().auth.token;
+
+      const response = await axios.post(
+        "http://127.0.0.1:8080/admin/movies/add",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        },
+      );
+
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || err.message);
+    }
+  },
+);
+
+// Thunk untuk menambahkan cinema schedule
+export const addCinemasSchedule = createAsyncThunk(
+  "admin/addCinemasSchedule",
+  async (payload, { getState, rejectWithValue }) => {
+    try {
+      const token = getState().auth.token;
+
+      const { data } = await axios.post(
+        "http://127.0.0.1:8080/admin/movies/cinemaschedule/add",
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      return data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || err.message);
+    }
+  },
+);
 
 const adminSlice = createSlice({
   initialState,
   name: "admin",
-  reducers: {
-    addMoviesData: (state, action) => {
-      state.dataMovies.push(action.payload);
-    },
-    deleteMoviesData: (state, action) => {
-      state.dataMovies = state.dataMovies.filter(
-        (item) => item.id !== action.payload,
-      );
-    },
-    editMoviesData: (state, action) => {
-      const index = state.dataMovies.findIndex(
-        (movie) => movie.id === action.payload.id,
-      );
-
-      if (index !== -1) {
-        state.dataMovies[index] = {
-          ...state.dataMovies[index],
-          ...action.payload,
-        };
-      }
-    },
+  extraReducers: (builder) => {
+    builder
+      /* =========================================== Get All Movies Data =========================================== */
+      .addCase(getAllDataMovies.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getAllDataMovies.fulfilled, (state, action) => {
+        state.loading = false;
+        state.dataMovies = action.payload.data;
+      })
+      .addCase(getAllDataMovies.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      /* =========================================== Get Movies Edit Data =========================================== */
+      .addCase(getMovieEditDetail.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getMovieEditDetail.fulfilled, (state, action) => {
+        state.loading = false;
+        state.movieEditDetail = action.payload.data;
+      })
+      .addCase(getMovieEditDetail.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      /* =========================================== Add Movies Data =========================================== */
+      .addCase(addMoviesData.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(addMoviesData.fulfilled, (state, action) => {
+        state.loading = false;
+        state.addMoviesData = action.payload.data;
+      })
+      .addCase(addMoviesData.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      /* =========================================== Edit Movies Data =========================================== */
+      .addCase(editMoviesData.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(editMoviesData.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(editMoviesData.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      /* =========================================== delete Movies Data =========================================== */
+      .addCase(deleteMoviesData.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(deleteMoviesData.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(deleteMoviesData.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      /* =========================================== Add CinemasSchedule Data =========================================== */
+      .addCase(addCinemasSchedule.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(addCinemasSchedule.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(addCinemasSchedule.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
   },
 });
-
-export const { addMoviesData, deleteMoviesData, editMoviesData } =
-  adminSlice.actions;
 
 export default adminSlice.reducer;
