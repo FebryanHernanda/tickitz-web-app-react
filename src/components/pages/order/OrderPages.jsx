@@ -4,7 +4,7 @@ import { ArrowDown, ArrowRight, Check } from "lucide-react";
 import { ChooseSeat } from "../../organisms";
 import { Circle, Line } from "../../atoms";
 import { toast } from "react-toastify";
-import { cinemaLogos } from "../../../data/cinema";
+import getCinemaLogo from "../../../data/cinema/getCinemaLogo";
 
 const OrderPages = () => {
   const navigate = useNavigate();
@@ -12,6 +12,7 @@ const OrderPages = () => {
 
   /* Set state Seat */
   const [seat, setSeat] = useState([]);
+  const [seatLabel, setSeatLabel] = useState([]);
 
   /* Check data null back to landing */
   useEffect(() => {
@@ -23,26 +24,49 @@ const OrderPages = () => {
   if (!location.state) return null;
 
   /* Get all data */
-  const { details, time, date, cinema } = location.state;
+  const { moviesDetails, selectedCinema } = location.state;
+
+  console.log(moviesDetails);
+  console.log(selectedCinema);
 
   /* Get Date Show */
-  const moviesShowDate = new Date(date);
-  const getDate = moviesShowDate.toLocaleString("en-US", {
+  const options = {
     weekday: "long",
+    year: "numeric",
     month: "long",
-    day: "numeric",
-  });
-  const getYear = moviesShowDate.getFullYear();
-  const dateShow = `${getDate} ${getYear}`;
-
-  /* count price */
-  const countPrices = () => {
-    const price = seat.length * 10;
-    return `$ ${price}`;
+    day: "2-digit",
   };
 
-  /* Generate UniqueID */
-  const orderId = Math.random().toString(16).slice(2);
+  const getDate = new Date(selectedCinema.ScheduleDate).toLocaleDateString(
+    "en-US",
+    options,
+  );
+
+  /* Count Prices */
+  const basePrice = selectedCinema.TicketPrice;
+
+  const formattedPrice = new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    minimumFractionDigits: 0,
+  })
+    .format(basePrice)
+    .replace("Rp", "Rp ");
+
+  // fungsi hitung total
+  const countPrices = () => {
+    const total = seat.length * basePrice;
+    return new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+      minimumFractionDigits: 0,
+    })
+      .format(total)
+      .replace("Rp", "Rp ");
+  };
+
+  const totalPrices = countPrices();
+  /* Count Prices */
 
   /* Handle Checkout */
   const handleCheckout = () => {
@@ -51,15 +75,15 @@ const OrderPages = () => {
         position: "top-center",
       });
     }
+
     navigate("/payment", {
       replace: true,
       state: {
-        details,
-        time,
-        dateShow,
-        cinema,
+        moviesDetails,
+        selectedCinema,
+        getDate,
         seat,
-        orderId,
+        totalPrices,
       },
     });
   };
@@ -90,27 +114,27 @@ const OrderPages = () => {
           <div className="flex flex-col items-center justify-between gap-5 rounded-2xl border-1 border-gray-200 p-3 sm:flex-row lg:h-40">
             <div className="h-40 w-full lg:h-full lg:w-200">
               <img
-                src={`https://image.tmdb.org/t/p/original${details.backdrop_path}`}
+                src={`https://image.tmdb.org/t/p/original${moviesDetails?.backdrop_path}`}
                 alt="Movies Posters"
                 className="h-full w-full rounded-md object-cover"
               />
             </div>
             <div className="flex w-full flex-col gap-5">
-              <h3 className="font-regular text-xl">{details.title}</h3>
+              <h3 className="font-regular text-xl">{moviesDetails?.title}</h3>
               <div className="flex gap-2">
-                {details?.genres?.map((data) => {
+                {moviesDetails.genres.map((data, idx) => {
                   return (
                     <span
-                      key={data.id}
+                      key={idx}
                       className="rounded-md bg-gray-200 px-2 py-1 text-xs text-gray-700"
                     >
-                      {data.name}
+                      {data}
                     </span>
                   );
                 })}
               </div>
               <div className="card-movies-bottom">
-                <h4 className="text-medium font-regular">{`Regular - ${time}`}</h4>
+                <h4 className="text-medium font-regular">{`Regular - ${selectedCinema.ScheduleTime}`}</h4>
               </div>
             </div>
             <div className="h-full w-full place-content-end self-end md:w-80">
@@ -129,7 +153,11 @@ const OrderPages = () => {
           <h1 className="text-2xl font-semibold">Choose Your Seat</h1>
 
           {/* <!-- Choose Seat --> */}
-          <ChooseSeat setSeat={setSeat} />
+          <ChooseSeat
+            setSeat={setSeat}
+            setSeatLabel={setSeatLabel}
+            cinemasID={selectedCinema.CinemaScheduleID}
+          />
           {/* <!-- Choose Seat --> */}
 
           {/* Seating key Container */}
@@ -173,28 +201,28 @@ const OrderPages = () => {
               <div className="flex flex-col gap-5">
                 <div className="flex flex-col items-center gap-2">
                   <img
-                    src={cinemaLogos[cinema.toLowerCase()]}
-                    alt={`${cinema} Logo`}
-                    className="w-30"
+                    src={getCinemaLogo(selectedCinema.CinemaName)}
+                    alt={`${selectedCinema.CinemaName} Logo`}
+                    className="w-30 object-contain"
                   />
-                  <h1 className="text-3xl">{`${cinema} Cinema`}</h1>
+                  <h1 className="text-3xl">{`${selectedCinema.CinemaName} Cinema`}</h1>
                 </div>
                 <div className="flex justify-between">
                   <h3 className="text-gray-500">Movie selected</h3>
-                  <h3 className="text-right">{details.title}</h3>
+                  <h3 className="text-right">{moviesDetails?.title}</h3>
                 </div>
                 <div className="flex justify-between">
-                  <h3 className="text-gray-500">{dateShow}</h3>
-                  <h3>{time}</h3>
+                  <h3 className="text-gray-500">{getDate}</h3>
+                  <h3>{selectedCinema.ScheduleTime}</h3>
                 </div>
                 <div className="flex justify-between">
                   <h3 className="text-gray-500">One ticket price</h3>
-                  <h3>$10</h3>
+                  <h3>{formattedPrice}</h3>
                 </div>
                 <div className="flex justify-between gap-5">
                   <h3 className="text-gray-500">Seat Choosed</h3>
                   <h3 className="">
-                    {seat.length > 0 ? seat.join(", ") : "-"}
+                    {seatLabel.length > 0 ? seatLabel.join(", ") : "-"}
                   </h3>
                 </div>
               </div>
@@ -203,7 +231,7 @@ const OrderPages = () => {
               <div className="flex items-center justify-between">
                 <h2 className="">Total Payment</h2>
                 <h3 className="text-lg font-semibold text-blue-700">
-                  {countPrices()}
+                  {totalPrices}
                 </h3>
               </div>
             </div>
