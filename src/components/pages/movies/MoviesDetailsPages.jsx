@@ -13,7 +13,9 @@ const MoviesDetailsPages = () => {
   const dispatch = useDispatch();
 
   const { moviesDetails, loading } = useSelector((state) => state.movies);
-  const { data, isLoading, error } = useSelector((state) => state.cinema);
+  const { data, total_pages, isLoading, error } = useSelector(
+    (state) => state.cinema,
+  );
 
   /* Get movie id from url */
   const { movieId } = useParams();
@@ -25,6 +27,7 @@ const MoviesDetailsPages = () => {
   const [time, setTime] = useState("");
   const [location, setLocation] = useState("");
   const [selectedCinema, setSelectedCinema] = useState({});
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
     dispatch(getMoviesDetails(movieId));
@@ -37,7 +40,7 @@ const MoviesDetailsPages = () => {
   }, [dispatch]);
 
   const handleFilter = () => {
-    dispatch(getCinemaSchedule({ movieId, location, date, time }));
+    dispatch(getCinemaSchedule({ movieId, location, date, time, page }));
   };
 
   /* Selected Card Cinema Schedule */
@@ -47,6 +50,12 @@ const MoviesDetailsPages = () => {
     } else {
       setSelectedCinema(idx);
     }
+  };
+
+  const handlePagination = (newPage) => {
+    if (newPage < 1 || newPage > total_pages) return;
+    setPage(newPage);
+    dispatch(getCinemaSchedule({ page: newPage }));
   };
 
   /* Handle Order */
@@ -145,13 +154,6 @@ const MoviesDetailsPages = () => {
                   <div className="flex flex-col gap-2 lg:w-90 xl:w-full">
                     <h4 className="text-gray-400">Casts</h4>
                     {loading ? "Loading..." : artistName}
-                    {/* {moviesDetails.casts.map((item, id) => {
-                      return (
-                        <h3 key={id} className="font-regular" id="castName">
-                          {item}
-                        </h3>
-                      );
-                    })} */}
                   </div>
                 </div>
               </div>
@@ -306,37 +308,21 @@ const MoviesDetailsPages = () => {
           {/* Choose Cinema Card container */}
 
           {/* Pagination */}
-          <div className="flex justify-center gap-5">
-            <button
-              type="button"
-              className="flex h-5 w-5 items-center justify-center rounded-lg bg-blue-700 p-5 text-white"
-            >
-              1
-            </button>
-            <button
-              type="button"
-              className="flex h-5 w-5 items-center justify-center rounded-lg border-1 border-gray-300 p-5 hover:bg-blue-700 hover:text-white"
-            >
-              2
-            </button>
-            <button
-              type="button"
-              className="flex h-5 w-5 items-center justify-center rounded-lg border-1 border-gray-300 p-5 hover:bg-blue-700 hover:text-white"
-            >
-              3
-            </button>
-            <button
-              type="button"
-              className="flex h-5 w-5 items-center justify-center rounded-lg border-1 border-gray-300 p-5 hover:bg-blue-700 hover:text-white"
-            >
-              4
-            </button>
-            <button
-              type="button"
-              className="flex h-5 w-5 items-center justify-center rounded-lg border-1 border-gray-300 p-5 hover:bg-blue-700 hover:text-white"
-            >
-              5
-            </button>
+          <div className="mt-6 flex items-center justify-center gap-2">
+            {/* Page Numbers */}
+            {Array.from({ length: total_pages }, (_, i) => i + 1).map((p) => (
+              <button
+                key={p}
+                onClick={() => handlePagination(p)}
+                className={`flex h-8 w-8 items-center justify-center rounded ${
+                  p === page
+                    ? "bg-blue-600 text-white shadow-md"
+                    : "border border-gray-300 text-gray-700"
+                }`}
+              >
+                {p}
+              </button>
+            ))}
           </div>
           {/* Pagination */}
 
