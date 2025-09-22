@@ -5,6 +5,7 @@ import { ChooseSeat } from "../../organisms";
 import { Circle, Line } from "../../atoms";
 import { toast } from "react-toastify";
 import getCinemaLogo from "../../../data/cinema/getCinemaLogo";
+import { API_URL } from "../../../utils/constants";
 
 const OrderPages = () => {
   const navigate = useNavigate();
@@ -114,7 +115,7 @@ const OrderPages = () => {
           <div className="flex flex-col items-center justify-between gap-5 rounded-2xl border-1 border-gray-200 p-3 sm:flex-row lg:h-40">
             <div className="h-40 w-full lg:h-full lg:w-200">
               <img
-                src={`https://image.tmdb.org/t/p/original${moviesDetails?.backdrop_path}`}
+                src={`${API_URL}/public/movies${moviesDetails.backdrop_path}`}
                 alt="Movies Posters"
                 className="h-full w-full rounded-md object-cover"
               />
