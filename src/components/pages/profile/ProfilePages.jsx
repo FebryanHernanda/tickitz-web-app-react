@@ -45,7 +45,7 @@ const ProfilePages = () => {
 
                 {/* <!-- Profile Hero --> */}
                 <div className="flex flex-col items-center gap-5">
-                  <div className="h-20 w-20 overflow-hidden rounded-full bg-orange-500">
+                  <div className="h-50 w-50 overflow-hidden rounded-full bg-orange-500">
                     <img
                       src={
                         userData?.data?.image_path
