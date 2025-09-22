@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import { API_KEY, API_URL, BASE_URL } from "../../utils/constants";
+import { API_URL } from "../../utils/constants";
 
 const initialState = {
   movies: [],
@@ -10,8 +10,10 @@ const initialState = {
   genresList: [],
   directorsList: [],
   castList: [],
-  // searchResults: [],
-  totalPages: 1,
+  page: 1,
+  limit: 12,
+  total: 0,
+  total_pages: 0,
   loading: false,
   error: null,
 };
@@ -88,6 +90,14 @@ export const getUpcomingMovies = createAsyncThunk(
         error.response?.data?.error || "Gagal mengambil data",
       );
     }
+  },
+);
+
+export const getAllMovies = createAsyncThunk(
+  "movies/getAll",
+  async ({ page = 1 }) => {
+    const res = await axios.get(`${API_URL}/movies?page=${page}`);
+    return res.data;
   },
 );
 
@@ -197,6 +207,23 @@ const moviesSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
+      /* =========================================== Get All Movies =========================================== */
+      .addCase(getAllMovies.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getAllMovies.fulfilled, (state, action) => {
+        state.loading = false;
+        state.movies = action.payload.data;
+        state.page = action.payload.page;
+        state.limit = action.payload.limit;
+        state.total = action.payload.total;
+        state.total_pages = action.payload.total_pages;
+      })
+      .addCase(getAllMovies.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
       /* =========================================== Get Movies Search=========================================== */
       .addCase(getMoviesSearch.pending, (state) => {
         state.loading = true;
@@ -205,6 +232,10 @@ const moviesSlice = createSlice({
       .addCase(getMoviesSearch.fulfilled, (state, action) => {
         state.loading = false;
         state.movies = action.payload.data;
+        state.page = action.payload.page;
+        state.limit = action.payload.limit;
+        state.total = action.payload.total;
+        state.total_pages = action.payload.total_pages;
       })
       .addCase(getMoviesSearch.rejected, (state, action) => {
         state.movies = [];

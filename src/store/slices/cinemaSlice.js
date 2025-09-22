@@ -7,6 +7,10 @@ const initialState = {
   seatData: [],
   cinemaList: [],
   cinemaLocationList: [],
+  page: 1,
+  limit: 12,
+  total: 0,
+  total_pages: 0,
   loading: false,
   error: null,
 };
@@ -52,6 +56,7 @@ export const getCinemaSchedule = createAsyncThunk(
       if (params.location) query.append("location", params.location);
       if (params.date) query.append("date", params.date);
       if (params.time) query.append("time", params.time);
+      if (params.page) query.append("page", params.page);
 
       const response = await axios.get(
         `${API_URL}/cinemas/${movieID}?${query.toString()}`,
@@ -122,6 +127,10 @@ const cinemaSlice = createSlice({
       .addCase(getCinemaSchedule.fulfilled, (state, action) => {
         state.loading = false;
         state.data = action.payload.data;
+        state.page = action.payload.page;
+        state.limit = action.payload.limit;
+        state.total = action.payload.total;
+        state.total_pages = action.payload.total_pages;
       })
       .addCase(getCinemaSchedule.rejected, (state, action) => {
         state.loading = false;

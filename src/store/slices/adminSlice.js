@@ -6,22 +6,29 @@ const initialState = {
   dataMovies: [],
   addMoviesData: [],
   movieEditDetail: null,
-  lastId: 0,
+  page: 1,
+  limit: 12,
+  total: 0,
+  total_pages: 0,
   loading: false,
   error: null,
 };
 
 export const getAllDataMovies = createAsyncThunk(
   "admin/allmovies",
-  async (_, { getState, rejectWithValue }) => {
+  async ({ page = 1 } = {}, { getState, rejectWithValue }) => {
     try {
       const token = getState().auth.token;
 
-      const response = await axios.get(`${API_URL}/admin/movies`, {
+      console.log(page);
+
+      const response = await axios.get(`${API_URL}/admin/movies?page=${page}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
+
+      console.log(response.data);
 
       return response.data;
     } catch (error) {
@@ -164,6 +171,10 @@ const adminSlice = createSlice({
       .addCase(getAllDataMovies.fulfilled, (state, action) => {
         state.loading = false;
         state.dataMovies = action.payload.data;
+        state.page = action.payload.page;
+        state.limit = action.payload.limit;
+        state.total = action.payload.total;
+        state.total_pages = action.payload.total_pages;
       })
       .addCase(getAllDataMovies.rejected, (state, action) => {
         state.loading = false;
