@@ -5,13 +5,20 @@ import heroBg from "/src/assets/background/background.png";
 import { useSearchParams } from "react-router-dom";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getMoviesSearch } from "../../../store/slices/moviesSlice";
+import {
+  getAllMovies,
+  getMoviesSearch,
+} from "../../../store/slices/moviesSlice";
 import debounce from "lodash.debounce";
 
 const MoviesPages = () => {
   const dispatch = useDispatch();
 
-  const { totalPages, movies, loading } = useSelector((state) => state.movies);
+  const {
+    total_pages: totalPages,
+    movies,
+    loading,
+  } = useSelector((state) => state.movies);
 
   const [searchParams, setSearchParams] = useSearchParams("");
 
@@ -22,8 +29,10 @@ const MoviesPages = () => {
 
   /* Check Getmovies filter endpoint */
   useEffect(() => {
-    dispatch(getMoviesSearch());
-  }, [dispatch]);
+    if (!querySearch && !selectedGenres) {
+      dispatch(getAllMovies({ page: currentPage }));
+    }
+  }, [dispatch, querySearch, selectedGenres, currentPage]);
 
   /* Reset Url Search Params */
   useEffect(() => {
@@ -81,8 +90,18 @@ const MoviesPages = () => {
   /* Handle Paginations */
   const handlePaginations = (page) => {
     if (page < 1 || page > totalPages) return;
-    setSearchParams({ query: querySearch, pages: page });
-    debouncedFetch(querySearch, page);
+    setSearchParams({
+      query: querySearch,
+      pages: page,
+      genres: selectedGenres,
+    });
+    if (querySearch || selectedGenres) {
+      dispatch(
+        getMoviesSearch({ search: querySearch, genre: selectedGenres, page }),
+      );
+    } else {
+      dispatch(getAllMovies({ page }));
+    }
   };
 
   /* Handle dynamic pages */
@@ -93,7 +112,18 @@ const MoviesPages = () => {
   /* Handle Filter */
   const handleFilter = (genreId, value) => {
     setSelectedGenres(value);
-    setSearchParams({ genres: value.toLowerCase() });
+    setSearchParams({
+      query: querySearch,
+      genres: value.toLowerCase(),
+      page: 1,
+    });
+    dispatch(
+      getMoviesSearch({
+        search: querySearch,
+        genre: value.toLowerCase(),
+        page: 1,
+      }),
+    );
   };
 
   const listFilterGenres = {
@@ -181,6 +211,7 @@ const MoviesPages = () => {
                 >
                   <ArrowLeft />
                 </button>
+
                 {pages.map((page) => {
                   return (
                     <button
@@ -194,7 +225,7 @@ const MoviesPages = () => {
                 })}
 
                 <button
-                  className={`flex h-10 w-10 items-center justify-center rounded-full text-white ${currentPage === 5 ? "!cursor-not-allowed bg-gray-400" : "bg-blue-600"} `}
+                  className={`flex h-10 w-10 items-center justify-center rounded-full text-white ${currentPage === totalPages ? "!cursor-not-allowed bg-gray-400" : "bg-blue-600"} `}
                   onClick={() => handlePaginations(currentPage + 1)}
                   disabled={currentPage === totalPages}
                 >
