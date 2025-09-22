@@ -21,7 +21,7 @@ import { API_URL } from "../../../utils/constants";
 const AdminData = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { dataMovies } = useSelector((state) => state.admin);
+  const { dataMovies, page, total_pages } = useSelector((state) => state.admin);
 
   useEffect(() => {
     dispatch(getAllDataMovies());
@@ -30,7 +30,8 @@ const AdminData = () => {
     dispatch(getDirectorsMovies());
     dispatch(getCinemaList());
     dispatch(getCinemaLocation());
-  }, [dispatch]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleDelete = async (id) => {
     console.log("movie id:", id);
@@ -59,6 +60,11 @@ const AdminData = () => {
 
   const handleEditData = (id) => {
     navigate(`${id}/edit`);
+  };
+
+  const handlePagination = (newPage) => {
+    if (newPage < 1 || newPage > total_pages) return;
+    dispatch(getAllDataMovies({ page: newPage }));
   };
 
   return (
@@ -167,16 +173,18 @@ const AdminData = () => {
 
           {/* Pagination */}
           <div className="mt-6 flex items-center justify-center gap-2">
-            {[1, 2, 3, 4].map((page) => (
+            {/* Page Numbers */}
+            {Array.from({ length: total_pages }, (_, i) => i + 1).map((p) => (
               <button
-                key={page}
+                key={p}
+                onClick={() => handlePagination(p)}
                 className={`flex h-8 w-8 items-center justify-center rounded ${
-                  page === 1
+                  p === page
                     ? "bg-blue-600 text-white shadow-md"
                     : "border border-gray-300 text-gray-700"
                 }`}
               >
-                {page}
+                {p}
               </button>
             ))}
           </div>
