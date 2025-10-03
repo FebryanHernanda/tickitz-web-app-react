@@ -13,7 +13,7 @@ import {
   updateProfile,
 } from "../../../store/slices/userSlice";
 
-const AccountSettings = () => {
+const AccountSettings = ({ fileInputRef, onFileChange }) => {
   const dispatch = useDispatch();
   const userData = useSelector((state) => state.user.data);
 
@@ -48,7 +48,6 @@ const AccountSettings = () => {
       lastName: userData?.data.last_name || "",
       phoneNumber: userData?.data.phone_number || "",
       email: userData?.data.email || "",
-      // avatarPath: userData?.data.image_path || "",
     });
   }, [userData]);
 
@@ -122,24 +121,6 @@ const AccountSettings = () => {
         formData.phoneNumber = personalNumber;
       }
     }
-
-    /* ======================================Validate Profile Image====================================== */
-
-    // if (!formData.newPassword.trim() && !formData.confirmPassword.trim()) {
-    //   newErrors.password = "Kolom tidak boleh kosong!";
-    // } else {
-    //   if (formData.newPassword !== formData.confirmPassword) {
-    //     newErrors.password = "Password tidak sama!";
-    //   } else {
-    //     password = formData.newPassword;
-    //     if (!passPattern.test(password)) {
-    //       newErrors.password =
-    //         "Password harus minimal 8 karakter, berisi huruf besar, huruf kecil, dan karakter spesial";
-    //     } else {
-    //       formData.password = password;
-    //     }
-    //   }
-    // }
 
     setErrorMsg(newErrors);
 
@@ -292,14 +273,22 @@ const AccountSettings = () => {
               </div>
             </div>
             <div className="flex w-full flex-col gap-[10px]">
-              <label htmlFor="avatarPath">Profile Image</label>
+              {/* <label htmlFor="avatarPath">Profile Image</label> */}
               <input
                 type="file"
                 name="avatarPath"
-                className="cursor-pointer rounded-[16px] border-[1px] border-gray-400 bg-[#fcfdfe] p-[15px]"
+                ref={fileInputRef}
+                className="hidden cursor-pointer rounded-[16px] border-[1px] border-gray-400 bg-[#fcfdfe] p-[15px]"
                 accept="image/*"
-                onChange={handleInput}
+                onChange={(e) => {
+                  const file = e.target.files[0];
+                  handleInput(e);
+                  if (file) {
+                    onFileChange(file);
+                  }
+                }}
               />
+
               {errorMsg.avatar && (
                 <p className="text-sm text-red-500">{errorMsg.avatar}</p>
               )}
