@@ -34,22 +34,24 @@ const AdminEditForm = () => {
     genre: [],
     director: [],
     cast: [],
-    cinema: [],
-    cinemaLocation: [],
-    movieDate: "",
-    showTime: [],
     poster: null,
     backdrop: null,
   });
 
+  // Combined schedule states
+  const [tempSchedule, setTempSchedule] = useState({
+    movieDate: "",
+    showTime: [],
+    cinema: [],
+    cinemaLocation: [],
+  });
+
   const [schedules, setSchedules] = useState([]);
-  const [cinemaSchedules, setCinemaSchedules] = useState([]);
   const [errorMsg, setErrorMsg] = useState("");
   const [isValid, setIsValid] = useState(true);
 
   useEffect(() => {
     if (!movieEditId) return;
-
     if (!movie || movie.id !== Number(movieEditId)) {
       dispatch(getMovieEditDetail(movieEditId));
     } else {
@@ -67,35 +69,60 @@ const AdminEditForm = () => {
         genre: movie.genre_ids || [],
         director: movie.director_id ? [movie.director_id] : [],
         cast: movie.cast_ids || [],
-        cinema: movie.cinema_schedules?.map((cs) => cs.cinemas_id) || [],
-        cinemaLocation:
-          movie.cinema_schedules?.map((cs) => cs.locations_id) || [],
-
         poster: movie.poster_path,
         backdrop: movie.backdrop_path,
-        showTime: [],
-        movieDate: "",
       });
 
-      if (movie.schedules) {
-        setSchedules(movie.schedules);
-      }
+      if (movie.cinema_schedules && movie.schedules) {
+        const combinedSchedules = [];
 
-      if (movie.cinema_schedules) {
-        setCinemaSchedules(movie.cinema_schedules);
+        if (movie.schedules.length > 0) {
+          const schedule = movie.schedules[0];
+
+          movie.cinema_schedules.forEach((cs) => {
+            schedule.times.forEach((time) => {
+              const cinema = cinemaList.find((c) => c.id === cs.cinemas_id);
+              const location = cinemaLocationList.find(
+                (l) => l.id === cs.locations_id,
+              );
+
+              combinedSchedules.push({
+                date: schedule.date,
+                time: time,
+                cinemaId: cs.cinemas_id,
+                cinemaName: cinema?.name || "Cinema not found",
+                locationId: cs.locations_id,
+                locationName: location?.name || "Location not found",
+              });
+            });
+          });
+        }
+
+        setSchedules(combinedSchedules);
       }
     }
-  }, [dispatch, movie, movieEditId]);
+  }, [dispatch, movie, movieEditId, cinemaList, cinemaLocationList]);
 
   const handleDataChange = (e) => {
     const { name, value, files } = e.target;
-    setMovieForm((prev) => ({ ...prev, [name]: files ? files[0] : value }));
+    setMovieForm((prev) => ({
+      ...prev,
+      [name]: files ? files[0] : value,
+    }));
     setErrorMsg("");
+  };
+
+  const handleTempScheduleChange = (e) => {
+    const { name, value } = e.target;
+    setTempSchedule((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const validate = () => {
     if (!movieForm.title || !movieForm.synopsis || !movieForm.releaseDate) {
-      setErrorMsg("Mohon isi seluruh kolom field!");
+      setErrorMsg("Please fill in all required fields!");
       setIsValid(false);
       return false;
     }
@@ -103,45 +130,86 @@ const AdminEditForm = () => {
     return true;
   };
 
-  const addSchedule = () => {
-    if (!movieForm.movieDate || !movieForm.showTime.length) return;
+  // Add combined schedule
+  const addCombinedSchedule = () => {
+    if (
+      !tempSchedule.movieDate ||
+      !tempSchedule.showTime.length ||
+      !tempSchedule.cinema.length ||
+      !tempSchedule.cinemaLocation.length
+    ) {
+      toast.error("Please fill in all schedule fields before adding!", {
+        position: "top-center",
+        autoClose: 1000,
+      });
+      return;
+    }
 
-    setSchedules((prev) => {
-      const existing = prev.find((s) => s.date === movieForm.movieDate);
+    const newSchedules = [];
+    let duplicateCount = 0;
 
-      if (existing) {
-        const updated = prev.map((s) =>
-          s.date === movieForm.movieDate
-            ? { ...s, times: [...new Set([...s.times, ...movieForm.showTime])] }
-            : s,
-        );
-        return updated;
-      } else {
-        const added = [
-          ...prev,
-          { date: movieForm.movieDate, times: movieForm.showTime },
-        ];
-        return added;
-      }
-    });
+    tempSchedule.cinema.forEach((cinemaId) => {
+      tempSchedule.cinemaLocation.forEach((locationId) => {
+        tempSchedule.showTime.forEach((time) => {
+          const cinema = cinemaList.find((c) => c.id === cinemaId);
+          const location = cinemaLocationList.find((l) => l.id === locationId);
 
-    setCinemaSchedules((prev) => {
-      const newSchedules = prev.flatMap((cs, idx) => {
-        console.log(`[Iterating cs ${idx}]`, cs);
-        return movieForm.showTime.map((time) => {
-          const newObj = {
-            cinema_id: cs.cinema_id ?? cs.cinemas_id,
-            location_id: cs.location_id ?? cs.locations_id,
-            date: movieForm.movieDate,
-            time,
-          };
-          return newObj;
+          const isDuplicate = schedules.some(
+            (existingSchedule) =>
+              existingSchedule.date === tempSchedule.movieDate &&
+              existingSchedule.time === time &&
+              existingSchedule.cinemaId === cinemaId &&
+              existingSchedule.locationId === locationId,
+          );
+
+          if (isDuplicate) {
+            duplicateCount++;
+            console.log(
+              `Duplicate found: ${tempSchedule.movieDate} - ${time} - ${cinema?.name} - ${location?.name}`,
+            );
+          } else {
+            newSchedules.push({
+              date: tempSchedule.movieDate,
+              time: time,
+              cinemaId: cinemaId,
+              cinemaName: cinema?.name || "Cinema not found",
+              locationId: locationId,
+              locationName: location?.name || "Location not found",
+            });
+          }
         });
       });
-
-      const result = [...prev, ...newSchedules];
-      return result;
     });
+
+    if (duplicateCount > 0) {
+      toast.warning(
+        `${duplicateCount} the schedule already exists and is not being added`,
+        {
+          position: "top-center",
+          autoClose: 1000,
+        },
+      );
+    }
+
+    if (newSchedules.length > 0) {
+      setSchedules((prev) => [...prev, ...newSchedules]);
+      toast.success(`Successfuly added ${newSchedules.length} schedule!`, {
+        position: "top-center",
+        autoClose: 1000,
+      });
+    }
+
+    setTempSchedule({
+      movieDate: "",
+      showTime: [],
+      cinema: [],
+      cinemaLocation: [],
+    });
+  };
+
+  // Remove individual schedule
+  const removeSchedule = (index) => {
+    setSchedules((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleEditSubmit = async () => {
@@ -152,18 +220,21 @@ const AdminEditForm = () => {
         parseInt(movieForm.durationHours || 0) * 60 +
         parseInt(movieForm.durationMinutes || 0);
 
-      const schedulesPayload = schedules.flatMap((s) =>
-        s.times.map((time) => ({
-          date: s.date,
-          time,
-        })),
-      );
+      // Group schedules by date and time for movie schedules
+      const uniqueSchedules = schedules.reduce((acc, curr) => {
+        const key = `${curr.date}-${curr.time}`;
+        if (!acc.find((s) => `${s.date}-${s.time}` === key)) {
+          acc.push({ date: curr.date, time: curr.time });
+        }
+        return acc;
+      }, []);
 
-      const cinemaSchedulesPayload = cinemaSchedules.map((cs) => ({
-        cinemas_id: cs.cinema_id,
-        locations_id: cs.location_id,
-        date: cs.date,
-        time: cs.time,
+      // Cinema schedules payload
+      const cinemaSchedulesPayload = schedules.map((schedule) => ({
+        cinemas_id: schedule.cinemaId,
+        locations_id: schedule.locationId,
+        date: schedule.date,
+        time: schedule.time,
       }));
 
       const formData = new FormData();
@@ -176,7 +247,7 @@ const AdminEditForm = () => {
       formData.append("director_id", parseInt(movieForm.director[0] || 0));
       formData.append("genres", JSON.stringify(movieForm.genre || []));
       formData.append("casts", JSON.stringify(movieForm.cast || []));
-      formData.append("schedules", JSON.stringify(schedulesPayload));
+      formData.append("schedules", JSON.stringify(uniqueSchedules));
       formData.append(
         "cinemas_schedules",
         JSON.stringify(cinemaSchedulesPayload),
@@ -208,8 +279,10 @@ const AdminEditForm = () => {
     }
   };
 
-  const renderAddPicker = (label, fieldName, list) => {
-    const selected = movieForm[fieldName] || [];
+  const renderAddPicker = (label, fieldName, list, isTemp = false) => {
+    const formData = isTemp ? tempSchedule : movieForm;
+    const setFormData = isTemp ? setTempSchedule : setMovieForm;
+    const selected = formData[fieldName] || [];
 
     return (
       <div className="flex w-full flex-col gap-2">
@@ -229,7 +302,7 @@ const AdminEditForm = () => {
                   type="button"
                   className="text-red-500"
                   onClick={() =>
-                    setMovieForm((prev) => ({
+                    setFormData((prev) => ({
                       ...prev,
                       [fieldName]: (prev[fieldName] || []).filter(
                         (v) => v !== id,
@@ -251,7 +324,7 @@ const AdminEditForm = () => {
             const value = parseInt(e.target.value);
             if (!value) return;
             if (!selected.includes(value)) {
-              setMovieForm((prev) => ({
+              setFormData((prev) => ({
                 ...prev,
                 [fieldName]: [...(prev[fieldName] || []), value],
               }));
@@ -272,44 +345,40 @@ const AdminEditForm = () => {
     );
   };
 
-  const renderTimePicker = () => (
-    <div className="flex gap-5">
-      {/* Movie Date */}
-      <div className="flex w-full flex-col gap-2">
+  //  Schedule Picker
+  const renderCombinedSchedulePicker = () => (
+    <div className="flex flex-col gap-4 rounded-lg border border-gray-300 p-4">
+      <h3 className="font-medium text-gray-800">Add New Schedule</h3>
+
+      {/* Date Input */}
+      <div className="flex flex-col gap-2">
         <label className="mb-1 block font-medium">Movie Date</label>
         <input
           type="date"
-          name="movieDate"
-          value={movieForm.movieDate}
-          onChange={handleDataChange}
           className="w-full rounded-md border border-gray-400 px-3 py-2 text-sm"
+          name="movieDate"
+          value={tempSchedule.movieDate}
+          onChange={handleTempScheduleChange}
+          required
         />
-        <button
-          type="button"
-          onClick={addSchedule}
-          className="mt-1 w-1/4 rounded bg-blue-600 px-3 py-2 text-sm text-white hover:bg-blue-700"
-        >
-          Add Schedule
-        </button>
       </div>
 
-      {/* Schedule Time */}
-      <div className="flex w-full flex-col gap-2">
+      {/* Show Time Selection */}
+      <div className="flex flex-col gap-2">
         <label className="mb-1 block font-medium">Schedule Time</label>
-
-        {movieForm.showTime?.length > 0 && (
+        {tempSchedule.showTime.length > 0 && (
           <div className="mb-1 flex flex-wrap gap-2">
-            {movieForm.showTime.map((time, idx) => (
+            {tempSchedule.showTime.map((time, idx) => (
               <span
                 key={idx}
-                className="flex items-center gap-2 rounded border px-2 py-1 text-sm"
+                className="flex items-center justify-between gap-2 rounded border border-gray-300 px-2 py-1 text-sm"
               >
                 {time}
                 <button
                   type="button"
                   className="text-red-500"
                   onClick={() =>
-                    setMovieForm((prev) => ({
+                    setTempSchedule((prev) => ({
                       ...prev,
                       showTime: prev.showTime.filter((_, i) => i !== idx),
                     }))
@@ -321,15 +390,13 @@ const AdminEditForm = () => {
             ))}
           </div>
         )}
-
-        {/* Dropdown */}
         <select
           className="w-full rounded-md border border-gray-400 px-3 py-2 text-sm"
           onChange={(e) => {
             const value = e.target.value;
             if (!value) return;
-            if (!movieForm.showTime.includes(value)) {
-              setMovieForm((prev) => ({
+            if (!tempSchedule.showTime.includes(value)) {
+              setTempSchedule((prev) => ({
                 ...prev,
                 showTime: [...prev.showTime, value],
               }));
@@ -339,50 +406,33 @@ const AdminEditForm = () => {
         >
           <option value="">Select time...</option>
           {scheduleTimes
-            .filter((t) => !movieForm.showTime.includes(t))
+            .filter((t) => !tempSchedule.showTime.includes(t))
             .map((t) => (
               <option key={t} value={t}>
                 {t}
               </option>
             ))}
         </select>
+      </div>
 
-        {/* Added schedules */}
-        {schedules?.length > 0 && (
-          <div className="mt-2 flex flex-col gap-1">
-            {schedules.map((s, idx) =>
-              s.times.map((time, tIdx) => (
-                <div
-                  key={`${idx}-${tIdx}`}
-                  className="flex items-center justify-between rounded border border-gray-300 px-2 py-1 text-sm"
-                >
-                  <span>
-                    {s.date} - {time}
-                  </span>
-                  <button
-                    type="button"
-                    className="text-red-500"
-                    onClick={() =>
-                      setSchedules((prev) =>
-                        prev.map((item, i) =>
-                          i === idx
-                            ? {
-                                ...item,
-                                times: item.times.filter((_, j) => j !== tIdx),
-                              }
-                            : item,
-                        ),
-                      )
-                    }
-                  >
-                    ×
-                  </button>
-                </div>
-              )),
-            )}
-          </div>
+      {/* Cinema and Location Selection */}
+      <div className="flex gap-4">
+        {renderAddPicker("Cinema", "cinema", cinemaList, true)}
+        {renderAddPicker(
+          "Cinema Location",
+          "cinemaLocation",
+          cinemaLocationList,
+          true,
         )}
       </div>
+
+      <button
+        type="button"
+        onClick={addCombinedSchedule}
+        className="w-full rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+      >
+        Add Schedule
+      </button>
     </div>
   );
 
@@ -524,18 +574,35 @@ const AdminEditForm = () => {
           </div>
           {renderAddPicker("Cast", "cast", castList)}
 
-          {/* Cinema Picker */}
-          <div className="flex justify-between gap-5">
-            {renderAddPicker("Cinema", "cinema", cinemaList)}
-            {renderAddPicker(
-              "Cinema Location",
-              "cinemaLocation",
-              cinemaLocationList,
-            )}
-          </div>
+          {/* Combined Schedule Picker */}
+          {renderCombinedSchedulePicker()}
 
-          {/* Schedule Picker */}
-          {renderTimePicker()}
+          {/* Display Current Schedules */}
+          {schedules.length > 0 && (
+            <div className="flex flex-col gap-2">
+              <h3 className="font-medium text-gray-800">Current Schedules</h3>
+              <div className="max-h-60 overflow-y-auto rounded border border-gray-300 p-3">
+                {schedules.map((schedule, idx) => (
+                  <div
+                    key={idx}
+                    className="mb-2 flex items-center justify-between rounded border border-gray-200 p-2 text-sm"
+                  >
+                    <span>
+                      {schedule.date} | {schedule.time} | {schedule.cinemaName}{" "}
+                      | {schedule.locationName}
+                    </span>
+                    <button
+                      type="button"
+                      className="text-red-500 hover:text-red-700"
+                      onClick={() => removeSchedule(idx)}
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Submit */}
           <button
@@ -543,7 +610,7 @@ const AdminEditForm = () => {
             onClick={handleEditSubmit}
             className="mt-4 w-full rounded-md bg-blue-600 py-2 text-sm text-white hover:bg-blue-700"
           >
-            Save Movie
+            Update Movie
           </button>
 
           {!isValid && <span className="mt-2 text-red-500">{errorMsg}</span>}
