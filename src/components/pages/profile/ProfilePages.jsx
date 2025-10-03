@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AccountSettings, OrderHistory } from "../../organisms";
 
 import avaProfile from "/src/assets/background/ava-profile.png";
@@ -8,6 +8,7 @@ import star from "/src/assets/icons/ornament/star.svg";
 import { useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getOrderHistory } from "../../../store/slices/orderSlice";
+import { Pencil, SquarePen } from "lucide-react";
 
 const ProfilePages = () => {
   const dispatch = useDispatch();
@@ -29,6 +30,22 @@ const ProfilePages = () => {
     dispatch(getOrderHistory());
   }, [dispatch]);
 
+  /* File Upload trigger */
+  const fileInputRef = useRef(null);
+  const [preview, setPreview] = useState(null);
+
+  const handleUploadClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleFileChange = (file) => {
+    if (file) {
+      setPreview(URL.createObjectURL(file));
+    }
+  };
+
   return (
     <>
       <div className="bg-gray-200">
@@ -45,16 +62,32 @@ const ProfilePages = () => {
 
                 {/* <!-- Profile Hero --> */}
                 <div className="flex flex-col items-center gap-5">
-                  <div className="h-50 w-50 overflow-hidden rounded-full bg-orange-500">
-                    <img
-                      src={
-                        userData?.data?.image_path
-                          ? `http://localhost:8080/public${userData?.data.image_path}`
-                          : avaProfile
-                      }
-                      alt="Photo Profile Avatar"
-                      className="h-full w-full object-cover"
-                    />
+                  <div className="relative">
+                    <div className="h-50 w-50 overflow-hidden rounded-full bg-orange-500">
+                      {preview ? (
+                        <img
+                          src={preview}
+                          alt="Photo Profile Avatar"
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        <img
+                          src={
+                            userData?.data?.image_path
+                              ? `http://localhost:8080/public${userData?.data.image_path}`
+                              : avaProfile
+                          }
+                          alt="Photo Profile Avatar"
+                          className="h-full w-full object-cover"
+                        />
+                      )}
+                    </div>
+                    <div
+                      className="absolute right-3 bottom-1 mx-auto flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-blue-600"
+                      onClick={handleUploadClick}
+                    >
+                      <Pencil size={20} className="text-white" />
+                    </div>
                   </div>
                   <div className="flex flex-col gap-[5px] text-center">
                     <h2 className="text-xl font-bold">
@@ -139,7 +172,14 @@ const ProfilePages = () => {
               </button>
             </nav>
             {/* Check Navigation, and render component base on navigation value */}
-            {page === "settings" ? <AccountSettings /> : <OrderHistory />}
+            {page === "settings" ? (
+              <AccountSettings
+                fileInputRef={fileInputRef}
+                onFileChange={handleFileChange}
+              />
+            ) : (
+              <OrderHistory />
+            )}
           </section>
           {/* Profile Settings */}
         </div>
