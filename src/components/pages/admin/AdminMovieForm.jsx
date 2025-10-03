@@ -31,12 +31,16 @@ const AdminMovieForm = () => {
     genre: [],
     director: [],
     cast: [],
-    cinema: [],
-    cinemaLocation: [],
-    movieDate: "",
-    showTime: [],
     poster: null,
     backdrop: null,
+  });
+
+  // New combined schedule state
+  const [tempSchedule, setTempSchedule] = useState({
+    movieDate: "",
+    showTime: [],
+    cinema: [],
+    cinemaLocation: [],
   });
 
   const [schedules, setSchedules] = useState([]);
@@ -52,9 +56,17 @@ const AdminMovieForm = () => {
     setErrorMsg("");
   };
 
+  const handleTempScheduleChange = (e) => {
+    const { name, value } = e.target;
+    setTempSchedule((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
   const validate = () => {
-    if (!movieForm.showTime.length && !schedules.length) {
-      setErrorMsg("Please fill in the broadcast time!");
+    if (!schedules.length) {
+      setErrorMsg("Please add at least one schedule!");
       return false;
     }
     if (
@@ -69,15 +81,86 @@ const AdminMovieForm = () => {
     return true;
   };
 
-  // Add schedule
-  const addSchedule = () => {
-    if (!movieForm.movieDate || !movieForm.showTime.length) return;
-    const newSchedules = movieForm.showTime.map((time) => ({
-      date: movieForm.movieDate,
-      time,
-    }));
-    setSchedules((prev) => [...prev, ...newSchedules]);
-    setMovieForm((prev) => ({ ...prev, showTime: [] }));
+  // Add combined schedule
+  const addCombinedSchedule = () => {
+    if (
+      !tempSchedule.movieDate ||
+      !tempSchedule.showTime.length ||
+      !tempSchedule.cinema.length ||
+      !tempSchedule.cinemaLocation.length
+    ) {
+      toast.error("Please fill in all schedule fields before adding!", {
+        position: "top-center",
+        autoClose: 1000,
+      });
+      return;
+    }
+
+    const newSchedules = [];
+    let duplicateCount = 0;
+
+    tempSchedule.cinema.forEach((cinemaId) => {
+      tempSchedule.cinemaLocation.forEach((locationId) => {
+        tempSchedule.showTime.forEach((time) => {
+          const cinema = cinemaList.find((c) => c.id === cinemaId);
+          const location = cinemaLocationList.find((l) => l.id === locationId);
+
+          const isDuplicate = schedules.some(
+            (existingSchedule) =>
+              existingSchedule.date === tempSchedule.movieDate &&
+              existingSchedule.time === time &&
+              existingSchedule.cinemaId === cinemaId &&
+              existingSchedule.locationId === locationId,
+          );
+
+          if (isDuplicate) {
+            duplicateCount++;
+            console.log(
+              `Duplicate found: ${tempSchedule.movieDate} - ${time} - ${cinema?.name} - ${location?.name}`,
+            );
+          } else {
+            newSchedules.push({
+              date: tempSchedule.movieDate,
+              time: time,
+              cinemaId: cinemaId,
+              cinemaName: cinema?.name || "Cinema not found",
+              locationId: locationId,
+              locationName: location?.name || "Location not found",
+            });
+          }
+        });
+      });
+    });
+
+    if (duplicateCount > 0) {
+      toast.warning(
+        `${duplicateCount} the schedule already exists and is not being added`,
+        {
+          position: "top-center",
+          autoClose: 1000,
+        },
+      );
+    }
+
+    if (newSchedules.length > 0) {
+      setSchedules((prev) => [...prev, ...newSchedules]);
+      toast.success(`Successfuly added ${newSchedules.length} schedule!`, {
+        position: "top-center",
+        autoClose: 1000,
+      });
+    }
+
+    setTempSchedule({
+      movieDate: "",
+      showTime: [],
+      cinema: [],
+      cinemaLocation: [],
+    });
+  };
+
+  // Remove individual schedule
+  const removeSchedule = (index) => {
+    setSchedules((prev) => prev.filter((_, i) => i !== index));
   };
 
   // Handle submit
@@ -93,11 +176,14 @@ const AdminMovieForm = () => {
         parseInt(movieForm.durationHours || 0) * 60 +
         parseInt(movieForm.durationMinutes || 0);
 
-      // parse date and time to schedules array
-      const schedulesArray = (schedules || []).map((s) => ({
-        date: s.date,
-        time: s.time,
-      }));
+      // Group schedules by date and time for movie schedules
+      const uniqueSchedules = schedules.reduce((acc, curr) => {
+        const key = `${curr.date}-${curr.time}`;
+        if (!acc.find((s) => `${s.date}-${s.time}` === key)) {
+          acc.push({ date: curr.date, time: curr.time });
+        }
+        return acc;
+      }, []);
 
       const formData = new FormData();
       formData.append("title", movieForm.title);
@@ -109,35 +195,27 @@ const AdminMovieForm = () => {
       formData.append("director_id", parseInt(movieForm.director[0] || 0));
       formData.append("genres", JSON.stringify(movieForm.genre || []));
       formData.append("casts", JSON.stringify(movieForm.cast || []));
-      formData.append("schedules", JSON.stringify(schedulesArray));
+      formData.append("schedules", JSON.stringify(uniqueSchedules));
 
       if (movieForm.poster) formData.append("poster", movieForm.poster);
       if (movieForm.backdrop) formData.append("backdrop", movieForm.backdrop);
 
-      // dispatch add movies
+      // Dispatch add movies
       const resultAction = await dispatch(addMoviesData(formData));
 
-      /* Check if response ok and get the payload for get schedules_id */
       if (addMoviesData.fulfilled.match(resultAction)) {
         const movieData = resultAction.payload.data;
         console.log("Movie added:", movieData);
 
-        // get payload for cinemaSchedule
-        const cinemaSchedulePayload = [];
-        (movieForm.cinema || []).forEach((cinemaID) => {
-          (movieForm.cinemaLocation || []).forEach((locationID) => {
-            (movieData.schedule_ids || []).forEach((scheduleID) => {
-              cinemaSchedulePayload.push({
-                cinemas_id: cinemaID,
-                locations_id: locationID,
-                schedules_id: scheduleID,
-              });
-            });
-          });
-        });
-        console.log("Cinema schedule payload:", cinemaSchedulePayload);
+        // Create cinema schedule payload from the combined schedules
+        const cinemaSchedulePayload = schedules.map((schedule, index) => ({
+          cinemas_id: schedule.cinemaId,
+          locations_id: schedule.locationId,
+          schedules_id:
+            movieData.schedule_ids?.[index] || movieData.schedule_ids?.[0],
+        }));
 
-        // add cinema schedules
+        // Add cinema schedules
         if (cinemaSchedulePayload.length > 0) {
           await dispatch(addCinemasSchedule(cinemaSchedulePayload));
         }
@@ -147,6 +225,7 @@ const AdminMovieForm = () => {
           autoClose: 1000,
         });
 
+        // Reset form
         setMovieForm({
           title: "",
           synopsis: "",
@@ -158,107 +237,117 @@ const AdminMovieForm = () => {
           genre: [],
           director: [],
           cast: [],
-          cinema: [],
-          cinemaLocation: [],
-          movieDate: "",
-          showTime: [],
           poster: null,
           backdrop: null,
         });
         setSchedules([]);
+        setTempSchedule({
+          movieDate: "",
+          showTime: [],
+          cinema: [],
+          cinemaLocation: [],
+        });
         navigate("/admin/data");
       } else {
         console.error("Movie add failed: ", resultAction.payload);
-        toast.error("Gagal menambahkan movie");
+        toast.error("Failed to add movie", {
+          position: "top-center",
+          autoClose: 1000,
+        });
       }
     } catch (err) {
       console.error(err);
-      toast.error("Terjadi kesalahan saat submit movie");
+      toast.error("Error occurred while submitting movie", {
+        position: "top-center",
+        autoClose: 1000,
+      });
     }
   };
 
   // Add Picker helper
-  const renderAddPicker = (label, fieldName, list) => (
-    <div className="flex w-full flex-col gap-2">
-      <label className="mb-1 block font-medium">{label}</label>
-      <div className="mb-1 flex flex-wrap gap-2">
-        {movieForm[fieldName].map((id) => {
-          const item = list.find((i) => i.id === id);
-          return (
-            <span
-              key={id}
-              className="flex items-center justify-between gap-5 rounded border border-gray-300 px-2 py-1 text-sm"
-            >
-              {item?.name}
-              <button
-                type="button"
-                className="text-red-500"
-                onClick={() =>
-                  setMovieForm((prev) => ({
-                    ...prev,
-                    [fieldName]: prev[fieldName].filter((v) => v !== id),
-                  }))
-                }
-              >
-                ×
-              </button>
-            </span>
-          );
-        })}
-      </div>
-      <select
-        className="w-full rounded-md border border-gray-400 px-3 py-2 text-sm"
-        onChange={(e) => {
-          const value = parseInt(e.target.value);
-          if (!value) return;
-          if (!movieForm[fieldName].includes(value)) {
-            setMovieForm((prev) => ({
-              ...prev,
-              [fieldName]: [...prev[fieldName], value],
-            }));
-          }
-          e.target.value = "";
-        }}
-      >
-        <option value="">Select {label.toLowerCase()}...</option>
-        {list
-          .filter((i) => !movieForm[fieldName].includes(i.id))
-          .map((i) => (
-            <option key={i.id} value={i.id}>
-              {i.name}
-            </option>
-          ))}
-      </select>
-    </div>
-  );
+  const renderAddPicker = (label, fieldName, list, isTemp = false) => {
+    const formData = isTemp ? tempSchedule : movieForm;
+    const setFormData = isTemp ? setTempSchedule : setMovieForm;
 
-  /* ! Time Picker */
-  const renderTimePicker = () => (
-    <div className="flex gap-5">
+    return (
       <div className="flex w-full flex-col gap-2">
+        <label className="mb-1 block font-medium">{label}</label>
+        <div className="mb-1 flex flex-wrap gap-2">
+          {formData[fieldName].map((id) => {
+            const item = list.find((i) => i.id === id);
+            return (
+              <span
+                key={id}
+                className="flex items-center justify-between gap-5 rounded border border-gray-300 px-2 py-1 text-sm"
+              >
+                {item?.name}
+                <button
+                  type="button"
+                  className="text-red-500"
+                  onClick={() =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      [fieldName]: prev[fieldName].filter((v) => v !== id),
+                    }))
+                  }
+                >
+                  ×
+                </button>
+              </span>
+            );
+          })}
+        </div>
+        <select
+          className="w-full rounded-md border border-gray-400 px-3 py-2 text-sm"
+          onChange={(e) => {
+            const value = parseInt(e.target.value);
+            if (!value) return;
+            if (!formData[fieldName].includes(value)) {
+              setFormData((prev) => ({
+                ...prev,
+                [fieldName]: [...prev[fieldName], value],
+              }));
+            }
+            e.target.value = "";
+          }}
+        >
+          <option value="">Select {label.toLowerCase()}...</option>
+          {list
+            .filter((i) => !formData[fieldName].includes(i.id))
+            .map((i) => (
+              <option key={i.id} value={i.id}>
+                {i.name}
+              </option>
+            ))}
+        </select>
+      </div>
+    );
+  };
+
+  // Combined Schedule Picker
+  const renderCombinedSchedulePicker = () => (
+    <div className="flex flex-col gap-4 rounded-lg border border-gray-300 p-4">
+      <h3 className="font-medium text-gray-800">Add Schedule</h3>
+
+      {/* Date Input */}
+      <div className="flex flex-col gap-2">
         <label className="mb-1 block font-medium">Movie Date</label>
         <input
           type="date"
           className="w-full rounded-md border border-gray-400 px-3 py-2 text-sm"
           name="movieDate"
-          value={movieForm.movieDate}
-          onChange={handleDataChange}
+          value={tempSchedule.movieDate}
+          onChange={handleTempScheduleChange}
           required
         />
-        <button
-          type="button"
-          onClick={addSchedule}
-          className="mt-1 w-1/4 rounded bg-blue-600 px-3 py-2 text-sm text-white hover:bg-blue-700"
-        >
-          Add Schedule
-        </button>
       </div>
 
-      <div className="full flex w-full flex-col gap-2">
+      {/* Show Time Selection */}
+      <div className="flex flex-col gap-2">
         <label className="mb-1 block font-medium">Schedule Time</label>
-        {movieForm.showTime.length > 0 && (
+        {tempSchedule.showTime.length > 0 && (
           <div className="mb-1 flex flex-wrap gap-2">
-            {movieForm.showTime.map((time, idx) => (
+            {tempSchedule.showTime.map((time, idx) => (
               <span
                 key={idx}
                 className="flex items-center justify-between gap-2 rounded border border-gray-300 px-2 py-1 text-sm"
@@ -268,13 +357,13 @@ const AdminMovieForm = () => {
                   type="button"
                   className="text-red-500"
                   onClick={() =>
-                    setMovieForm((prev) => ({
+                    setTempSchedule((prev) => ({
                       ...prev,
                       showTime: prev.showTime.filter((_, i) => i !== idx),
                     }))
                   }
                 >
-                  x
+                  ×
                 </button>
               </span>
             ))}
@@ -285,8 +374,8 @@ const AdminMovieForm = () => {
           onChange={(e) => {
             const value = e.target.value;
             if (!value) return;
-            if (!movieForm.showTime.includes(value)) {
-              setMovieForm((prev) => ({
+            if (!tempSchedule.showTime.includes(value)) {
+              setTempSchedule((prev) => ({
                 ...prev,
                 showTime: [...prev.showTime, value],
               }));
@@ -296,37 +385,33 @@ const AdminMovieForm = () => {
         >
           <option value="">Select time...</option>
           {scheduleTimes
-            .filter((t) => !movieForm.showTime.includes(t))
+            .filter((t) => !tempSchedule.showTime.includes(t))
             .map((t) => (
               <option key={t} value={t}>
                 {t}
               </option>
             ))}
         </select>
-        {schedules.length > 0 && (
-          <div className="mt-2 flex flex-col gap-1">
-            {schedules.map((s, idx) => (
-              <div
-                key={idx}
-                className="flex items-center justify-between rounded border border-gray-300 px-2 py-1 text-sm"
-              >
-                <span>
-                  {s.date} - {s.time}
-                </span>
-                <button
-                  type="button"
-                  className="text-red-500"
-                  onClick={() =>
-                    setSchedules((prev) => prev.filter((_, i) => i !== idx))
-                  }
-                >
-                  ×
-                </button>
-              </div>
-            ))}
-          </div>
+      </div>
+
+      {/* Cinema and Location Selection */}
+      <div className="flex gap-4">
+        {renderAddPicker("Cinema", "cinema", cinemaList, true)}
+        {renderAddPicker(
+          "Cinema Location",
+          "cinemaLocation",
+          cinemaLocationList,
+          true,
         )}
       </div>
+
+      <button
+        type="button"
+        onClick={addCombinedSchedule}
+        className="w-full rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+      >
+        Add Schedule
+      </button>
     </div>
   );
 
@@ -467,17 +552,36 @@ const AdminMovieForm = () => {
             {renderAddPicker("Director", "director", directorsList)}
           </div>
           {renderAddPicker("Cast", "cast", castList)}
-          <div className="flex justify-between gap-5">
-            {renderAddPicker("Cinema", "cinema", cinemaList)}
-            {renderAddPicker(
-              "Cinema Location",
-              "cinemaLocation",
-              cinemaLocationList,
-            )}
-          </div>
 
-          {/* Time Picker */}
-          {renderTimePicker()}
+          {/* Combined Schedule Picker */}
+          {renderCombinedSchedulePicker()}
+
+          {/* Display Added Schedules */}
+          {schedules.length > 0 && (
+            <div className="flex flex-col gap-2">
+              <h3 className="font-medium text-gray-800">Added Schedules</h3>
+              <div className="max-h-60 overflow-y-auto rounded border border-gray-300 p-3">
+                {schedules.map((schedule, idx) => (
+                  <div
+                    key={idx}
+                    className="mb-2 flex items-center justify-between rounded border border-gray-200 p-2 text-sm"
+                  >
+                    <span>
+                      {schedule.date} | {schedule.time} | {schedule.cinemaName}{" "}
+                      | {schedule.locationName}
+                    </span>
+                    <button
+                      type="button"
+                      className="text-red-500 hover:text-red-700"
+                      onClick={() => removeSchedule(idx)}
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           <button
             type="button"
