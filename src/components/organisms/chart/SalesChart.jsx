@@ -14,6 +14,7 @@ import {
   Filler,
 } from "chart.js";
 import { useDispatch, useSelector } from "react-redux";
+import { getAllMovies } from "../../../store/slices/moviesSlice";
 // import { fetchMovies } from "../../../store/slices/moviesSlice";
 
 ChartJS.register(
@@ -35,9 +36,11 @@ const SalesChart = () => {
   const [timeCategory, setTimeCategory] = useState("monthly");
   const [chartData, setChartData] = useState(getDataSalesByCategory("monthly"));
 
-  // useEffect(() => {
-  //   if (!movies.length) dispatch(fetchMovies({ page: 1 }));
-  // }, [dispatch, movies]);
+  useEffect(() => {
+    dispatch(getAllMovies({ page: 1 }));
+  }, [dispatch]);
+
+  console.log(movies);
 
   const handleTimeChange = (e) => setTimeCategory(e.target.value);
   const handleMoviesName = (e) => setMoviesName(e.target.value);
@@ -97,8 +100,6 @@ const SalesChart = () => {
                 </option>
               );
             })}
-
-            {/* <option value="Man with No Past">Man with No Past</option> */}
           </select>
         </label>
 
