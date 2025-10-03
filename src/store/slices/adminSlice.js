@@ -213,6 +213,7 @@ const adminSlice = createSlice({
       })
       .addCase(editMoviesData.fulfilled, (state) => {
         state.loading = false;
+        state.movieEditDetail = null;
       })
       .addCase(editMoviesData.rejected, (state, action) => {
         state.loading = false;
