@@ -34,8 +34,6 @@ const AdminData = () => {
   }, []);
 
   const handleDelete = async (id) => {
-    console.log("movie id:", id);
-
     try {
       const resultAction = await dispatch(deleteMoviesData({ id }));
 
@@ -69,8 +67,8 @@ const AdminData = () => {
 
   return (
     <section className="min-h-screen bg-gray-200">
-      <div className="mx-auto flex max-w-screen-2xl flex-col gap-10 p-5 lg:p-10">
-        <div className="rounded-lg bg-white p-6 shadow-md">
+      <div className="mx-auto flex min-h-screen max-w-screen-2xl flex-col justify-center gap-10 p-5 lg:p-10">
+        <div className="flex flex-col justify-center rounded-lg bg-white p-6 shadow-md">
           <div className="mb-6 flex items-center justify-between">
             <h2 className="text-lg font-semibold">List Movie</h2>
             <div className="flex items-center gap-4">
