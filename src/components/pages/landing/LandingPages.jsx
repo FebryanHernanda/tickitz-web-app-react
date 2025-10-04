@@ -37,7 +37,6 @@ const LandingPages = () => {
       dispatch(getUpcomingMovies());
     }
   }, [dispatch, popularMovies.length, upcomingMovies.length]);
-  console.log(upcomingMovies);
 
   const moviesPoster = {
     heroOne: popularMovies?.[5]?.poster_path,
