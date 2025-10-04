@@ -68,9 +68,9 @@ $ npm run dev
 
 <div align="center">
 
-<img src="/demo/landing_page.png" loading="lazy" width="370px">
-</br>
-<img src="/demo/movies_page.png" loading="lazy" width="370px">
+<img src="/public/demo/landing_page.png" loading="lazy" width="520px" >
+<br/>
+<img src="/public/demo/movies_page.png" loading="lazy" width="520px">
 
 </div>
 
