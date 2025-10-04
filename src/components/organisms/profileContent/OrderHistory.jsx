@@ -4,8 +4,6 @@ import { TicketHistory } from "../../molecules";
 const OrderHistory = () => {
   const { orderHistory } = useSelector((state) => state.orders);
 
-  console.log(orderHistory);
-
   return (
     <>
       <div className="flex w-full flex-col gap-[40px]">
