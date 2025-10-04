@@ -39,6 +39,7 @@ const MoviesPages = () => {
     if (querySearch === "") {
       const newParams = new URLSearchParams(searchParams);
       newParams.delete("query");
+      newParams.delete("page");
       setSearchParams(newParams);
     }
   }, [querySearch, setSearchParams, searchParams]);
@@ -46,7 +47,7 @@ const MoviesPages = () => {
   /* Search Logic with debounce library */
   const handleSearch = (e) => {
     const { value } = e.target;
-    setSearchParams({ query: value, page: 1 });
+    setSearchParams({ query: value, page: currentPage, genre: selectedGenres });
   };
 
   /* Debounce function, handle search results */
@@ -61,14 +62,14 @@ const MoviesPages = () => {
             getMoviesSearch({
               search: search,
               genre: selectedGenres,
-              page: page,
+              page: currentPage,
             }),
           );
         } else if (prevSearch && prevSearch.trim() !== "") {
-          dispatch(getMoviesSearch({ search: "", page }));
+          dispatch(getMoviesSearch({ search: "", genre: "", page }));
         }
       }, 1000),
-    [dispatch, selectedGenres],
+    [dispatch, selectedGenres, currentPage],
   );
 
   /* clear debounce */
@@ -80,20 +81,12 @@ const MoviesPages = () => {
     };
   }, [querySearch, currentPage, debouncedFetch]);
 
-  /* Handle pagination movies data results */
-  // useEffect(() => {
-  //   if (!querySearch && querySearch.trim() === "") {
-  //     dispatch(fetchMovies({ page: currentPage }));
-  //   }
-  // }, [currentPage, querySearch, dispatch]);
-
   /* Handle Paginations */
   const handlePaginations = (page) => {
     if (page < 1 || page > totalPages) return;
     setSearchParams({
       query: querySearch,
       pages: page,
-      genres: selectedGenres,
     });
     if (querySearch || selectedGenres) {
       dispatch(
@@ -110,20 +103,31 @@ const MoviesPages = () => {
   const pages = Array.from({ length: end - start + 1 }, (_, i) => start + i);
 
   /* Handle Filter */
-  const handleFilter = (genreId, value) => {
-    setSelectedGenres(value);
-    setSearchParams({
-      query: querySearch,
-      genres: value.toLowerCase(),
-      page: 1,
+  const handleFilter = (value, page) => {
+    setSelectedGenres((prev) => {
+      const newValue = prev === value ? "" : value;
+
+      const params = {
+        query: querySearch,
+        page,
+      };
+
+      if (newValue) {
+        params.genres = newValue.toLowerCase();
+      }
+
+      setSearchParams(params);
+
+      dispatch(
+        getMoviesSearch({
+          search: querySearch,
+          genre: newValue ? newValue.toLowerCase() : "",
+          page,
+        }),
+      );
+
+      return newValue;
     });
-    dispatch(
-      getMoviesSearch({
-        search: querySearch,
-        genre: value.toLowerCase(),
-        page: 1,
-      }),
-    );
   };
 
   const listFilterGenres = {
@@ -178,7 +182,7 @@ const MoviesPages = () => {
                         <li
                           key={key}
                           className={`cursor-pointer rounded-lg p-2 hover:bg-blue-700 hover:text-white ${selectedGenres === value && "bg-blue-700 text-white"}`}
-                          onClick={() => handleFilter(key, value)}
+                          onClick={() => handleFilter(value)}
                         >
                           {value}
                         </li>
