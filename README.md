@@ -69,9 +69,8 @@ $ npm run dev
 <div align="center">
 
 <img src="/demo/landing_page.png" loading="lazy" width="370px">
-<img src="/demo/dashboard.png" loading="lazy" width="370px"> </br>
-<img src="/demo/profile.png" loading="lazy" width="370px">
-<img src="/demo/top-up.png" loading="lazy" width="370px">
+</br>
+<img src="/demo/movies_page.png" loading="lazy" width="370px">
 
 </div>
 
@@ -80,7 +79,6 @@ $ npm run dev
 MIT License
 
 Copyright (c) 2025 Febryan Hernanda
-
 
 ## 🎯 Related Project
 
