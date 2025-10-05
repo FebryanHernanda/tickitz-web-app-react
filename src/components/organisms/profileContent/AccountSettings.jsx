@@ -22,6 +22,7 @@ const AccountSettings = ({ fileInputRef, onFileChange }) => {
   const [reloadData, setReloadData] = useState(false);
 
   const [showPassword, setShowPassword] = useState(false);
+  const [showNewPassword, setNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -35,6 +36,7 @@ const AccountSettings = ({ fileInputRef, onFileChange }) => {
   const [passwordData, setPasswordData] = useState({
     oldPassword: "",
     newPassword: "",
+    confirmNewPassword: "",
   });
 
   useEffect(() => {
@@ -68,6 +70,7 @@ const AccountSettings = ({ fileInputRef, onFileChange }) => {
 
   /* Check previous value  */
   const togglePassword = () => setShowPassword((prev) => !prev);
+  const toggleNewPassword = () => setNewPassword((prev) => !prev);
   const toggleConfirmPassword = () => setShowConfirmPassword((prev) => !prev);
 
   const handleInput = (e) => {
@@ -78,6 +81,11 @@ const AccountSettings = ({ fileInputRef, onFileChange }) => {
       [name]: type === "file" ? files[0] : value,
     }));
 
+    setErrorMsg({});
+  };
+
+  const handleInputPassword = (e) => {
+    const { name, value } = e.target;
     setPasswordData((prev) => ({
       ...prev,
       [name]: value,
@@ -129,14 +137,21 @@ const AccountSettings = ({ fileInputRef, onFileChange }) => {
 
   const validateInputPassword = () => {
     const newErrors = {};
-    /* ======================================Validate Password====================================== */
 
-    if (!formData.oldPassword.trim() && !formData.newPassword.trim()) {
+    if (
+      !passwordData.oldPassword.trim() &&
+      !passwordData.newPassword.trim() &&
+      !passwordData.confirmNewPassword.trim()
+    ) {
       newErrors.password = "Kolom tidak boleh kosong!";
     } else {
-      if (!passPattern.test(formData.newPassword)) {
+      if (!passPattern.test(passwordData.newPassword)) {
         newErrors.password =
           "Password harus minimal 8 karakter, berisi huruf besar, huruf kecil, dan karakter spesial";
+      }
+
+      if (passwordData.newPassword !== passwordData.confirmNewPassword) {
+        newErrors.confirmPassword = "Konfirmasi password tidak cocok!";
       }
     }
 
@@ -187,6 +202,7 @@ const AccountSettings = ({ fileInputRef, onFileChange }) => {
         setPasswordData({
           oldPassword: "",
           newPassword: "",
+          confirmNewPassword: "",
         });
 
         setReloadData((prev) => !prev);
@@ -273,7 +289,6 @@ const AccountSettings = ({ fileInputRef, onFileChange }) => {
               </div>
             </div>
             <div className="flex w-full flex-col gap-[10px]">
-              {/* <label htmlFor="avatarPath">Profile Image</label> */}
               <input
                 type="file"
                 name="avatarPath"
@@ -311,7 +326,7 @@ const AccountSettings = ({ fileInputRef, onFileChange }) => {
           <h1 className="text-medium font-light">Account and Privacy</h1>
           <hr />
           <div className="flex flex-col gap-[20px]">
-            <div className="flex gap-[50px] max-[640px]:flex-wrap max-[640px]:gap-[20px]">
+            <div className="flex flex-col gap-[50px] max-[640px]:flex-wrap max-[640px]:gap-[20px]">
               <div className="relative flex w-full flex-col gap-[10px]">
                 <label htmlFor="oldPassword">Old Password</label>
                 <input
@@ -320,7 +335,7 @@ const AccountSettings = ({ fileInputRef, onFileChange }) => {
                   placeholder="Write your password"
                   className="rounded-[16px] border-[1px] border-gray-400 bg-white p-[15px]"
                   value={passwordData.oldPassword || ""}
-                  onChange={handleInput}
+                  onChange={handleInputPassword}
                 />
                 <button
                   type="button"
@@ -330,30 +345,56 @@ const AccountSettings = ({ fileInputRef, onFileChange }) => {
                   {showPassword ? <EyeClosed /> : <Eye />}
                 </button>
               </div>
-              <div className="relative flex w-full flex-col gap-[10px]">
-                <label htmlFor="newPassword">New Password</label>
-                <input
-                  type={showConfirmPassword ? "text" : "password"}
-                  name="newPassword"
-                  placeholder="Confirm your password"
-                  className="rounded-[16px] border-[1px] border-gray-400 bg-white p-[15px]"
-                  value={passwordData.newPassword || ""}
-                  onChange={handleInput}
-                />
-                <button
-                  type="button"
-                  className="absolute top-13 right-5"
-                  onClick={toggleConfirmPassword}
-                >
-                  {showConfirmPassword ? <EyeClosed /> : <Eye />}
-                </button>
+              <div className="flex gap-5">
+                <div className="relative flex w-full flex-col gap-[10px]">
+                  <label htmlFor="newPassword">New Password</label>
+                  <input
+                    type={showNewPassword ? "text" : "password"}
+                    name="newPassword"
+                    placeholder="Confirm your password"
+                    className="rounded-[16px] border-[1px] border-gray-400 bg-white p-[15px]"
+                    value={passwordData.newPassword || ""}
+                    onChange={handleInputPassword}
+                  />
+                  <button
+                    type="button"
+                    className="absolute top-13 right-5"
+                    onClick={toggleNewPassword}
+                  >
+                    {showConfirmPassword ? <EyeClosed /> : <Eye />}
+                  </button>
+                </div>
+                <div className="relative flex w-full flex-col gap-[10px]">
+                  <label htmlFor="confirmNewPassword">
+                    Confirm New Password
+                  </label>
+                  <input
+                    type={showConfirmPassword ? "text" : "password"}
+                    name="confirmNewPassword"
+                    placeholder="Confirm your new password"
+                    className="rounded-[16px] border-[1px] border-gray-400 bg-white p-[15px]"
+                    value={passwordData.confirmNewPassword || ""}
+                    onChange={handleInputPassword}
+                  />
+                  <button
+                    type="button"
+                    className="absolute top-13 right-5"
+                    onClick={toggleConfirmPassword}
+                  >
+                    {showConfirmPassword ? <EyeClosed /> : <Eye />}
+                  </button>
+                </div>
               </div>
             </div>
-            {errorMsg.password && (
+            {errorMsg.password ? (
               <p className="text-center text-sm text-red-500">
                 {errorMsg.password}
               </p>
-            )}
+            ) : errorMsg.confirmPassword ? (
+              <p className="text-center text-sm text-red-500">
+                {errorMsg.confirmPassword}
+              </p>
+            ) : null}
           </div>
         </div>
         {/* <!-- Container Privacy Account settings --> */}
